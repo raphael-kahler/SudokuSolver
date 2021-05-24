@@ -6,7 +6,7 @@ using Xunit;
 
 namespace SudokuSolver.Tests.Techniques
 {
-    public class CellsForCandidatesTests
+    public class HiddenSubsetTests
     {
         public static IEnumerable<object[]> FullSets_TestInputs()
         {
@@ -37,7 +37,7 @@ namespace SudokuSolver.Tests.Techniques
                 board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
             }
 
-            var technique = new CellsForCandidates(size, cellCollector);
+            var technique = new HiddenSubset(size, cellCollector);
             var change = technique.GetPossibleBoardStateChange(board);
 
             Assert.IsType<BoardStateChangeCandidateRemoval>(change);
@@ -84,7 +84,7 @@ namespace SudokuSolver.Tests.Techniques
                 board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
             }
 
-            var technique = new CellsForCandidates(size, cellCollector);
+            var technique = new HiddenSubset(size, cellCollector);
             var change = technique.GetPossibleBoardStateChange(board);
 
             Assert.IsType<BoardStateChangeCandidateRemoval>(change);

@@ -50,6 +50,11 @@ namespace SudokuSolver.Techniques
         }
     }
 
+    public static class WingTechnique
+    {
+        public static XyWingTechnique XyWing() => new XyWingTechnique();
+    }
+
     public class XyWingTechnique : ISolverTechnique
     {
         public string Description => "XY-Wing";

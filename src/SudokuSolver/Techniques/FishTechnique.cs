@@ -26,6 +26,13 @@ namespace SudokuSolver.Techniques
         public static FishTechnique FourRow() => new FishTechnique(4, RowOrientation.Instance);
         public static FishTechnique FourColumn() => new FishTechnique(4, ColumnOrientation.Instance);
 
+        public static IEnumerable<FishTechnique> TwoFish() => new List<FishTechnique> { TwoRow(), TwoColumn() };
+        public static IEnumerable<FishTechnique> ThreeFish() => new List<FishTechnique> { ThreeRow(), ThreeColumn() };
+        public static IEnumerable<FishTechnique> FourFish() => new List<FishTechnique> { FourRow(), FourColumn() };
+        public static IEnumerable<FishTechnique> XWing() => TwoFish();
+        public static IEnumerable<FishTechnique> Swordfish() => ThreeFish();
+        public static IEnumerable<FishTechnique> Jellyfish() => FourFish();
+
         public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
         {
             for (int value = 1; value <= 9; ++value)

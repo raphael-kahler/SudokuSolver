@@ -5,7 +5,7 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques
 {
-    public class CellsForCandidates : CollectionCandidateRemover
+    public class HiddenSubset : CollectionCandidateRemover
     {
         private record CellsForCandidate(int CandidateValue, IReadOnlyList<Cell> Cells);
         private readonly int size;
@@ -17,7 +17,7 @@ namespace SudokuSolver.Techniques
             $"{this.size} number{(this.size > 1 ? "s are" : " is")} the candidate of only {this.size} " +
             $"cell{(this.size > 1 ? "s" : string.Empty)} in a {this.cellCollector.CollectionName}. All other candidates of the cells can be removed.";
 
-        internal CellsForCandidates(int size, ICellCollector cellCollector)
+        internal HiddenSubset(int size, ICellCollector cellCollector)
         {
             this.size = size;
             this.cellCollector = cellCollector;
@@ -69,17 +69,21 @@ namespace SudokuSolver.Techniques
 
         }
 
-        public static CellsForCandidates OnePerRow() => new CellsForCandidates(1, RowCellCollector.Instance);
-        public static CellsForCandidates OnePerColumn() => new CellsForCandidates(1, ColumnCellCollector.Instance);
-        public static CellsForCandidates OnePerBox() => new CellsForCandidates(1, BoxCellCollector.Instance);
-        public static CellsForCandidates TwoPerRow() => new CellsForCandidates(2, RowCellCollector.Instance);
-        public static CellsForCandidates TwoPerColumn() => new CellsForCandidates(2, ColumnCellCollector.Instance);
-        public static CellsForCandidates TwoPerBox() => new CellsForCandidates(2, BoxCellCollector.Instance);
-        public static CellsForCandidates ThreePerRow() => new CellsForCandidates(3, RowCellCollector.Instance);
-        public static CellsForCandidates ThreePerColumn() => new CellsForCandidates(3, ColumnCellCollector.Instance);
-        public static CellsForCandidates ThreePerBox() => new CellsForCandidates(3, BoxCellCollector.Instance);
-        public static CellsForCandidates FourPerRow() => new CellsForCandidates(4, RowCellCollector.Instance);
-        public static CellsForCandidates FourPerColumn() => new CellsForCandidates(4, ColumnCellCollector.Instance);
-        public static CellsForCandidates FourPerBox() => new CellsForCandidates(4, BoxCellCollector.Instance);
+        public static HiddenSubset HiddenSingleRow() => new HiddenSubset(1, RowCellCollector.Instance);
+        public static HiddenSubset HiddenSingleColumn() => new HiddenSubset(1, ColumnCellCollector.Instance);
+        public static HiddenSubset HiddenSingleBox() => new HiddenSubset(1, BoxCellCollector.Instance);
+        public static HiddenSubset HiddenPairRow() => new HiddenSubset(2, RowCellCollector.Instance);
+        public static HiddenSubset HiddenPairColumn() => new HiddenSubset(2, ColumnCellCollector.Instance);
+        public static HiddenSubset HiddenPairBox() => new HiddenSubset(2, BoxCellCollector.Instance);
+        public static HiddenSubset HiddenTripleRow() => new HiddenSubset(3, RowCellCollector.Instance);
+        public static HiddenSubset HiddenTripleColumn() => new HiddenSubset(3, ColumnCellCollector.Instance);
+        public static HiddenSubset HiddenTripleBox() => new HiddenSubset(3, BoxCellCollector.Instance);
+        public static HiddenSubset HiddenQuadRow() => new HiddenSubset(4, RowCellCollector.Instance);
+        public static HiddenSubset HiddenQuadColumn() => new HiddenSubset(4, ColumnCellCollector.Instance);
+        public static HiddenSubset HiddenQuadBox() => new HiddenSubset(4, BoxCellCollector.Instance);
+        public static IEnumerable<HiddenSubset> HiddenSingles() => new List<HiddenSubset> { HiddenSingleRow(), HiddenSingleColumn(), HiddenSingleBox() };
+        public static IEnumerable<HiddenSubset> HiddenPairs() => new List<HiddenSubset> { HiddenPairRow(), HiddenPairColumn(), HiddenPairBox() };
+        public static IEnumerable<HiddenSubset> HiddenTriples() => new List<HiddenSubset> { HiddenTripleRow(), HiddenTripleColumn(), HiddenTripleBox() };
+        public static IEnumerable<HiddenSubset> HiddenQuads() => new List<HiddenSubset> { HiddenQuadRow(), HiddenQuadColumn(), HiddenQuadBox() };
     }
 }

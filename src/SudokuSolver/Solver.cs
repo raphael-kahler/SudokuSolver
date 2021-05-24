@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using SudokuSolver.Techniques;
 
 namespace SudokuSolver
@@ -16,6 +16,9 @@ namespace SudokuSolver
 
         public Solver WithTechnique(ISolverTechnique technique) =>
             new Solver(this.techniques.Add(technique));
+
+        public Solver WithTechnique(IEnumerable<ISolverTechnique> techniques) =>
+            new Solver(this.techniques.AddRange(techniques));
 
         public IBoardStateChange GetNextChange(BoardState board)
         {

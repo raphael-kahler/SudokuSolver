@@ -5,7 +5,7 @@ using Xunit;
 
 namespace SudokuSolver.Tests.Techniques
 {
-    public class CellsWithSameCandidateTests
+    public class NakedSubsetTests
     {
         [Theory]
         [InlineData(2)]
@@ -22,7 +22,7 @@ namespace SudokuSolver.Tests.Techniques
                 board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
             }
 
-            var technique = new CellsWithSameCandidatesInCollection(size, RowCellCollector.Instance);
+            var technique = new NakedSubset(size, RowCellCollector.Instance);
             var change = technique.GetPossibleBoardStateChange(board);
 
             Assert.IsType<BoardStateChangeCandidateRemoval>(change);
@@ -51,7 +51,7 @@ namespace SudokuSolver.Tests.Techniques
                 board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
             }
 
-            var technique = new CellsWithSameCandidatesInCollection(size, ColumnCellCollector.Instance);
+            var technique = new NakedSubset(size, ColumnCellCollector.Instance);
             var change = technique.GetPossibleBoardStateChange(board);
 
             Assert.IsType<BoardStateChangeCandidateRemoval>(change);
@@ -81,7 +81,7 @@ namespace SudokuSolver.Tests.Techniques
                 board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
             }
 
-            var technique = new CellsWithSameCandidatesInCollection(size, BoxCellCollector.Instance);
+            var technique = new NakedSubset(size, BoxCellCollector.Instance);
             var change = technique.GetPossibleBoardStateChange(board);
 
             Assert.IsType<BoardStateChangeCandidateRemoval>(change);

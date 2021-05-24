@@ -5,16 +5,23 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques
 {
-    public abstract class CollectionCandidatesInSingleBox : ISolverTechnique
+    public class LockedCandidateClaiming : ISolverTechnique
     {
-        public abstract string Description { get; }
+        private readonly ICellCollector cellCollector;
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Medium;
-        protected abstract IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board);
+        public string Description =>
+            $"In one {this.cellCollector.CollectionName} all candidates of a number are in the same box. " +
+            $"Remove candidates from other {this.cellCollector.CollectionName}s of that box.";
+
+        internal LockedCandidateClaiming(ICellCollector cellCollector)
+        {
+            this.cellCollector = cellCollector ?? throw new System.ArgumentNullException(nameof(cellCollector));
+        }
 
         public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
         {
             var candidatesToRemove = new List<Candidate>();
-            foreach (var cellCollection in GetCellCollections(board))
+            foreach (var cellCollection in this.cellCollector.GetCollections(board))
             {
                 for (int value = 1; value <= 9; ++value)
                 {
@@ -60,21 +67,9 @@ namespace SudokuSolver.Techniques
 
             return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
+
+        public static LockedCandidateClaiming Row() => new LockedCandidateClaiming(RowCellCollector.Instance);
+        public static LockedCandidateClaiming Column() => new LockedCandidateClaiming(ColumnCellCollector.Instance);
+        public static IEnumerable<LockedCandidateClaiming> AllDirections() => new List<LockedCandidateClaiming> { Row(), Column() };
     }
-
-    public class RowCandidatesInSingleBox : CollectionCandidatesInSingleBox
-    {
-        public override string Description => "In one row all candidates of a number are in the same box. Remove candidates from other rows of that box.";
-
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
-            CellCollections.GetRows(board);
-    }
-
-    public class ColumnCandidatesInSingleBox : CollectionCandidatesInSingleBox
-    {
-        public override string Description => "In one column all candidates of a number are in the same box. Remove candidates from other columns of that box.";
-
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
-            CellCollections.GetColumns(board);
-   }
 }

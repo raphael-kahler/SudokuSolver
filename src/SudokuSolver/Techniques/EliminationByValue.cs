@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,9 +5,20 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques
 {
-    public abstract class OneNumberPerCollection : CollectionCandidateRemover
+    public class EliminationByValue : CollectionCandidateRemover
     {
+        private readonly ICellCollector cellCollector;
         public override DifficultyLevel DifficultyLevel => DifficultyLevel.Trivial;
+        public override string Description => $"Each number is only allowed once per {this.cellCollector.CollectionName}.";
+
+        internal EliminationByValue(ICellCollector cellCollector)
+        {
+            this.cellCollector = cellCollector;
+        }
+
+        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
+            this.cellCollector.GetCollections(board);
+
         protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
         {
             var valuesCausingChange = ImmutableHashSet<Position>.Empty;
@@ -31,29 +41,10 @@ namespace SudokuSolver.Techniques
 
             return ChangeDescription.ValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
         }
-    }
 
-    public class OneNumberPerRow : OneNumberPerCollection
-    {
-        public override string Description => "Each number is only allowed once per row.";
-
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
-            CellCollections.GetRows(board);
-    }
-
-    public class OneNumberPerColumn : OneNumberPerCollection
-    {
-        public override string Description => "Each number is only allowed once per column.";
-
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
-            CellCollections.GetColumns(board);
-    }
-
-    public class OneNumberPerBox : OneNumberPerCollection
-    {
-        public override string Description => "Each number is only allowed once per 3x3 box.";
-
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
-            CellCollections.GetBoxes(board);
+        public static EliminationByValue Row() => new EliminationByValue(RowCellCollector.Instance);
+        public static EliminationByValue Column() => new EliminationByValue(ColumnCellCollector.Instance);
+        public static EliminationByValue Box() => new EliminationByValue(BoxCellCollector.Instance);
+        public static IEnumerable<EliminationByValue> AllDirections() => new List<EliminationByValue> { Row(), Column(), Box() };
     }
 }
