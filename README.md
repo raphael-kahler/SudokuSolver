@@ -4,6 +4,8 @@ A solver for Sudoku puzzles that uses common [solving techniques](http://sudoped
 The solver shows for every step which technique was used, so you can follow along how the puzzle was solved.
 You can use this for learning techniques or to get a hint for the sudoku you are stuck on.
 
+![Console Output Example](https://i.imgur.com/US62oen.png)
+
 ## Techniques
 
 The following techniques are implemented so far. Each technique can individually be added to the solver.
@@ -29,6 +31,8 @@ The following techniques are implemented so far. Each technique can individually
 | 4-Fish: [Jellyfish](http://sudopedia.enjoysudoku.com/Jellyfish.html) and finned variants. |  `FishTechnique.Jellyfish()` |
 | **Wing Techniques** | |
 | [XY-Wing](http://sudopedia.enjoysudoku.com/XY-Wing.html) | `WingTechnique.XyWing()` |
+| [XYZ-Wing](http://sudopedia.enjoysudoku.com/XYZ-Wing.html) | `WingTechnique.XyzWing()` |
+| [WXYZ-Wing](http://sudopedia.enjoysudoku.com/WXYZ-Wing.html) | `WingTechnique.WxyzWing()` |
 
 ## Usage
 
