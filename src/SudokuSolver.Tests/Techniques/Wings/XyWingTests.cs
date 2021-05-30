@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
-using SudokuSolver.Techniques;
+using SudokuSolver.Techniques.Wings;
 using Xunit;
 
-namespace SudokuSolver.Tests.Techniques
+namespace SudokuSolver.Tests.Techniques.Wings
 {
     public class XyWingTests
     {
@@ -18,9 +18,9 @@ namespace SudokuSolver.Tests.Techniques
         public void Test(int row, int col, int value, bool shouldApply)
         {
             var xyWing = new XyWing(
-                new Cell(new Position(1, 1), null, ImmutableHashSet<int>.Empty.Add(2).Add(5)),
-                new Cell(new Position(1, 8), null, ImmutableHashSet<int>.Empty.Add(1).Add(2)),
-                new Cell(new Position(2, 2), null, ImmutableHashSet<int>.Empty.Add(1).Add(5)));
+                new Cell((1, 1), null, ImmutableHashSet<int>.Empty.Add(2).Add(5)),
+                new Cell((1, 8), null, ImmutableHashSet<int>.Empty.Add(1).Add(2)),
+                new Cell((2, 2), null, ImmutableHashSet<int>.Empty.Add(1).Add(5)));
 
             var cell = new Cell(new Position(row, col), null, ImmutableHashSet<int>.Empty.Add(value));
 

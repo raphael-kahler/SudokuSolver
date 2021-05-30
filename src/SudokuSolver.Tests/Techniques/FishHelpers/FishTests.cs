@@ -15,9 +15,9 @@ namespace SudokuSolver.Tests
         {
             // settings
             int candidateValue = 7;
-            var fishPositions = new HashSet<Position> { new(2, 4), new(2, 8), new(4, 4), new(4, 8) };
-            var positionsAffected = new HashSet<Position> { new(1, 7), new(3, 8), new(5, 8) };
-            var posistionsNotAffected = new HashSet<Position> { new(0, 2), new(0, 4), new(0, 5), new(1, 6), new(8, 7), new(8, 8) };
+            var fishPositions = new HashSet<Position> { (2, 4), (2, 8), (4, 4), (4, 8) };
+            var positionsAffected = new HashSet<Position> { (1, 7), (3, 8), (5, 8) };
+            var posistionsNotAffected = new HashSet<Position> { (0, 2), (0, 4), (0, 5), (1, 6), (8, 7), (8, 8) };
 
             // set up board
             var board = BoardFactory.EmptyBoard();
@@ -47,9 +47,9 @@ namespace SudokuSolver.Tests
         {
             // settings
             int candidateValue = 7;
-            var fishPositions = new HashSet<Position> { new(1, 1), new(2, 7), new(7, 1), new(7, 7) };
-            var positionsAffected = new HashSet<Position> { new(1, 6), new(2, 0) };
-            var posistionsNotAffected = new HashSet<Position> { new(2, 6), new(4, 0), new(4, 6), new(7, 0) };
+            var fishPositions = new HashSet<Position> { (1, 1), (2, 7), (7, 1), (7, 7) };
+            var positionsAffected = new HashSet<Position> { (1, 6), (2, 0) };
+            var posistionsNotAffected = new HashSet<Position> { (2, 6), (4, 0), (4, 6), (7, 0) };
 
             // set up board
             var board = BoardFactory.EmptyBoard();
@@ -83,7 +83,7 @@ namespace SudokuSolver.Tests
         {
             var fin = new FishFin(
                 position: new Position(4, 3),
-                fins: ImmutableHashSet<Position>.Empty.Add(new(4, 3)).Add(new(4, 5)));
+                fins: ImmutableHashSet<Position>.Empty.Add((4, 3)).Add((4, 5)));
 
             var connects = fin.ConnectsTo(new Position(row, col));
 

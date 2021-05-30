@@ -70,7 +70,9 @@ namespace SudokuConsole
             .WithTechnique(FishTechnique.XWing())
             .WithTechnique(WingTechnique.XyWing())
             .WithTechnique(FishTechnique.Swordfish())
-            .WithTechnique(FishTechnique.Jellyfish());
+            .WithTechnique(FishTechnique.Jellyfish())
+            .WithTechnique(WingTechnique.XyzWing())
+            .WithTechnique(WingTechnique.WxyzWing());
 
         private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
         {
@@ -83,6 +85,7 @@ namespace SudokuConsole
             if (!change.CausesChange)
             {
                 Console.WriteLine("Couldn't find any more steps for solving the sudoku :(");
+                return change;
             }
 
             var newBoard = board.ApplyChange(change);

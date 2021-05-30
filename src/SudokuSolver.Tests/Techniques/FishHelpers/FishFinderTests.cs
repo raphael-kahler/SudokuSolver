@@ -16,8 +16,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(0, 2), new(0, 5) },
-                    new List<Position> { new(2, 4), new(2, 8) }
+                    new List<Position> { (0, 2), (0, 5) },
+                    new List<Position> { (2, 4), (2, 8) }
                 }
             };
             // x-wing
@@ -27,8 +27,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(4, 4), new(4, 8) },
-                    new List<Position> { new(2, 4), new(2, 8) }
+                    new List<Position> { (4, 4), (4, 8) },
+                    new List<Position> { (2, 4), (2, 8) }
                 }
             };
             // sashimi x-wing
@@ -38,8 +38,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(4, 4), new(4, 7) },
-                    new List<Position> { new(2, 4), new(2, 8) }
+                    new List<Position> { (4, 4), (4, 7) },
+                    new List<Position> { (2, 4), (2, 8) }
                 }
             };
             // sashimi x-wing (reversed row order)
@@ -49,8 +49,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(2, 4), new(2, 8) },
-                    new List<Position> { new(4, 4), new(4, 7) }
+                    new List<Position> { (2, 4), (2, 8) },
+                    new List<Position> { (4, 4), (4, 7) }
                 }
             };
             // two-finned sashimi x-wing
@@ -60,8 +60,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(2, 1), new(2, 8) },
-                    new List<Position> { new(4, 1), new(4, 2), new(4, 8) }
+                    new List<Position> { (2, 1), (2, 8) },
+                    new List<Position> { (4, 1), (4, 2), (4, 8) }
                 }
             };
             // two-finned sashimi x-wing (reversed order)
@@ -71,8 +71,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(4, 1), new(4, 2), new(4, 8) },
-                    new List<Position> { new(2, 1), new(2, 8) }
+                    new List<Position> { (4, 1), (4, 2), (4, 8) },
+                    new List<Position> { (2, 1), (2, 8) }
                 }
             };
             // x-wing + plus fin
@@ -82,8 +82,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 1), new(7, 3), new(7, 4) }
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 1), (7, 3), (7, 4) }
                 }
             };
             // x-wing + plus two fins
@@ -93,8 +93,8 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 1), new(7, 3), new(7, 4), new(7, 5) }
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 1), (7, 3), (7, 4), (7, 5) }
                 }
             };
             // no fish
@@ -103,9 +103,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 false,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 5) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 5) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 4), (7, 6) },
                 }
             };
             // no fish
@@ -114,9 +114,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 false,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 5), new(1, 6), new(1, 7) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 5), (1, 6), (1, 7) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 4), (7, 6) },
                 }
             };
             // three-fish
@@ -125,9 +125,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 6) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 6) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 4), (7, 6) },
                 }
             };
             // finned three-fish
@@ -136,9 +136,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 7) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 7) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 4), (7, 6) },
                 }
             };
             // two-finned three-fish
@@ -147,9 +147,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 4), new(1, 7), new(1, 8) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 1), new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 4), (1, 7), (1, 8) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 1), (7, 4), (7, 6) },
                 }
             };
             // three-fish + extra fin
@@ -158,9 +158,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 4), new(1, 6), new(1, 7) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 4), (1, 6), (1, 7) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 4), (7, 6) },
                 }
             };
             // three-fish + extra two-fin
@@ -169,9 +169,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 4), new(1, 6), new(1, 7), new(1, 8) },
-                    new List<Position> { new(4, 1), new(4, 4) },
-                    new List<Position> { new(7, 1), new(7, 4), new(7, 6) },
+                    new List<Position> { (1, 1), (1, 4), (1, 6), (1, 7), (1, 8) },
+                    new List<Position> { (4, 1), (4, 4) },
+                    new List<Position> { (7, 1), (7, 4), (7, 6) },
                 }
             };
             // no fish
@@ -180,9 +180,9 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 false,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(2, 0), new(2, 2) },
-                    new List<Position> { new(3, 0), new(3, 2), new(3, 3), new(3, 6), new(3, 8) },
-                    new List<Position> { new(4, 0), new(4, 8) },
+                    new List<Position> { (2, 0), (2, 2) },
+                    new List<Position> { (3, 0), (3, 2), (3, 3), (3, 6), (3, 8) },
+                    new List<Position> { (4, 0), (4, 8) },
                 }
             };
             // four-row fish
@@ -191,10 +191,10 @@ namespace SudokuSolver.Tests.Techniques.FishHelpers
                 true,
                 new LargeFishFinder(4, RowOrientation.Instance),
                 new List<IList<Position>> {
-                    new List<Position> { new(1, 1), new(1, 5) },
-                    new List<Position> { new(2, 7), new(2, 5) },
-                    new List<Position> { new(5, 7), new(5, 3) },
-                    new List<Position> { new(6, 1), new(6, 3) },
+                    new List<Position> { (1, 1), (1, 5) },
+                    new List<Position> { (2, 7), (2, 5) },
+                    new List<Position> { (5, 7), (5, 3) },
+                    new List<Position> { (6, 1), (6, 3) },
                 }
             };
         }

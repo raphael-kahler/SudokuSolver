@@ -10,10 +10,32 @@ namespace SudokuSolver
         public int Box { get; } = (Row / 3) * 3 + (Col / 3);
         public bool Is(int row, int col) => Row == row && Col == col;
         public bool ConnectsTo(Position other) => Row == other.Row || Col == other.Col || Box == other.Box;
+        public bool ConnectsToDistinct(Position other) => ConnectsTo(other) && !this.Equals(other);
+
+        public static implicit operator Position((int row, int col) pos) => new Position(pos.row, pos.col);
     }
 
     public record Candidate(Position Position, int CandidateValue);
-    public record Cell(Position Position, int? Value, IImmutableSet<int> Candidates);
+    public record Cell(Position Position, int? Value, IImmutableSet<int> Candidates)
+    {
+        public Cell(Position position, params int[] candidates) : this(position, null, candidates.ToImmutableHashSet()) { }
+
+        public IEnumerable<Candidate> GetCandidatesWithPosition()
+        {
+            foreach (var candidate in Candidates)
+            {
+                yield return new Candidate(Position, candidate);
+            }
+        }
+
+        public virtual bool Equals(Cell other) =>
+            other != null &&
+            Position == other.Position &&
+            Value == other.Value &&
+            Candidates.SetEquals(other.Candidates);
+
+        public override int GetHashCode() => HashCode.Combine(Position, Value, Candidates);
+    }
 
     public record BoardState
     {

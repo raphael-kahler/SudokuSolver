@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build SudokuConsole",
             "program": "${workspaceFolder}/src/SudokuConsole/bin/Debug/net5.0/SudokuConsole.exe",
-            "args": ["..\\..\\inputs\\sudoku-extreme1.txt"],
+            "args": ["-i", "..\\..\\inputs\\sudoku-evil3.txt"],
             "cwd": "${workspaceFolder}/src/SudokuConsole",
             "stopAtEntry": false,
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
