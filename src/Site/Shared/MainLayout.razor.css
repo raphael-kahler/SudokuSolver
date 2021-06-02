@@ -14,7 +14,8 @@
 .content {
     padding-top: 1.1rem;
     width: 448px;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sidebar {
