@@ -10,10 +10,10 @@ namespace SudokuConsole
 {
     internal class Options
     {
-        [Option('i', "input", Required = true, HelpText = "The input file containing the sudoku puzzle to solve.")]
+        [Option('i', "input", Required = true, HelpText = "The input file containing the Sudoku puzzle to solve.")]
         public string InputFile { get; set; }
 
-        [Option('n', "nextStep", Required = false, HelpText = "If provided, solve only the next step for the sudoku. If not provided, solve the sudoku completely.")]
+        [Option('n', "nextStep", Required = false, HelpText = "If provided, solve only the next step for the Sudoku. If not provided, solve the Sudoku completely.")]
         public bool NextStep { get; set; }
     }
 
@@ -84,7 +84,7 @@ namespace SudokuConsole
             var change = solver.GetNextChange(board);
             if (!change.CausesChange)
             {
-                Console.WriteLine("Couldn't find any more steps for solving the sudoku :(");
+                Console.WriteLine("Couldn't find any more steps for solving the Sudoku :(");
                 return change;
             }
 

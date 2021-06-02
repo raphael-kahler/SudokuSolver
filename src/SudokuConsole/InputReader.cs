@@ -24,7 +24,7 @@ namespace SudokuConsole
 
         private static BoardState ParseSimpleBoard(string[] lines)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             for (int row = 0; row < 9; ++ row)
             {
                 var line = lines[row];
@@ -42,7 +42,7 @@ namespace SudokuConsole
 
         private static BoardState ParseBoardWithCandidates(string[] lines)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             for (int row = 0; row < 9; ++ row)
             {
                 var line = lines[row];

@@ -24,6 +24,19 @@ namespace SudokuSolver
         public BoardState ApplyTo(BoardState board) => board with { LastChange = this };
     }
 
+    public record BoardStateChangeClearCell(Position Position)
+        : IBoardStateChange
+    {
+        public bool CausesChange => true;
+        public IChangeFinder FoundBy => NotFound.Instance;
+        public IChangeDescription Description => NoChangeDescription.Instance;
+        public BoardState ApplyTo(BoardState board) => new BoardState(
+            cells: board.Cells.Replace(
+                oldValue: board.Cell(Position),
+                newValue: Cell.Empty(Position)),
+            lastChange: this);
+    }
+
     public record BoardStateChangeSetNumber(Position Position, int Value, IChangeFinder FoundBy, IChangeDescription Description)
         : IBoardStateChange
     {

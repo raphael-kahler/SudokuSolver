@@ -1,0 +1,50 @@
+﻿@page "/new"
+
+<h4>Enter your Sudoku puzzle</h4>
+<ul>
+    <li>Click or tap a cell to select it</li>
+    <li>Use arrow keys to move across cells</li>
+    <li>Type numbers 1-9 to set the value of the selected cell</li>
+    <li>Type number 0 to reset a cell</li>
+</ul>
+
+<SudokuBoard Board="@(initialBoard)"
+             SolveSudokuCallback="@SudokuReadyToSolve"
+             InputMode="true" />
+
+@code {
+    @inject NavigationManager NavigationManager
+    private BoardState initialBoard;
+
+    protected override void OnInitialized()
+    {
+        this.initialBoard = BoardFactory.EmptyBoard();
+    }
+
+    private void SudokuReadyToSolve(BoardState board)
+    {
+        var sudokuString = GetBoardString(board);
+        NavigationManager.NavigateTo($"/solve?puzzle={sudokuString}", false);
+    }
+
+    private string GetBoardString(BoardState board)
+    {
+        var builder = new System.Text.StringBuilder();
+        for (int row = 0; row < 9; ++row)
+        {
+            for (int col = 0; col < 9; ++col)
+            {
+                var cell = board.Cell(row, col);
+                if (cell.Value.HasValue)
+                {
+                    builder.Append(cell.Value.Value);
+                }
+                else
+                {
+                    builder.Append("0");
+                }
+            }
+        }
+        return builder.ToString();
+    }
+}

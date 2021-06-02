@@ -1,0 +1,44 @@
+.cellContent {
+    width: 48px;
+    height: 48px;
+    top: 0px;
+    left: 0px;
+}
+
+.selected {
+    border: 2px solid red;
+}
+
+.cellValue {
+    font-size: x-large;
+    line-height: 48px;
+    text-align: center;
+}
+
+.candidateTable {
+    font-size: x-small;
+    color: gray;
+    text-align: center;
+}
+
+.candidateCell {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+}
+
+.cause, .affected {
+    animation: flash-in 2s cubic-bezier(0.51, 0.34, 0.09, 1.13) 1;
+}
+
+.cause {
+    background-color: #ffe3bd;
+}
+
+.affected {
+    background-color: #cfffb5;
+}
+
+@keyframes flash-in {
+    from { background-color: transparent; }
+}

@@ -13,7 +13,7 @@ namespace SudokuSolver.Tests.Techniques
         [InlineData(4)]
         public void GetPossibleBoardStateChange_Row(int size)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             for (int i = 0; i < size; ++i)
             {
                 var candidatesToRemove = Enumerable.Range(size + 1, 9 - size)
@@ -42,7 +42,7 @@ namespace SudokuSolver.Tests.Techniques
         [InlineData(4)]
         public void GetPossibleBoardStateChange_Column(int size)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             for (int i = 0; i < size; ++i)
             {
                 var candidatesToRemove = Enumerable.Range(size + 1, 9 - size)
@@ -71,7 +71,7 @@ namespace SudokuSolver.Tests.Techniques
         [InlineData(4)]
         public void GetPossibleBoardStateChange_Box(int size)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             for (int i = 0; i < size; ++i)
             {
                 Position position = board.Box(0).Skip(i).First().Position;

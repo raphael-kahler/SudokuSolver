@@ -32,7 +32,7 @@ namespace SudokuSolver.Tests.Techniques.Wings
         public void GetPossibleBoardStateChange_XyzWing(Position xyzPosition, Position xzPosition, Position yzPosition, List<Position> affectedPositions)
         {
             // create board where xyz has candidates 123, xz has 12, and yz has 13
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var removals = Enumerable.Range(4, 6).Select(value => new Candidate(xyzPosition, value))
                 .Concat(Enumerable.Range(3, 7).Select(value => new Candidate(xzPosition, value)))
                 .Concat(Enumerable.Range(4, 7).Append(2).Select(value => new Candidate(yzPosition, value)))

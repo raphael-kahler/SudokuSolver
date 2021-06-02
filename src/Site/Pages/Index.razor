@@ -1,0 +1,50 @@
+﻿@page "/"
+
+<h1 class="title text-center">Sudoku Solver</h1>
+<h4>Stuck on a Sudoku?</h4>
+<ol>
+    <li>Enter your Sudoku</li>
+    <li>Press the solve button</li>
+    <li>Get an explanation for the next solution step</li>
+</ol>
+<p>Try the example below or <a href="/new">enter your own Sudoku</a>.</p>
+
+<SudokuBoardSolver Board="@initialBoard" />
+
+@code {
+    private BoardState initialBoard;
+
+    protected override void OnInitialized()
+    {
+        this.initialBoard = BoardFactory.CandidateBoard()
+            .ApplyChange(new BoardStateChangeSetNumber((0, 2), 8, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((0, 7), 9, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((1, 1), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((2, 0), 7, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((2, 5), 9, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((2, 6), 1, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((2, 8), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((3, 3), 7, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((3, 4), 4, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((4, 3), 6, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((4, 5), 2, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((4, 6), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((4, 8), 4, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((5, 2), 4, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((5, 4), 8, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((5, 8), 9, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((6, 2), 9, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((6, 4), 2, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((6, 7), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((6, 8), 6, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((7, 0), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((7, 6), 4, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((7, 7), 7, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((7, 8), 3, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((8, 2), 6, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((8, 4), 5, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((8, 5), 3, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((8, 6), 9, NotFound.Instance, NoChangeDescription.Instance))
+            .ApplyChange(new BoardStateChangeSetNumber((8, 7), 2, NotFound.Instance, NoChangeDescription.Instance));
+    }
+}

@@ -1,0 +1,85 @@
+<div class="puzzle-area">
+    <SudokuBoard Board="@(Board)"
+                Change="@(change)"/>
+
+    <div class="btn-toolbar justify-content-between solver-btn-area">
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(boardStates.Count <= 1)" @onclick="GoBackOneStep">Back</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled>Hint</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(!change.CausesChange)" @onclick="SolveNextStep">Next step</button>
+    </div>
+
+    @if (!boardIsValid) {
+        <p>Oh no! The Sudoku puzzle got into an invalid state :(</p>
+    } else if (change.CausesChange) {
+        <p>@(change.FoundBy.DifficultyLevel) step: @(change.FoundBy.Description)</p>
+    } else {
+        if (Board.IsComplete) {
+            <p>Sudoku solved!</p>
+        } else {
+            <p>Couldn't find any more steps for solving the Sudoku :(</p>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public BoardState Board { get; set; }
+
+    private List<BoardState> boardStates;
+    private Solver solver;
+    private ISudokuRules rules;
+    private IBoardStateChange change;
+    private bool boardIsValid;
+
+    protected override void OnInitialized()
+    {
+        this.boardStates = new List<BoardState> { Board };
+        this.rules = new StandardSudokuRules();
+        this.solver = new Solver()
+            .WithTechnique(NakedSubset.NakedSingle())
+            .WithTechnique(EliminationByValue.AllDirections())
+            .WithTechnique(HiddenSubset.HiddenSingles())
+            .WithTechnique(LockedCandidatesPointing.AllDirections())
+            .WithTechnique(LockedCandidateClaiming.AllDirections())
+            .WithTechnique(NakedSubset.NakedPairs())
+            .WithTechnique(HiddenSubset.HiddenPairs())
+            .WithTechnique(NakedSubset.NakedTriples())
+            .WithTechnique(HiddenSubset.HiddenTriples())
+            .WithTechnique(NakedSubset.NakedQuads())
+            .WithTechnique(HiddenSubset.HiddenQuads())
+            .WithTechnique(FishTechnique.XWing())
+            .WithTechnique(WingTechnique.XyWing())
+            .WithTechnique(FishTechnique.Swordfish())
+            .WithTechnique(FishTechnique.Jellyfish())
+            .WithTechnique(WingTechnique.XyzWing())
+            .WithTechnique(WingTechnique.WxyzWing());
+
+        this.boardIsValid = this.rules.BoardIsValid(Board);
+        this.change = ComputeNextStep();
+    }
+
+    private void SolveNextStep()
+    {
+        this.boardIsValid = this.rules.BoardChangeIsValid(Board, this.change);
+        var newBoard = Board.ApplyChange(this.change);
+        Board = newBoard;
+        this.boardStates.Add(Board);
+        this.change = ComputeNextStep();
+    }
+
+    private IBoardStateChange ComputeNextStep() =>
+        (Board.IsComplete || !this.boardIsValid)
+            ? new BoardStateNoChange()
+            : solver.GetNextChange(Board);
+
+    private void GoBackOneStep()
+    {
+        if (this.boardStates.Count > 1)
+        {
+            this.boardStates.RemoveAt(this.boardStates.Count - 1);
+            Board = this.boardStates[this.boardStates.Count - 1];
+            this.boardIsValid = true;
+            this.change = ComputeNextStep();
+        }
+    }
+}

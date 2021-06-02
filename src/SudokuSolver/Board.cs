@@ -19,6 +19,7 @@ namespace SudokuSolver
     public record Cell(Position Position, int? Value, IImmutableSet<int> Candidates)
     {
         public Cell(Position position, params int[] candidates) : this(position, null, candidates.ToImmutableHashSet()) { }
+        public static Cell Empty(Position position) => new Cell(position, null, ImmutableHashSet<int>.Empty);
 
         public IEnumerable<Candidate> GetCandidatesWithPosition()
         {

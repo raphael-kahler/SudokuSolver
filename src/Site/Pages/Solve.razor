@@ -1,0 +1,58 @@
+﻿@page "/solve"
+
+@if (initialBoard != null) {
+    <h4 >How to solve this Sudoku?</h4>
+    <p>Follow the steps to find out.</p>
+    <SudokuBoardSolver Board="@initialBoard"/>
+} else {
+    <SudokuInputError />
+}
+
+@code {
+    @inject NavigationManager NavigationManager
+
+    private BoardState initialBoard;
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("OnInitialized");
+        var query = new Uri(NavigationManager.Uri).Query;
+        var queryParameters = HttpUtility.ParseQueryString(query);
+        var puzzleInput = queryParameters["puzzle"];
+        if (!string.IsNullOrWhiteSpace(puzzleInput))
+        {
+            this.initialBoard = ParseInput(puzzleInput);
+        }
+    }
+
+    private BoardState ParseInput(string puzzleInput)
+    {
+        if (puzzleInput.Length != 81)
+        {
+            Console.WriteLine($"Sudoku puzzle string needs to be 81 characters long, but was {puzzleInput.Length} characters long instead.");
+            return null;
+        }
+        var board = BoardFactory.CandidateBoard();
+        for (int row = 0; row < 9; ++ row)
+        {
+            for (int col = 0; col < 9; ++col)
+            {
+                var idx = row * 9 + col;
+                var inputValue = puzzleInput[idx];
+                if (int.TryParse(inputValue.ToString(), out int value))
+                {
+                    if (value > 0)
+                    {
+                        board = board.ApplyChange(new BoardStateChangeSetNumber(new Position(row, col), value));
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Sudoku puzzle string can only consist of integers 0-9, but found character '{inputValue}' instead.");
+                    return null;
+                }
+            }
+        }
+        return board;
+    }
+}

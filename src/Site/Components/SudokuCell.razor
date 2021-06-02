@@ -1,0 +1,50 @@
+<div class="cellContent @(Selected ? "selected" : string.Empty)"
+     @onclick="@OnClicked">
+    @if (Cell.Value != null) {
+        var changeClass = ChangeDescription.ValuesCausingChange.Any(c => c == Cell.Position) ? "cause"
+            : ChangeDescription.ValuesAffected.Any(c => c.Position == Cell.Position) ? "affected"
+            : string.Empty;
+        <div class="cellValue @(changeClass)">
+            @(Cell.Value)
+        </div>
+    }
+    else {
+        <table class="candidateTable">
+            @for (int row = 0; row < 3; ++row) {
+                <tr>
+                    @for (int col = 1; col <= 3; ++col) {
+                        var value = 3 * row + col;
+                        bool hasValue = Cell.Candidates.Contains(value);
+                        var changeClass = !hasValue ? string.Empty
+                            : ChangeDescription.CandidatesCausingChange.Any(c => c.Position == Cell.Position && c.CandidateValue == value) ? "cause"
+                            : ChangeDescription.CandidatesAffected.Any(c => c.Position == Cell.Position && c.CandidateValue == value) ? "affected"
+                            : string.Empty;
+
+                        <td class="candidateCell @(changeClass)">
+                            @(hasValue ? value : null)
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Cell Cell { get; set; }
+
+    [Parameter]
+    public bool Selected { get; set; }
+
+    [Parameter]
+    public IChangeDescription ChangeDescription { get; set; }
+
+    [Parameter]
+    public EventCallback<Position> OnClickCallback { get; set; }
+
+    private async Task OnClicked(MouseEventArgs e)
+    {
+        await OnClickCallback.InvokeAsync(Cell.Position);
+    }
+}

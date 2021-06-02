@@ -2,7 +2,7 @@
 
 A solver for Sudoku puzzles that uses common [solving techniques](http://sudopedia.enjoysudoku.com/Solving_Technique.html).
 The solver shows for every step which technique was used, so you can follow along how the puzzle was solved.
-You can use this for learning techniques or to get a hint for the sudoku you are stuck on.
+You can use this for learning techniques or to get a hint for the Sudoku you are stuck on.
 
 ![Console Output Example](https://i.imgur.com/US62oen.png)
 
@@ -43,7 +43,7 @@ cd src/SudokuConsole
 dotnet build
 ```
 
-To solve a sudoku completely, just provide the path to a sudoku input file.
+To solve a Sudoku completely, just provide the path to a Sudoku input file.
 
 ``` sh
 ./bin/Debug/net5.0/SudokuConsole.exe -i ../../inputs/sudoku-basic1.txt

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -7,7 +8,13 @@ namespace SudokuSolver
     {
         private readonly static ImmutableHashSet<int> AllCandidates = Enumerable.Range(1, 9).ToImmutableHashSet();
 
-        public static BoardState EmptyBoard()
+        public static BoardState CandidateBoard() =>
+            CreateBoard((Position position) => new Cell(position, null, AllCandidates));
+
+        public static BoardState EmptyBoard() =>
+            CreateBoard((Position position) => Cell.Empty(position));
+
+        private static BoardState CreateBoard(Func<Position, Cell> cellConstructor)
         {
             var cells = ImmutableList<Cell>.Empty;
 
@@ -15,13 +22,11 @@ namespace SudokuSolver
             {
                 for (int col = 0; col < 9; ++col)
                 {
-                    cells = cells.Add(EmptyCell(row, col));
+                    cells = cells.Add(cellConstructor(new Position(row, col)));
                 }
             }
 
             return new BoardState(cells);
         }
-
-        public static Cell EmptyCell(int row, int col) => new Cell(new Position(row, col), null, AllCandidates);
     }
 }

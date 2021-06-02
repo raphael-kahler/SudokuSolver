@@ -157,7 +157,7 @@ namespace SudokuSolver.Tests.Techniques
         {
             // set up board
             int candidateValue = 7;
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var removals = board.Cells
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !positionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))

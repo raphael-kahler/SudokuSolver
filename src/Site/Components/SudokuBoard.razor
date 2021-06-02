@@ -1,0 +1,123 @@
+<table class="board"
+       @onkeydown="@OnKeyPress"
+       tabindex="0"
+       @ref="boardDiv">
+    @for (int row = 0; row < 9; ++row) {
+        <tr>
+            @for (int col = 0; col < 9; ++col) {
+                var selected = SelectedPos.Is(row, col);
+                var rowClass = (row > 0 && row % 3 == 0) ? "boxTopRow" : (row < 8 && row % 3 == 2) ? "boxBottomRow" : string.Empty;
+                var colClass = (col > 0 && col % 3 == 0) ? "boxLeftCol" : (col < 8 && col % 3 == 2) ? "boxRightCol" : string.Empty;
+                <td class="cell @(rowClass) @(colClass)">
+                    <SudokuCell Cell="@(Board.Cell(row, col))"
+                                Selected="@selected"
+                                ChangeDescription="@(Change.Description)"
+                                OnClickCallback="OnCellClicked"/>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<div hidden=@(!InputMode) class="btn-toolbar justify-content-between solver-btn-area">
+    <button disabled=@(!readyToSolve) class="btn btn-outline-secondary sudoku-btn" @onclick="SudokuReadyToSolve">Solve</button>
+</div>
+
+@code {
+    [Parameter]
+    public Position SelectedPos { get; set; } = (-1, -1);
+
+    [Parameter]
+    public BoardState Board { get; set; }
+
+    [Parameter]
+    public bool InputMode { get; set; }
+
+    [Parameter]
+    public IBoardStateChange Change { get; set; } = new BoardStateNoChange();
+
+    [Parameter]
+    public EventCallback<BoardState> SolveSudokuCallback { get; set; }
+
+    private ElementReference boardDiv;  // set by the @ref attribute
+    private bool readyToSolve;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await boardDiv.FocusAsync();
+        }
+    }
+
+    private void OnKeyPress(KeyboardEventArgs e)
+    {
+        if (InputMode)
+        {
+            if (int.TryParse(e.Key, out int value))
+            {
+                SetValue(value);
+            }
+            else
+            {
+                MovePosition(e);
+            }
+        }
+    }
+
+    private void SetValue(int value)
+    {
+        if (SelectedPos.Is(-1, -1))
+        {
+            return;
+        }
+        if (value > 0 && value <= 9)
+        {
+            Board = Board.ApplyChange(new BoardStateChangeSetNumber(SelectedPos, value, NotFound.Instance, NoChangeDescription.Instance));
+        }
+        else
+        {
+            Board = Board.ApplyChange(new BoardStateChangeClearCell(SelectedPos));
+        }
+
+        this.readyToSolve = Board.Cells.Any(c => c.Value.HasValue);
+    }
+
+    private void MovePosition(KeyboardEventArgs e)
+    {
+        if (SelectedPos.Is(-1, -1))
+        {
+            SelectedPos = new Position(0, 0);
+        }
+        else
+        {
+            var newPosition = GetNewPosition(e.Key, SelectedPos);
+            if (newPosition.Row >= 0 && newPosition.Col >= 0 &&
+                newPosition.Row < 9 && newPosition.Col < 9)
+            {
+                SelectedPos = newPosition;
+            }
+        }
+    }
+
+    private Position GetNewPosition(string key, Position currentPosition) => key switch
+    {
+        "ArrowUp" => new Position(currentPosition.Row - 1, currentPosition.Col),
+        "ArrowDown" => new Position(currentPosition.Row + 1, currentPosition.Col),
+        "ArrowLeft" => new Position(currentPosition.Row, currentPosition.Col - 1),
+        "ArrowRight" => new Position(currentPosition.Row, currentPosition.Col + 1),
+        _ => currentPosition
+    };
+
+    private void OnCellClicked(Position position)
+    {
+        if (InputMode) {
+            SelectedPos = position;
+        }
+    }
+
+    private async Task SudokuReadyToSolve()
+    {
+        await SolveSudokuCallback.InvokeAsync(Board);
+    }
+}

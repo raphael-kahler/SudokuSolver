@@ -11,7 +11,7 @@ namespace SudokuSolver.Tests
         [Fact]
         public void Constructor_WrongNumberOfCells()
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
 
             Assert.Throws<ArgumentException>(() =>
                 new BoardState(cells: board.Cells.RemoveAt(0)));
@@ -20,7 +20,7 @@ namespace SudokuSolver.Tests
         [Fact]
         public void Constructor_MissingCellCoordinate()
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
 
             for (int row = 0; row < 9; ++row)
             {
@@ -49,7 +49,7 @@ namespace SudokuSolver.Tests
         [MemberData(nameof(BoxTest_ExpectedCellsPerBox))]
         public void Box(int boxId, IEnumerable<Position> expectedPositions)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var boxCells = board.Box(boxId);
 
             Assert.Equal(expectedPositions, boxCells.Select(c => c.Position));

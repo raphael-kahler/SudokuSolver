@@ -38,7 +38,7 @@ namespace SudokuSolver.Tests.Techniques.Wings
         [MemberData(nameof(WxyzWing_TestInputs))]
         public void GetPossibleBoardStateChange_WxyzWing(List<Cell> wingCells, HashSet<Candidate> affectedCandidates)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             foreach (var cell in wingCells)
             {
                 var removals = Enumerable.Range(1, 9).Except(cell.Candidates).Select(value => new Candidate(cell.Position, value)).ToList();

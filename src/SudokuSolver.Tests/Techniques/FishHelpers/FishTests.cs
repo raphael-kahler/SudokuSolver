@@ -20,7 +20,7 @@ namespace SudokuSolver.Tests
             var posistionsNotAffected = new HashSet<Position> { (0, 2), (0, 4), (0, 5), (1, 6), (8, 7), (8, 8) };
 
             // set up board
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var removals = board.Cells
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
@@ -52,7 +52,7 @@ namespace SudokuSolver.Tests
             var posistionsNotAffected = new HashSet<Position> { (2, 6), (4, 0), (4, 6), (7, 0) };
 
             // set up board
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var removals = board.Cells
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))

@@ -1,0 +1,31 @@
+.board {
+    margin-top: 45px;
+    border: 2px solid black;
+}
+
+.cell {
+    border: 1px solid gray;
+    padding: 0;
+    width: 49px;
+    height: 49px;
+}
+
+.boxTopRow {
+    border-top: 2px solid gray;
+}
+
+.boxBottomRow {
+    border-bottom: 2px solid gray;
+}
+
+.boxLeftCol {
+    border-left: 2px solid gray;
+}
+
+.boxRightCol {
+    border-right: 2px solid gray;
+}
+
+.solver-btn-area {
+    margin: 10px 0;
+}

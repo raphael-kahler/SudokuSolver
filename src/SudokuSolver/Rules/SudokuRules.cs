@@ -5,6 +5,7 @@ namespace SudokuSolver.Rules
     public interface ISudokuRules
     {
         bool BoardIsValid(BoardState board);
+        bool BoardChangeIsValid(BoardState state, IBoardStateChange change);
     }
 
     public class StandardSudokuRules : ISudokuRules
@@ -13,6 +14,25 @@ namespace SudokuSolver.Rules
             ValidateOneNumberPerRow(board)
             && ValidateOneNumberPerColumn(board)
             && ValidateOneNumberPerBox(board);
+
+        public bool BoardChangeIsValid(BoardState board, IBoardStateChange change)
+        {
+            if (change is BoardStateChangeSetNumber numberChange)
+            {
+                var value = numberChange.Value;
+                var position = numberChange.Position;
+                var numberAlreadyExists = board.Row(position.Row)
+                    .Concat(board.Column(position.Col))
+                    .Concat(board.Box(position.Box))
+                    .Any(cell => cell.Value == value);
+
+                return !numberAlreadyExists;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         private bool ValidateOneNumberPerRow(BoardState board)
         {

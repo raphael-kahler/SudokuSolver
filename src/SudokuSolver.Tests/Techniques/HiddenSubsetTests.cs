@@ -28,7 +28,7 @@ namespace SudokuSolver.Tests.Techniques
         [MemberData(nameof(FullSets_TestInputs))]
         internal void GetPossibleBoardStateChange(int size, ICellCollector cellCollector)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             foreach (var cell in cellCollector.GetCollection(board, 0).Skip(size))
             {
                 var candidatesToRemove = Enumerable.Range(1, size)
@@ -65,7 +65,7 @@ namespace SudokuSolver.Tests.Techniques
         [MemberData(nameof(IncompleteSets_TestInputs))]
         internal void GetPossibleBoardStateChange_IncompleteSets(int size, ICellCollector cellCollector)
         {
-            var board = BoardFactory.EmptyBoard();
+            var board = BoardFactory.CandidateBoard();
             var cells = cellCollector.GetCollection(board, 0).ToList();
             for (int i = 0; i < size; ++i)
             {
