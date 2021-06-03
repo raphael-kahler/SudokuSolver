@@ -15,7 +15,7 @@ namespace SudokuSolver.Techniques
 
         public override string Description =>
             $"{this.size} number{(this.size > 1 ? "s are" : " is")} the candidate of only {this.size} " +
-            $"cell{(this.size > 1 ? "s" : string.Empty)} in a {this.cellCollector.CollectionName}. All other candidates of the cells can be removed.";
+            $"cell{(this.size > 1 ? "s" : string.Empty)} in a {this.cellCollector.CollectionName}. All other candidates of the cell{(this.size > 1 ? "s" : string.Empty)} can be removed.";
 
         internal HiddenSubset(int size, ICellCollector cellCollector)
         {

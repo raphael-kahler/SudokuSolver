@@ -19,6 +19,14 @@
     }
 </table>
 
+<div hidden=@(!InputMode) class="btn-toolbar justify-content-between input-btn-area">
+    @for (int i = 1; i <= 9; ++i)
+    {
+        var value = i;
+        <button class="btn btn-outline-secondary number-btn" @onclick=@(e => SetValue(value))>@value</button>
+    }
+    <button class="btn btn-outline-secondary number-btn" @onclick=@(e => SetValue(0))></button>
+</div>
 <div hidden=@(!InputMode) class="btn-toolbar justify-content-between solver-btn-area">
     <button disabled=@(!readyToSolve) class="btn btn-outline-secondary sudoku-btn" @onclick="SudokuReadyToSolve">Solve</button>
 </div>

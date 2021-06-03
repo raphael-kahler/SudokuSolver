@@ -26,6 +26,15 @@
     border-right: 2px solid gray;
 }
 
-.solver-btn-area {
+.input-btn-area {
     margin: 10px 0;
+}
+
+.solver-btn-area {
+    margin: 20px 0;
+}
+
+.number-btn {
+    width: 40px;
+    height: 40px;
 }
