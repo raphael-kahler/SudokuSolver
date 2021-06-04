@@ -33,7 +33,7 @@ namespace SudokuConsole
             using var boardPrinter = new ConsoleBoardPrinter();
             var board = InputReader.CreateBoardFromFile(options.InputFile);
             var rules = new StandardSudokuRules();
-            Solver solver = CreateSolver();
+            ISolver solver = CreateSolver();
             try
             {
                 Console.WriteLine("Initial board.");
@@ -55,27 +55,32 @@ namespace SudokuConsole
             }
         }
 
-        private static Solver CreateSolver() => new Solver()
-            .WithTechnique(NakedSubset.NakedSingle())
-            .WithTechnique(EliminationByValue.AllDirections())
-            .WithTechnique(HiddenSubset.HiddenSingles())
-            .WithTechnique(LockedCandidatesPointing.AllDirections())
-            .WithTechnique(LockedCandidateClaiming.AllDirections())
-            .WithTechnique(NakedSubset.NakedPairs())
-            .WithTechnique(HiddenSubset.HiddenPairs())
-            .WithTechnique(NakedSubset.NakedTriples())
-            .WithTechnique(HiddenSubset.HiddenTriples())
-            .WithTechnique(NakedSubset.NakedQuads())
-            .WithTechnique(HiddenSubset.HiddenQuads())
-            .WithTechnique(FishTechnique.XWing())
-            .WithTechnique(WingTechnique.XyWing())
-            .WithTechnique(FishTechnique.Swordfish())
-            .WithTechnique(FishTechnique.Jellyfish())
-            .WithTechnique(WingTechnique.XyzWing())
-            .WithTechnique(WingTechnique.WxyzWing())
-            .GlobTrivialChanges();
+        private static ISolver CreateSolver()
+        {
+            return new ChainedSolver()
+                .WithSolver(new Solver().WithTechnique(NakedSubset.NakedSingle()).GlobChanges())
+                .WithSolver(new Solver().WithTechnique(EliminationByValue.AllDirections()).GlobChanges())
+                .WithSolver(new Solver().WithTechnique(HiddenSubset.HiddenSingleRow()).GlobChanges())
+                .WithSolver(new Solver().WithTechnique(HiddenSubset.HiddenSingleColumn()).GlobChanges())
+                .WithSolver(new Solver().WithTechnique(HiddenSubset.HiddenSingleBox()).GlobChanges())
+                .WithSolver(new Solver()
+                    .WithTechnique(LockedCandidatesPointing.AllDirections())
+                    .WithTechnique(LockedCandidateClaiming.AllDirections())
+                    .WithTechnique(NakedSubset.NakedPairs())
+                    .WithTechnique(HiddenSubset.HiddenPairs())
+                    .WithTechnique(NakedSubset.NakedTriples())
+                    .WithTechnique(HiddenSubset.HiddenTriples())
+                    .WithTechnique(NakedSubset.NakedQuads())
+                    .WithTechnique(HiddenSubset.HiddenQuads())
+                    .WithTechnique(FishTechnique.XWing())
+                    .WithTechnique(WingTechnique.XyWing())
+                    .WithTechnique(FishTechnique.Swordfish())
+                    .WithTechnique(FishTechnique.Jellyfish())
+                    .WithTechnique(WingTechnique.XyzWing())
+                    .WithTechnique(WingTechnique.WxyzWing()));
+        }
 
-        private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
+        private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
             if (board.IsComplete)
             {
@@ -108,7 +113,7 @@ namespace SudokuConsole
             return change;
         }
 
-        private static void SolveCompletely(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
+        private static void SolveCompletely(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
             var changeHistory = new List<IBoardStateChange>();
             while (true)

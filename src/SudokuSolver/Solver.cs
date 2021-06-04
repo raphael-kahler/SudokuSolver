@@ -5,37 +5,33 @@ using SudokuSolver.Techniques;
 
 namespace SudokuSolver
 {
-    public class Solver
+    public interface ISolver
     {
-        private bool globTrivialChanges;
+        IBoardStateChange GetNextChange(BoardState board);
+    }
+
+    public class Solver : ISolver
+    {
+        private bool globChanges;
         private IImmutableList<ISolverTechnique> techniques;
 
         public Solver() : this(ImmutableList<ISolverTechnique>.Empty, false)
         { }
 
-        public Solver(IImmutableList<ISolverTechnique> techniques, bool globTrivialChanges)
+        public Solver(IImmutableList<ISolverTechnique> techniques, bool globChanges)
         {
             this.techniques = techniques;
-            this.globTrivialChanges = globTrivialChanges;
+            this.globChanges = globChanges;
         }
 
-        public Solver WithTechnique(ISolverTechnique technique)
-        {
-            this.techniques = this.techniques.Add(technique);
-            return this;
-        }
+        public Solver WithTechnique(ISolverTechnique technique) =>
+            new Solver(this.techniques.Add(technique), this.globChanges);
 
-        public Solver WithTechnique(IEnumerable<ISolverTechnique> techniques)
-        {
-            this.techniques = this.techniques.AddRange(techniques);
-            return this;
-        }
+        public Solver WithTechnique(IEnumerable<ISolverTechnique> techniques) =>
+            new Solver(this.techniques.AddRange(techniques), this.globChanges);
 
-        public Solver GlobTrivialChanges()
-        {
-            this.globTrivialChanges = true;
-            return this;
-        }
+        public Solver GlobChanges() =>
+            new Solver(this.techniques, true);
 
         public IBoardStateChange GetNextChange(BoardState board)
         {
@@ -59,11 +55,11 @@ namespace SudokuSolver
         private IBoardStateChange GetGlobbedChange(BoardState board)
         {
             var changes = new List<IBoardStateChange>();
-            if (!globTrivialChanges)
+            if (!globChanges)
             {
                 return BoardStateNoChange.Instance;
             }
-            foreach (var technique in this.techniques.Where(t => t.DifficultyLevel ==  DifficultyLevel.Trivial))
+            foreach (var technique in this.techniques)
             {
                 while (true)
                 {
@@ -84,6 +80,35 @@ namespace SudokuSolver
             {
                 return BoardStateNoChange.Instance;
             }
+        }
+    }
+
+    public class ChainedSolver : ISolver
+    {
+        private IImmutableList<ISolver> solvers;
+
+        public ChainedSolver() : this(ImmutableList<ISolver>.Empty)
+        { }
+
+        public ChainedSolver(IImmutableList<ISolver> solvers) => this.solvers = solvers;
+
+        public ChainedSolver WithSolver(ISolver solver) =>
+            new ChainedSolver(this.solvers.Add(solver));
+
+        public ChainedSolver WithSolver(IEnumerable<ISolver> solvers) =>
+            new ChainedSolver(this.solvers.AddRange(solvers));
+
+        public IBoardStateChange GetNextChange(BoardState board)
+        {
+            foreach (var solver in this.solvers)
+            {
+                var change = solver.GetNextChange(board);
+                if (change.CausesChange)
+                {
+                    return change;
+                }
+            }
+            return BoardStateNoChange.Instance;
         }
     }
 }
