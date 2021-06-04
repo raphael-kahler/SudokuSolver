@@ -44,7 +44,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return new BoardStateNoChange();
+            return BoardStateNoChange.Instance;
         }
 
         private IChangeDescription GetChangeForValue(BoardState board, int value)

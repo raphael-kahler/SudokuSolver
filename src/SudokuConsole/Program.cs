@@ -72,14 +72,15 @@ namespace SudokuConsole
             .WithTechnique(FishTechnique.Swordfish())
             .WithTechnique(FishTechnique.Jellyfish())
             .WithTechnique(WingTechnique.XyzWing())
-            .WithTechnique(WingTechnique.WxyzWing());
+            .WithTechnique(WingTechnique.WxyzWing())
+            .GlobTrivialChanges();
 
         private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
         {
             if (board.IsComplete)
             {
                 Console.WriteLine("Sudoku is already solved.");
-                return new BoardStateNoChange();
+                return BoardStateNoChange.Instance;
             }
             var change = solver.GetNextChange(board);
             if (!change.CausesChange)

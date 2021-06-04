@@ -22,6 +22,9 @@ namespace SudokuSolver
         public IChangeDescription Description => NoChangeDescription.Instance;
 
         public BoardState ApplyTo(BoardState board) => board with { LastChange = this };
+
+        private BoardStateNoChange() { }
+        public static BoardStateNoChange Instance { get; } = new BoardStateNoChange();
     }
 
     public record BoardStateChangeClearCell(Position Position)
@@ -72,6 +75,27 @@ namespace SudokuSolver
                 cells = cells.Replace(oldCell, newCell);
             }
             return new BoardState(cells, this);
+        }
+    }
+
+    public record BoardStateChangeCombination(IReadOnlyCollection<IBoardStateChange> Changes)
+        : IBoardStateChange
+    {
+        public bool CausesChange => Changes.Any(c => c.CausesChange);
+
+        public IChangeFinder FoundBy =>
+            new FoundByCombination(Changes.Select(c => c.FoundBy).ToList());
+
+        public IChangeDescription Description =>
+            new ChangeDescriptionCombination(Changes.Select(c => c.Description).ToList());
+
+        public BoardState ApplyTo(BoardState board)
+        {
+            foreach (var change in Changes)
+            {
+                board = board.ApplyChange(change);
+            }
+            return board;
         }
     }
 }

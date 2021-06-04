@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 
 namespace SudokuSolver.Techniques.Helpers
 {
@@ -25,7 +23,7 @@ namespace SudokuSolver.Techniques.Helpers
                 }
             }
 
-            return new SudokuSolver.BoardStateNoChange();
+            return BoardStateNoChange.Instance;
         }
     }
 }

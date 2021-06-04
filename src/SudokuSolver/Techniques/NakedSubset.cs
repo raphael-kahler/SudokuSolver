@@ -15,7 +15,7 @@ namespace SudokuSolver.Techniques
             var match = board.Cells.FirstOrDefault(c => !c.Value.HasValue && c.Candidates.Count == 1);
             return match != null
                 ? ConstructChange(match)
-                : new SudokuSolver.BoardStateNoChange();
+                : BoardStateNoChange.Instance;
         }
 
         private BoardStateChangeSetNumber ConstructChange(Cell match)

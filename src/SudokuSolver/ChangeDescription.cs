@@ -66,4 +66,28 @@ namespace SudokuSolver
         public bool RelatedToRow(int row) => false;
         public bool RelatedToPosition(Position position) => false;
     }
+
+    public record ChangeDescriptionCombination(IReadOnlyCollection<IChangeDescription> ChangeDescriptions)
+        : IChangeDescription
+    {
+        public bool HasEffect => ChangeDescriptions.Any(c => c.HasEffect);
+
+        public IImmutableSet<Position> ValuesCausingChange =>
+            ChangeDescriptions.SelectMany(c => c.ValuesCausingChange).ToImmutableHashSet();
+
+        public IImmutableSet<Candidate> CandidatesCausingChange =>
+            ChangeDescriptions.SelectMany(c => c.CandidatesCausingChange).ToImmutableHashSet();
+
+        public IImmutableSet<Cell> ValuesAffected =>
+            ChangeDescriptions.SelectMany(c => c.ValuesAffected).ToImmutableHashSet();
+
+        public IImmutableSet<Candidate> CandidatesAffected =>
+            ChangeDescriptions.SelectMany(c => c.CandidatesAffected).ToImmutableHashSet();
+
+        public bool RelatedToPosition(Position position) =>
+            ChangeDescriptions.Any(c => c.RelatedToPosition(position));
+
+        public bool RelatedToRow(int row) =>
+            ChangeDescriptions.Any(c => c.RelatedToRow(row));
+    }
 }

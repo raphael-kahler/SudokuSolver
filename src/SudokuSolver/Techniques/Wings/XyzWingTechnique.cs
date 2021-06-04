@@ -50,7 +50,7 @@ namespace SudokuSolver.Techniques.Wings
                 }
             }
 
-            return new BoardStateNoChange();
+            return BoardStateNoChange.Instance;
         }
 
         private ImmutableHashSet<Candidate> FindCandidatesToRemove(BoardState board, XyzWing xyzWing)

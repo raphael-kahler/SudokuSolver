@@ -79,7 +79,7 @@ namespace SudokuSolver.Tests
         public void NoChange_KeepsCellsIdentical()
         {
             var board = BoardFactory.CandidateBoard();
-            var newBoard = board.ApplyChange(new BoardStateNoChange());
+            var newBoard = board.ApplyChange(BoardStateNoChange.Instance);
 
             Assert.Equal(board.Cells, newBoard.Cells);
         }
@@ -90,7 +90,7 @@ namespace SudokuSolver.Tests
         {
             var board = BoardFactory.CandidateBoard()
                 .ApplyChange(new BoardStateChangeSetNumber(new Position(1, 1), 4));
-            var change = new BoardStateNoChange();
+            var change = BoardStateNoChange.Instance;
             var newBoard = board.ApplyChange(change);
 
             Assert.NotEqual(change, board.LastChange);

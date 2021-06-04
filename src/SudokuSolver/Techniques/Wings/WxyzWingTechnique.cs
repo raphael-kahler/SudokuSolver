@@ -37,7 +37,7 @@ namespace SudokuSolver.Techniques.Wings
                 }
             }
 
-            return new BoardStateNoChange();
+            return BoardStateNoChange.Instance;
         }
 
         private IEnumerable<Cell> AffectedCells(BoardState board, WxyzWing wing) => wing.CollectionType switch

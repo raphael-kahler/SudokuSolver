@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace SudokuSolver.Techniques
 {
     public interface IChangeFinder
@@ -20,4 +24,18 @@ namespace SudokuSolver.Techniques
     {
         IBoardStateChange GetPossibleBoardStateChange(BoardState board);
     }
+
+    public record FoundByCombination(IReadOnlyCollection<IChangeFinder> ChangeFinders)
+        : IChangeFinder
+    {
+        public string Description => string.Join(Environment.NewLine,
+            ChangeFinders
+                .OrderBy(c => c.DifficultyLevel)
+                .Select(c => c.Description)
+                .Distinct());
+
+        public DifficultyLevel DifficultyLevel =>
+            ChangeFinders.Select(c => c.DifficultyLevel).Max();
+    }
+
 }

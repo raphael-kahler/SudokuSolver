@@ -43,7 +43,7 @@ namespace SudokuSolver
         public IImmutableList<Cell> Cells { get; }
         public IBoardStateChange LastChange { get; init; }
 
-        public BoardState(IImmutableList<Cell> cells) : this(cells, new BoardStateNoChange())
+        public BoardState(IImmutableList<Cell> cells) : this(cells, BoardStateNoChange.Instance)
         { }
 
         public BoardState(IImmutableList<Cell> cells, IBoardStateChange lastChange)
