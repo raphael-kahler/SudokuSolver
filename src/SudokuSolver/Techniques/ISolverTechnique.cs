@@ -4,8 +4,9 @@ using System.Linq;
 
 namespace SudokuSolver.Techniques
 {
-    public interface IChangeFinder
+    public interface ISolverTechniqueDescription
     {
+        public string TechniqueName => "";
         string Description { get; }
         DifficultyLevel DifficultyLevel { get; }
     }
@@ -20,22 +21,24 @@ namespace SudokuSolver.Techniques
         Expert
     }
 
-    public interface ISolverTechnique : IChangeFinder
+    public interface ISolverTechnique : ISolverTechniqueDescription
     {
         IBoardStateChange GetPossibleBoardStateChange(BoardState board);
     }
 
-    public record FoundByCombination(IReadOnlyCollection<IChangeFinder> ChangeFinders)
-        : IChangeFinder
+    public record CombinedTechnique(IReadOnlyCollection<ISolverTechniqueDescription> Techniques)
+        : ISolverTechniqueDescription
     {
+        public string TechniqueName => "Combined Technique";
+
         public string Description => string.Join(Environment.NewLine,
-            ChangeFinders
+            Techniques
                 .OrderBy(c => c.DifficultyLevel)
                 .Select(c => c.Description)
                 .Distinct());
 
         public DifficultyLevel DifficultyLevel =>
-            ChangeFinders.Select(c => c.DifficultyLevel).Max();
+            Techniques.Select(c => c.DifficultyLevel).Max();
     }
 
 }

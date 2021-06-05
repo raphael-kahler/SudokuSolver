@@ -65,7 +65,7 @@ namespace SudokuSolver.Techniques
                 if (removals.Any())
                 {
                     var causers = fish.DefiningCandidates(value).ToImmutableHashSet();
-                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals);
+                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals, NoHints.Instance);
                 }
             }
 

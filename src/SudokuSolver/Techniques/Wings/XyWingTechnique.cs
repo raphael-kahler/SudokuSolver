@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -35,7 +36,7 @@ namespace SudokuSolver.Techniques.Wings
                                     if (candidatesToRemove.Any())
                                     {
                                         var candidatesCausingChange = xyWing.GetDefiningCandidates().ToImmutableHashSet();
-                                        var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                                        var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove, new XyWingTechniqueHinter(xyWing));
                                         return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change);
                                     }
                                 }
@@ -61,6 +62,26 @@ namespace SudokuSolver.Techniques.Wings
             }
 
             return candidatesToRemove;
+        }
+
+        private IEnumerable<IChangeHint> GetHints(XyWing xyWing)
+        {
+            yield return new ChangeHint($"Use {((ISolverTechniqueDescription)this).TechniqueName}");
+            yield return new ChangeHint($"This is the pivot", xyWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet());
+        }
+    }
+
+    internal class XyWingTechniqueHinter : IChangeHinter
+    {
+        private readonly XyWing xyWing;
+
+        public XyWingTechniqueHinter(XyWing xyWing) =>
+            this.xyWing = xyWing ?? throw new System.ArgumentNullException(nameof(xyWing));
+
+        public IEnumerable<IChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use {((ISolverTechniqueDescription)this).TechniqueName}");
+            yield return new ChangeHint($"This is the pivot", this.xyWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet());
         }
     }
 }

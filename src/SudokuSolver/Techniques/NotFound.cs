@@ -1,6 +1,6 @@
 namespace SudokuSolver.Techniques
 {
-    public class NotFound : IChangeFinder
+    public class NotFound : ISolverTechniqueDescription
     {
         private NotFound() { }
         public static NotFound Instance { get; } = new NotFound();

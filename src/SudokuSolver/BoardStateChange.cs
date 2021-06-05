@@ -8,7 +8,7 @@ namespace SudokuSolver
     public interface IBoardStateChange
     {
         bool CausesChange { get; }
-        IChangeFinder FoundBy { get; }
+        ISolverTechniqueDescription FoundBy { get; }
 
         IChangeDescription Description { get; }
 
@@ -18,7 +18,7 @@ namespace SudokuSolver
     public class BoardStateNoChange : IBoardStateChange
     {
         public bool CausesChange => false;
-        public IChangeFinder FoundBy => NotFound.Instance;
+        public ISolverTechniqueDescription FoundBy => NotFound.Instance;
         public IChangeDescription Description => NoChangeDescription.Instance;
 
         public BoardState ApplyTo(BoardState board) => board with { LastChange = this };
@@ -31,7 +31,7 @@ namespace SudokuSolver
         : IBoardStateChange
     {
         public bool CausesChange => true;
-        public IChangeFinder FoundBy => NotFound.Instance;
+        public ISolverTechniqueDescription FoundBy => NotFound.Instance;
         public IChangeDescription Description => NoChangeDescription.Instance;
         public BoardState ApplyTo(BoardState board) => new BoardState(
             cells: board.Cells.Replace(
@@ -40,7 +40,7 @@ namespace SudokuSolver
             lastChange: this);
     }
 
-    public record BoardStateChangeSetNumber(Position Position, int Value, IChangeFinder FoundBy, IChangeDescription Description)
+    public record BoardStateChangeSetNumber(Position Position, int Value, ISolverTechniqueDescription FoundBy, IChangeDescription Description)
         : IBoardStateChange
     {
         public bool CausesChange => true;
@@ -56,7 +56,7 @@ namespace SudokuSolver
             lastChange: this);
     }
 
-    public record BoardStateChangeCandidateRemoval(IReadOnlyCollection<Candidate> CandidatesToRemove, IChangeFinder FoundBy, IChangeDescription Description)
+    public record BoardStateChangeCandidateRemoval(IReadOnlyCollection<Candidate> CandidatesToRemove, ISolverTechniqueDescription FoundBy, IChangeDescription Description)
         : IBoardStateChange
     {
         public bool CausesChange => true;
@@ -83,8 +83,8 @@ namespace SudokuSolver
     {
         public bool CausesChange => Changes.Any(c => c.CausesChange);
 
-        public IChangeFinder FoundBy =>
-            new FoundByCombination(Changes.Select(c => c.FoundBy).ToList());
+        public ISolverTechniqueDescription FoundBy =>
+            new CombinedTechnique(Changes.Select(c => c.FoundBy).ToList());
 
         public IChangeDescription Description =>
             new ChangeDescriptionCombination(Changes.Select(c => c.Description).ToList());
