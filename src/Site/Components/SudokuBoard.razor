@@ -42,7 +42,7 @@
     public bool InputMode { get; set; }
 
     [Parameter]
-    public IBoardStateChange Change { get; set; } = new BoardStateNoChange();
+    public IBoardStateChange Change { get; set; } = BoardStateNoChange.Instance;
 
     [Parameter]
     public EventCallback<BoardState> SolveSudokuCallback { get; set; }

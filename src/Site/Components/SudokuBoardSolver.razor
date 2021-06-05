@@ -26,7 +26,7 @@
     public BoardState Board { get; set; }
 
     private List<BoardState> boardStates;
-    private Solver solver;
+    private ISolver solver;
     private ISudokuRules rules;
     private IBoardStateChange change;
     private bool boardIsValid;
@@ -69,7 +69,7 @@
 
     private IBoardStateChange ComputeNextStep() =>
         (Board.IsComplete || !this.boardIsValid)
-            ? new BoardStateNoChange()
+            ? BoardStateNoChange.Instance
             : solver.GetNextChange(Board);
 
     private void GoBackOneStep()
