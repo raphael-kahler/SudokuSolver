@@ -28,7 +28,7 @@ namespace SudokuSolver.Techniques
                     var change = GetChangeForValue(board, cells, value);
                     if (change.HasEffect)
                     {
-                        return new BoardStateChangeCandidateRemoval(change.CandidatesAffected, this, change);
+                        return new BoardStateChangeCandidateRemoval(change.CandidatesAffected, this, change, NoHints.Instance);
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove, NoHints.Instance);
+            return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
 
         public static LockedCandidatesPointing Row() => new LockedCandidatesPointing(RowOrientation.Instance);

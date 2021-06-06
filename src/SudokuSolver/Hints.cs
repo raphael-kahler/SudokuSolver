@@ -6,34 +6,22 @@ namespace SudokuSolver
 {
     public interface IChangeHinter
     {
-        IEnumerable<IChangeHint> GetHints();
+        bool HasHints { get; }
+        IEnumerable<ChangeHint> GetHints();
     }
 
     public class NoHints : IChangeHinter
     {
-        public IEnumerable<IChangeHint> GetHints() => Enumerable.Empty<IChangeHint>();
+        public bool HasHints => false;
+        public IEnumerable<ChangeHint> GetHints() => Enumerable.Empty<ChangeHint>();
 
         private NoHints() {}
         public static NoHints Instance { get; } = new NoHints();
     }
 
-    public interface IChangeHint
+    public record ChangeHint(string Description, IChangeDescription ChangeDescription)
     {
-        string Description { get; }
-        IImmutableSet<Cell> HintedCells { get; }
-        IImmutableSet<Candidate> HintedCandidates { get; }
-    }
-
-    public record ChangeHint(string Description, IImmutableSet<Cell> HintedCells, IImmutableSet<Candidate> HintedCandidates)
-        : IChangeHint
-    {
-        public ChangeHint(string description) : this(description, ImmutableHashSet<Cell>.Empty, ImmutableHashSet<Candidate>.Empty)
-        { }
-
-        public ChangeHint(string description, IImmutableSet<Cell> hintedCells) : this(description, hintedCells, ImmutableHashSet<Candidate>.Empty)
-        { }
-
-        public ChangeHint(string description, IImmutableSet<Candidate> hintedCandidates) : this(description, ImmutableHashSet<Cell>.Empty, hintedCandidates)
+        public ChangeHint(string description) : this(description, NoChangeDescription.Instance)
         { }
     }
 }

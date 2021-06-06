@@ -37,7 +37,7 @@ namespace SudokuSolver.Tests.Techniques.Wings
                 .Concat(Enumerable.Range(3, 7).Select(value => new Candidate(xzPosition, value)))
                 .Concat(Enumerable.Range(4, 7).Append(2).Select(value => new Candidate(yzPosition, value)))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
 
             var technique = new XyzWingTechnique();
             var change = technique.GetPossibleBoardStateChange(board);

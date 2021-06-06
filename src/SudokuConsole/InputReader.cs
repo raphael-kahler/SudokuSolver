@@ -62,7 +62,7 @@ namespace SudokuConsole
                             .Select(value => new Candidate(position, value))
                             .ToList();
 
-                        board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+                        board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
                     }
                 }
             }

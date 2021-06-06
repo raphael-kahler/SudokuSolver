@@ -25,7 +25,7 @@ namespace SudokuSolver.Tests
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
 
             // set up fish
             var fish = new FinnedFish(
@@ -57,7 +57,7 @@ namespace SudokuSolver.Tests
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
 
             // set up fish
             var fish = new FinnedFish(

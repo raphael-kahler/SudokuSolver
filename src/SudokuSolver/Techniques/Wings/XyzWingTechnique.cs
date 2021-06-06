@@ -39,8 +39,8 @@ namespace SudokuSolver.Techniques.Wings
                                         if (candidatesToRemove.Any())
                                         {
                                             var candidatesCausingChange = xyzWing.GetDefiningCandidates().ToImmutableHashSet();
-                                            var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove, NoHints.Instance);
-                                            return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change);
+                                            var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                                            return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change, NoHints.Instance);
                                         }
                                     }
                                 }

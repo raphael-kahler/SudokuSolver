@@ -23,8 +23,7 @@ namespace SudokuSolver.Techniques
             var candidate = match.Candidates.Single();
             var changeExplanation = ChangeDescription.ValueSetter(
                 candidatesCausingChange: ImmutableHashSet<Candidate>.Empty.Add(new Candidate(match.Position, candidate)),
-                valueAffected: new Cell(match.Position, candidate, ImmutableHashSet<int>.Empty),
-                changeHinter: NoHints.Instance);
+                valueAffected: new Cell(match.Position, candidate, ImmutableHashSet<int>.Empty));
 
             return new BoardStateChangeSetNumber(match.Position, candidate, this, changeExplanation);
         }
@@ -86,8 +85,7 @@ namespace SudokuSolver.Techniques
 
             return ChangeDescription.CandidatesRemovingCandidates(
                 candidatesCausingChange.ToImmutableHashSet(),
-                 candidatesToRemove.ToImmutableHashSet(),
-                 NoHints.Instance);
+                candidatesToRemove.ToImmutableHashSet());
         }
 
         public static NakedSubset NakedPairRow() => new NakedSubset(2, RowCellCollector.Instance);

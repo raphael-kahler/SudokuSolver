@@ -34,7 +34,7 @@ namespace SudokuSolver.Tests.Techniques
                 var candidatesToRemove = Enumerable.Range(1, size)
                     .Select(value => new Candidate(cell.Position, value))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
 
             var technique = new HiddenSubset(size, cellCollector);
@@ -74,14 +74,14 @@ namespace SudokuSolver.Tests.Techniques
                     new Candidate(cells[i].Position, i + 1),
                     new Candidate(cells[i].Position, (i + 1) % size + 1),
                 };
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
             foreach (var cell in cells.Skip(size))
             {
                 var candidatesToRemove = Enumerable.Range(1, size)
                     .Select(value => new Candidate(cell.Position, value))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
 
             var technique = new HiddenSubset(size, cellCollector);

@@ -19,7 +19,7 @@ namespace SudokuSolver.Tests.Techniques
                 var candidatesToRemove = Enumerable.Range(size + 1, 9 - size)
                     .Select(v => new Candidate(new Position(0, i), v))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
 
             var technique = new NakedSubset(size, RowCellCollector.Instance);
@@ -48,7 +48,7 @@ namespace SudokuSolver.Tests.Techniques
                 var candidatesToRemove = Enumerable.Range(size + 1, 9 - size)
                     .Select(v => new Candidate(new Position(i, 0), v))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
 
             var technique = new NakedSubset(size, ColumnCellCollector.Instance);
@@ -78,7 +78,7 @@ namespace SudokuSolver.Tests.Techniques
                 var candidatesToRemove = Enumerable.Range(size + 1, 9 - size)
                     .Select(v => new Candidate(position, v))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove));
             }
 
             var technique = new NakedSubset(size, BoxCellCollector.Instance);

@@ -162,7 +162,7 @@ namespace SudokuSolver.Tests.Techniques
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !positionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
 
             // use fish technique
             var boardChange = fishTechnique.GetPossibleBoardStateChange(board);

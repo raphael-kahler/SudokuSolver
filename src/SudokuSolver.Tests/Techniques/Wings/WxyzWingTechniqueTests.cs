@@ -42,7 +42,7 @@ namespace SudokuSolver.Tests.Techniques.Wings
             foreach (var cell in wingCells)
             {
                 var removals = Enumerable.Range(1, 9).Except(cell.Candidates).Select(value => new Candidate(cell.Position, value)).ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
             }
 
             var technique = new WxyzWingTechnique();

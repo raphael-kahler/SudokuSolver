@@ -19,7 +19,8 @@ namespace SudokuSolver.Techniques.Helpers
                     return new BoardStateChangeCandidateRemoval(
                         CandidatesToRemove: changeDescription.CandidatesAffected,
                         FoundBy: this,
-                        Description: changeDescription);
+                        Description: changeDescription,
+                        ChangeHinter: NoHints.Instance);
                 }
             }
 

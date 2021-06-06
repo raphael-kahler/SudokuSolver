@@ -11,7 +11,7 @@
                 <td class="cell @(rowClass) @(colClass)">
                     <SudokuCell Cell="@(Board.Cell(row, col))"
                                 Selected="@selected"
-                                ChangeDescription="@(Change.Description)"
+                                ChangeDescription="@(ChangeDescription)"
                                 OnClickCallback="OnCellClicked"/>
                 </td>
             }
@@ -42,7 +42,7 @@
     public bool InputMode { get; set; }
 
     [Parameter]
-    public IBoardStateChange Change { get; set; } = BoardStateNoChange.Instance;
+    public IChangeDescription ChangeDescription { get; set; } = NoChangeDescription.Instance;
 
     [Parameter]
     public EventCallback<BoardState> SolveSudokuCallback { get; set; }

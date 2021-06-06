@@ -40,7 +40,7 @@ namespace SudokuSolver.Techniques
                 var changeDescription = GetChangeForValue(board, value);
                 if (changeDescription.HasEffect)
                 {
-                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription);
+                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription, NoHints.Instance);
                 }
             }
 
@@ -65,7 +65,7 @@ namespace SudokuSolver.Techniques
                 if (removals.Any())
                 {
                     var causers = fish.DefiningCandidates(value).ToImmutableHashSet();
-                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals, NoHints.Instance);
+                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals);
                 }
             }
 

@@ -9,7 +9,7 @@ namespace SudokuSolver
     {
         bool CausesChange { get; }
         ISolverTechniqueDescription FoundBy { get; }
-
+        IChangeHinter ChangeHinter { get; }
         IChangeDescription Description { get; }
 
         BoardState ApplyTo(BoardState board);
@@ -19,6 +19,7 @@ namespace SudokuSolver
     {
         public bool CausesChange => false;
         public ISolverTechniqueDescription FoundBy => NotFound.Instance;
+        public IChangeHinter ChangeHinter => NoHints.Instance;
         public IChangeDescription Description => NoChangeDescription.Instance;
 
         public BoardState ApplyTo(BoardState board) => board with { LastChange = this };
@@ -31,6 +32,7 @@ namespace SudokuSolver
         : IBoardStateChange
     {
         public bool CausesChange => true;
+        public IChangeHinter ChangeHinter => NoHints.Instance;
         public ISolverTechniqueDescription FoundBy => NotFound.Instance;
         public IChangeDescription Description => NoChangeDescription.Instance;
         public BoardState ApplyTo(BoardState board) => new BoardState(
@@ -44,6 +46,7 @@ namespace SudokuSolver
         : IBoardStateChange
     {
         public bool CausesChange => true;
+        public IChangeHinter ChangeHinter => NoHints.Instance;
 
         public BoardStateChangeSetNumber(Position position, int value)
             : this(position, value, NotFound.Instance, NoChangeDescription.Instance)
@@ -56,13 +59,13 @@ namespace SudokuSolver
             lastChange: this);
     }
 
-    public record BoardStateChangeCandidateRemoval(IReadOnlyCollection<Candidate> CandidatesToRemove, ISolverTechniqueDescription FoundBy, IChangeDescription Description)
+    public record BoardStateChangeCandidateRemoval(IReadOnlyCollection<Candidate> CandidatesToRemove, ISolverTechniqueDescription FoundBy, IChangeDescription Description, IChangeHinter ChangeHinter)
         : IBoardStateChange
     {
         public bool CausesChange => true;
 
         public BoardStateChangeCandidateRemoval(IReadOnlyList<Candidate> candidatesToRemove)
-            : this(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance)
+            : this(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance, NoHints.Instance)
         { }
 
         public BoardState ApplyTo(BoardState board)
@@ -82,6 +85,7 @@ namespace SudokuSolver
         : IBoardStateChange
     {
         public bool CausesChange => Changes.Any(c => c.CausesChange);
+        public IChangeHinter ChangeHinter => NoHints.Instance;
 
         public ISolverTechniqueDescription FoundBy =>
             new CombinedTechnique(Changes.Select(c => c.FoundBy).ToList());

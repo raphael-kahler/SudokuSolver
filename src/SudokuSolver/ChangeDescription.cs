@@ -7,7 +7,6 @@ namespace SudokuSolver
     public interface IChangeDescription
     {
         bool HasEffect { get; }
-        IChangeHinter ChangeHinter { get; }
         IImmutableSet<Position> ValuesCausingChange { get; }
         IImmutableSet<Candidate> CandidatesCausingChange { get; }
 
@@ -22,22 +21,24 @@ namespace SudokuSolver
         IImmutableSet<Position> ValuesCausingChange,
         IImmutableSet<Candidate> CandidatesCausingChange,
         IImmutableSet<Cell> ValuesAffected,
-        IImmutableSet<Candidate> CandidatesAffected,
-        IChangeHinter ChangeHinter)
+        IImmutableSet<Candidate> CandidatesAffected)
         : IChangeDescription
     {
-        public static ChangeDescription ValueSetter(ImmutableHashSet<Candidate> candidatesCausingChange, Cell valueAffected, IChangeHinter changeHinter) =>
-            new ChangeDescription(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty.Add(valueAffected), ImmutableHashSet<Candidate>.Empty, changeHinter);
+        public static ChangeDescription ValueSetter(ImmutableHashSet<Candidate> candidatesCausingChange, Cell valueAffected) =>
+            new ChangeDescription(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty.Add(valueAffected), ImmutableHashSet<Candidate>.Empty);
 
-        public static IChangeDescription ValuesRemovingCandidates(ImmutableHashSet<Position> valuesCausingChange, ImmutableHashSet<Candidate> canidatesAffected, IChangeHinter changeHinter) =>
+        public static IChangeDescription ValuesRemovingCandidates(ImmutableHashSet<Position> valuesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
             canidatesAffected.Any()
-                ? new ChangeDescription(valuesCausingChange, ImmutableHashSet<Candidate>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected, changeHinter)
+                ? new ChangeDescription(valuesCausingChange, ImmutableHashSet<Candidate>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected)
                 : NoChangeDescription.Instance;
 
-        public static IChangeDescription CandidatesRemovingCandidates(ImmutableHashSet<Candidate> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected, IChangeHinter changeHinter) =>
+        public static IChangeDescription CandidatesRemovingCandidates(ImmutableHashSet<Candidate> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
             canidatesAffected.Any()
-                ? new ChangeDescription(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, canidatesAffected, changeHinter)
+                ? new ChangeDescription(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, canidatesAffected)
                 : NoChangeDescription.Instance;
+
+        public static IChangeDescription ForCandidatesCausingChange(ImmutableHashSet<Candidate> candidatesCausingChange) =>
+            new ChangeDescription(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, ImmutableHashSet<Candidate>.Empty);
 
         public bool HasEffect => ValuesAffected.Any() || CandidatesAffected.Any();
 
@@ -58,7 +59,6 @@ namespace SudokuSolver
     {
         private NoChangeDescription() { }
         public static NoChangeDescription Instance { get; } = new NoChangeDescription();
-        public IChangeHinter ChangeHinter => NoHints.Instance;
         public IImmutableSet<Position> ValuesCausingChange => ImmutableHashSet<Position>.Empty;
         public IImmutableSet<Candidate> CandidatesCausingChange => ImmutableHashSet<Candidate>.Empty;
         public IImmutableSet<Cell> ValuesAffected => ImmutableHashSet<Cell>.Empty;
@@ -74,7 +74,6 @@ namespace SudokuSolver
         : IChangeDescription
     {
         public bool HasEffect => ChangeDescriptions.Any(c => c.HasEffect);
-        public IChangeHinter ChangeHinter => NoHints.Instance;
 
         public IImmutableSet<Position> ValuesCausingChange =>
             ChangeDescriptions.SelectMany(c => c.ValuesCausingChange).ToImmutableHashSet();
