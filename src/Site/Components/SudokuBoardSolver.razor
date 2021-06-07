@@ -80,6 +80,7 @@
         this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
         this.currentHint = 0;
         this.hintDescriptions.Clear();
+        ShowNextHint();
     }
 
     private void SolveNextStep()
