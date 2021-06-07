@@ -40,7 +40,8 @@ namespace SudokuSolver.Techniques
                 var changeDescription = GetChangeForValue(board, value);
                 if (changeDescription.HasEffect)
                 {
-                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription, NoHints.Instance);
+                    var hinter = new FishTechniqueHinter();
+                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription, hinter);
                 }
             }
 
@@ -78,5 +79,13 @@ namespace SudokuSolver.Techniques
                 .ToList();
 
         private IFishFinder GetFishFinder() => Size == 2 ? new TwoFishFinder(Orientation) : new LargeFishFinder(Size, Orientation);
+    }
+
+    internal class FishTechniqueHinter : IChangeHinter
+    {
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

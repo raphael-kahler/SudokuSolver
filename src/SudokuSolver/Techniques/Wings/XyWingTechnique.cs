@@ -68,7 +68,6 @@ namespace SudokuSolver.Techniques.Wings
     internal class XyWingTechniqueHinter : IChangeHinter
     {
         private readonly XyWing xyWing;
-        public bool HasHints => true;
 
         public XyWingTechniqueHinter(XyWing xyWing) =>
             this.xyWing = xyWing ?? throw new System.ArgumentNullException(nameof(xyWing));

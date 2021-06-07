@@ -6,13 +6,11 @@ namespace SudokuSolver
 {
     public interface IChangeHinter
     {
-        bool HasHints { get; }
         IEnumerable<ChangeHint> GetHints();
     }
 
     public class NoHints : IChangeHinter
     {
-        public bool HasHints => false;
         public IEnumerable<ChangeHint> GetHints() => Enumerable.Empty<ChangeHint>();
 
         private NoHints() {}

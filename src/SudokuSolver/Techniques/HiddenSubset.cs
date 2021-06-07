@@ -86,4 +86,17 @@ namespace SudokuSolver.Techniques
         public static IEnumerable<HiddenSubset> HiddenTriples() => new List<HiddenSubset> { HiddenTripleRow(), HiddenTripleColumn(), HiddenTripleBox() };
         public static IEnumerable<HiddenSubset> HiddenQuads() => new List<HiddenSubset> { HiddenQuadRow(), HiddenQuadColumn(), HiddenQuadBox() };
     }
+
+    internal class HiddenSubsetHinter : IChangeHinter
+    {
+        private string techniqueName;
+        private ICellCollector cellCollector;
+        private Position position;
+
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Find a {techniqueName} in a {cellCollector.CollectionName}");
+            yield return new ChangeHint($"It is in {this.cellCollector.CollectionName} {this.cellCollector.Indexer.CollectionIndex(this.position)}");
+        }
+    }
 }

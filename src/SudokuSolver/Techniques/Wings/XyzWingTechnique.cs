@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -66,6 +67,24 @@ namespace SudokuSolver.Techniques.Wings
             }
 
             return candidatesToRemove;
+        }
+    }
+
+    internal class XyzWingTechniqueHinter : IChangeHinter
+    {
+        private readonly XyzWing xyzWing;
+
+        public XyzWingTechniqueHinter(XyzWing xyzWing) =>
+            this.xyzWing = xyzWing ?? throw new System.ArgumentNullException(nameof(xyzWing));
+
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use XYZ-Wing technique");
+            yield return new ChangeHint($"The Z value is {this.xyzWing.ZValue}");
+            yield return new ChangeHint($"This is the pivot", ChangeDescription.ForCandidatesCausingChange(
+                this.xyzWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet()));
+            yield return new ChangeHint($"This is the XYZ-Wing", ChangeDescription.ForCandidatesCausingChange(
+                this.xyzWing.GetDefiningCandidates().ToImmutableHashSet()));
         }
     }
 }

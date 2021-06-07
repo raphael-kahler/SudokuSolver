@@ -63,4 +63,22 @@ namespace SudokuSolver.Techniques.Wings
             return candidatesToRemove;
         }
     }
+
+    internal class WxyzWingTechniqueHinter : IChangeHinter
+    {
+        private readonly WxyzWing wxyzWing;
+
+        public WxyzWingTechniqueHinter(WxyzWing xyzWing) =>
+            this.wxyzWing = xyzWing ?? throw new System.ArgumentNullException(nameof(xyzWing));
+
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use WXYZ-Wing technique");
+            yield return new ChangeHint($"The Z value is {this.wxyzWing.ZValue}");
+            yield return new ChangeHint($"This is the W cell", ChangeDescription.ForCandidatesCausingChange(
+                this.wxyzWing.WzCell.GetCandidatesWithPosition().ToImmutableHashSet()));
+            yield return new ChangeHint($"This is the WXYZ-Wing", ChangeDescription.ForCandidatesCausingChange(
+                this.wxyzWing.GetDefiningCandidates().ToImmutableHashSet()));
+        }
+    }
 }
