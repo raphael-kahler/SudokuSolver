@@ -24,9 +24,12 @@ namespace SudokuSolver
             this.globChanges = globChanges;
         }
 
+        public Solver With(ISolverTechnique technique) => WithTechnique(technique);
         public Solver WithTechnique(ISolverTechnique technique) =>
             new Solver(this.techniques.Add(technique), this.globChanges);
 
+
+        public Solver With(IEnumerable<ISolverTechnique> techniques) => WithTechnique(techniques);
         public Solver WithTechnique(IEnumerable<ISolverTechnique> techniques) =>
             new Solver(this.techniques.AddRange(techniques), this.globChanges);
 

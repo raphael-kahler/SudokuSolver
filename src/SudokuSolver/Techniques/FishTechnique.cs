@@ -6,32 +6,18 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques
 {
-    public class FishTechnique : ISolverTechnique
+    internal class FishTechnique : ISolverTechnique
     {
         public string Description => $"{Size}-{Orientation.PrimaryDimensionName} Fish.";
         public DifficultyLevel DifficultyLevel => Size < 3 ? DifficultyLevel.Advanced : DifficultyLevel.Expert;
         private int Size { get; }
         private IOrientation Orientation { get; }
 
-        private FishTechnique(int size, IOrientation oritentation)
+        internal FishTechnique(int size, IOrientation oritentation)
         {
             Size = size;
             Orientation = oritentation ?? throw new System.ArgumentNullException(nameof(oritentation));
         }
-
-        public static FishTechnique TwoRow() => new FishTechnique(2, RowOrientation.Instance);
-        public static FishTechnique TwoColumn() => new FishTechnique(2, ColumnOrientation.Instance);
-        public static FishTechnique ThreeRow() => new FishTechnique(3, RowOrientation.Instance);
-        public static FishTechnique ThreeColumn() => new FishTechnique(3, ColumnOrientation.Instance);
-        public static FishTechnique FourRow() => new FishTechnique(4, RowOrientation.Instance);
-        public static FishTechnique FourColumn() => new FishTechnique(4, ColumnOrientation.Instance);
-
-        public static IEnumerable<FishTechnique> TwoFish() => new List<FishTechnique> { TwoRow(), TwoColumn() };
-        public static IEnumerable<FishTechnique> ThreeFish() => new List<FishTechnique> { ThreeRow(), ThreeColumn() };
-        public static IEnumerable<FishTechnique> FourFish() => new List<FishTechnique> { FourRow(), FourColumn() };
-        public static IEnumerable<FishTechnique> XWing() => TwoFish();
-        public static IEnumerable<FishTechnique> Swordfish() => ThreeFish();
-        public static IEnumerable<FishTechnique> Jellyfish() => FourFish();
 
         public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {

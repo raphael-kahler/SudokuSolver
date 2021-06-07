@@ -44,12 +44,4 @@ namespace SudokuSolver.Techniques
         }
 
     }
-
-    public static class EliminationByValue
-    {
-        public static ISolverTechnique Row() => new EliminationByValueTechnique(RowCellCollector.Instance);
-        public static ISolverTechnique Column() => new EliminationByValueTechnique(ColumnCellCollector.Instance);
-        public static ISolverTechnique Box() => new EliminationByValueTechnique(BoxCellCollector.Instance);
-        public static IEnumerable<ISolverTechnique> AllDirections() => new List<ISolverTechnique> { Row(), Column(), Box() };
-    }
 }
