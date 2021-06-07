@@ -80,48 +80,48 @@ namespace SudokuConsole
                     .WithTechnique(WingTechnique.WxyzWing()));
         }
 
-        private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
+        private static IChangeDescription SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
             if (board.IsComplete)
             {
                 Console.WriteLine("Sudoku is already solved.");
-                return BoardStateNoChange.Instance;
+                return NoChangeDescription.Instance;
             }
-            var change = solver.GetNextChange(board);
-            if (!change.CausesChange)
+            var changeDescription = solver.GetNextChange(board);
+            if (!changeDescription.Change.HasEffect)
             {
                 Console.WriteLine("Couldn't find any more steps for solving the Sudoku :(");
-                return change;
+                return changeDescription;
             }
 
-            var newBoard = board.ApplyChange(change);
-            Console.WriteLine($"{change.FoundBy.DifficultyLevel} step: {change.FoundBy.Description}");
-            boardPrinter.PrintLarge(newBoard, change.Description);
+            var newBoard = board.ApplyChange(changeDescription.Change);
+            Console.WriteLine($"{changeDescription.FoundBy.DifficultyLevel} step: {changeDescription.FoundBy.Description}");
+            boardPrinter.PrintLarge(newBoard, changeDescription.Change);
 
             if (!rules.BoardIsValid(newBoard))
             {
                 Console.WriteLine("Oh no! Got into an invalid state :(");
-                return change;
+                return changeDescription;
             }
 
             if (newBoard.IsComplete)
             {
                 Console.WriteLine("Solved :)");
-                return change;
+                return changeDescription;
             }
 
-            return change;
+            return changeDescription;
         }
 
         private static void SolveCompletely(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
-            var changeHistory = new List<IBoardStateChange>();
+            var changeHistory = new List<IChangeDescription>();
             while (true)
             {
-                var change = SolveNextStep(board, boardPrinter, solver, rules);
-                board = board.ApplyChange(change);
-                changeHistory.Add(change);
-                if (!change.CausesChange)
+                var changeDescription = SolveNextStep(board, boardPrinter, solver, rules);
+                board = board.ApplyChange(changeDescription.Change);
+                changeHistory.Add(changeDescription);
+                if (!changeDescription.Change.HasEffect)
                 {
                     break;
                 }
@@ -133,7 +133,7 @@ namespace SudokuConsole
             }
         }
 
-        private static void PrintSummary(IReadOnlyList<IBoardStateChange> changeHistory)
+        private static void PrintSummary(IReadOnlyList<IChangeDescription> changeHistory)
         {
             Console.WriteLine();
             Console.WriteLine("Applied techniques in order:");

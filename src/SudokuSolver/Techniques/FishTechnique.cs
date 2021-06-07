@@ -33,22 +33,22 @@ namespace SudokuSolver.Techniques
         public static IEnumerable<FishTechnique> Swordfish() => ThreeFish();
         public static IEnumerable<FishTechnique> Jellyfish() => FourFish();
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             for (int value = 1; value <= 9; ++value)
             {
-                var changeDescription = GetChangeForValue(board, value);
-                if (changeDescription.HasEffect)
+                var change = GetChangeForValue(board, value);
+                if (change.HasEffect)
                 {
                     var hinter = new FishTechniqueHinter();
-                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription, hinter);
+                    return new ChangeDescription(change, hinter, this);
                 }
             }
 
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
-        private IChangeDescription GetChangeForValue(BoardState board, int value)
+        private IBoardStateChange GetChangeForValue(BoardState board, int value)
         {
             var cellCollections = GetCellCollections(board)
                 .Select(cells => cells.Where(c => c.Candidates.Contains(value)).Select(c => c.Position).ToList())
@@ -66,11 +66,11 @@ namespace SudokuSolver.Techniques
                 if (removals.Any())
                 {
                     var causers = fish.DefiningCandidates(value).ToImmutableHashSet();
-                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals);
+                    return BoardStateChange.CandidatesRemovingCandidates(causers, removals);
                 }
             }
 
-            return NoChangeDescription.Instance;
+            return BoardStateNoChange.Instance;
         }
 
         private IList<IEnumerable<Cell>> GetCellCollections(BoardState board) =>

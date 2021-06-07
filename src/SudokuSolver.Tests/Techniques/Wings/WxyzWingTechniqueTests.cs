@@ -1,3 +1,4 @@
+using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using SudokuSolver.Techniques;
@@ -14,10 +15,10 @@ namespace SudokuSolver.Tests.Techniques.Wings
             {
                 new List<Cell>
                 {
-                    new Cell((0, 2), 1, 2, 3, 4),
-                    new Cell((0, 4), 2, 4),
-                    new Cell((0, 6), 3, 4),
-                    new Cell((1, 1), 1, 4),
+                    Cell.WithCandidates((0, 2), 1, 2, 3, 4),
+                    Cell.WithCandidates((0, 4), 2, 4),
+                    Cell.WithCandidates((0, 6), 3, 4),
+                    Cell.WithCandidates((1, 1), 1, 4),
                 },
                 new HashSet<Candidate> { new((0, 0), 4), new((0, 1), 4) }
             };
@@ -25,10 +26,10 @@ namespace SudokuSolver.Tests.Techniques.Wings
             {
                 new List<Cell>
                 {
-                    new Cell((8, 1), 4, 5, 8),
-                    new Cell((8, 0), 4, 5),
-                    new Cell((5, 1), 7, 8),
-                    new Cell((2, 1), 4, 7),
+                    Cell.WithCandidates((8, 1), 4, 5, 8),
+                    Cell.WithCandidates((8, 0), 4, 5),
+                    Cell.WithCandidates((5, 1), 7, 8),
+                    Cell.WithCandidates((2, 1), 4, 7),
                 },
                 new HashSet<Candidate> { new((6, 1), 4), new((7, 1), 4) }
             };
@@ -42,22 +43,13 @@ namespace SudokuSolver.Tests.Techniques.Wings
             foreach (var cell in wingCells)
             {
                 var removals = Enumerable.Range(1, 9).Except(cell.Candidates).Select(value => new Candidate(cell.Position, value)).ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
+                board = board.ApplyChange(BoardStateChange.RemoveCandidates(removals));
             }
 
             var technique = new WxyzWingTechnique();
             var change = technique.GetPossibleBoardStateChange(board);
 
-            if (affectedCandidates.Any())
-            {
-                Assert.IsType<BoardStateChangeCandidateRemoval>(change);
-                var removalChange = change as BoardStateChangeCandidateRemoval;
-                Assert.Equal(affectedCandidates, removalChange.CandidatesToRemove.ToHashSet());
-            }
-            else
-            {
-                Assert.IsType<BoardStateNoChange>(change);
-            }
+            change.Change.CandidatesAffected.Should().BeEquivalentTo(affectedCandidates);
         }
     }
 }

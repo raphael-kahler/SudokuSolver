@@ -1,11 +1,10 @@
 <div class="puzzle-area">
-    <SudokuBoard Board="@(Board)"
-                ChangeDescription="@(changeDescription)"/>
+    <SudokuBoard Board="@(Board)" Change="@(shownChange)"/>
 
     <div class="btn-toolbar justify-content-between solver-btn-area">
         <button class="btn btn-outline-secondary sudoku-btn" disabled="@(boardStates.Count <= 1)" @onclick="GoBackOneStep">Back</button>
         <button class="btn btn-outline-secondary sudoku-btn" disabled="@(NoMoreHints)" @onclick="ShowNextHint">Hint</button>
-        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(!change.CausesChange)" @onclick="SolveNextStep">Next step</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(!changeDescription.Change.HasEffect)" @onclick="SolveNextStep">Next step</button>
     </div>
 
     <ul hidden="@(!hintDescriptions.Any())">
@@ -17,7 +16,7 @@
 
     @if (!boardIsValid) {
         <p>Oh no! The Sudoku puzzle got into an invalid state :(</p>
-    } else if (change.CausesChange) {
+    } else if (changeDescription.Change.HasEffect) {
         @* <p>@(change.FoundBy.DifficultyLevel) step: @(change.FoundBy.Description)</p> *@
     } else {
         if (Board.IsComplete) {
@@ -35,12 +34,12 @@
     private List<BoardState> boardStates;
     private ISolver solver;
     private ISudokuRules rules;
-    private IBoardStateChange change;
+    private IChangeDescription changeDescription = NoChangeDescription.Instance;
+    private IBoardStateChange shownChange;
     private List<ChangeHint> hints;
     private int currentHint;
     private bool NoMoreHints => currentHint > hints.Count;
     private List<string> hintDescriptions = new List<string>();
-    private IChangeDescription changeDescription = NoChangeDescription.Instance;
 
     private bool boardIsValid;
 
@@ -76,25 +75,25 @@
 
     private void ComputeChangeAndHints()
     {
-        this.change = ComputeNextStep();
-        this.changeDescription = NoChangeDescription.Instance;
-        this.hints = this.change.ChangeHinter.GetHints().ToList();
+        this.changeDescription = ComputeNextStep();
+        this.shownChange = BoardStateNoChange.Instance;
+        this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
         this.currentHint = 0;
         this.hintDescriptions.Clear();
     }
 
     private void SolveNextStep()
     {
-        this.boardIsValid = this.rules.BoardChangeIsValid(Board, this.change);
-        var newBoard = Board.ApplyChange(this.change);
+        this.boardIsValid = this.rules.BoardChangeIsValid(Board, this.changeDescription.Change);
+        var newBoard = Board.ApplyChange(this.changeDescription.Change);
         Board = newBoard;
         this.boardStates.Add(Board);
         ComputeChangeAndHints();
     }
 
-    private IBoardStateChange ComputeNextStep() =>
+    private IChangeDescription ComputeNextStep() =>
         (Board.IsComplete || !this.boardIsValid)
-            ? BoardStateNoChange.Instance
+            ? NoChangeDescription.Instance
             : solver.GetNextChange(Board);
 
     private void GoBackOneStep()
@@ -113,14 +112,14 @@
         if (this.currentHint < this.hints.Count)
         {
             var hint = this.hints[currentHint++];
-            this.changeDescription = hint.ChangeDescription;
+            this.shownChange = hint.ChangeDescription;
             this.hintDescriptions.Add(hint.Description);
         }
         else if (this.currentHint == this.hints.Count)
         {
             this.currentHint++;
-            this.changeDescription = this.change.Description;
-            this.hintDescriptions.Add($"{this.change.FoundBy.DifficultyLevel} step: {this.change.FoundBy.Description}");
+            this.shownChange = this.changeDescription.Change;
+            this.hintDescriptions.Add($"{this.changeDescription.FoundBy.DifficultyLevel} step: {this.changeDescription.FoundBy.Description}");
         }
     }
 }

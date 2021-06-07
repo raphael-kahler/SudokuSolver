@@ -23,7 +23,7 @@ namespace SudokuSolver.Techniques
 
     public interface ISolverTechnique : ISolverTechniqueDescription
     {
-        IBoardStateChange GetPossibleBoardStateChange(BoardState board);
+        IChangeDescription GetPossibleBoardStateChange(BoardState board);
     }
 
     public record CombinedTechnique(IReadOnlyCollection<ISolverTechniqueDescription> Techniques)

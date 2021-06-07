@@ -59,15 +59,15 @@ namespace SudokuSolver.Tests
         public void Cell_Equality()
         {
             Assert.Equal(
-                new Cell((1, 2), 1, 4, 7),
-                new Cell((1, 2), 1, 4, 7)
+                Cell.WithCandidates((1, 2), 1, 4, 7),
+                Cell.WithCandidates((1, 2), 1, 4, 7)
             );
         }
 
         [Fact]
         public void Cell_Equals_Null()
         {
-            Assert.False(new Cell((1, 2), 1, 4, 7).Equals(null));
+            Assert.False(Cell.WithCandidates((1, 2), 1, 4, 7).Equals(null));
         }
     }
 }

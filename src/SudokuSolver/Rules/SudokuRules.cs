@@ -17,21 +17,27 @@ namespace SudokuSolver.Rules
 
         public bool BoardChangeIsValid(BoardState board, IBoardStateChange change)
         {
-            if (change is BoardStateChangeSetNumber numberChange)
+            foreach (var cellValueChange in change.ValuesAffected)
             {
-                var value = numberChange.Value;
-                var position = numberChange.Position;
-                var numberAlreadyExists = board.Row(position.Row)
-                    .Concat(board.Column(position.Col))
-                    .Concat(board.Box(position.Box))
-                    .Any(cell => cell.Value == value);
+                if (!CellValueChangeIsValid(board, cellValueChange))
+                {
+                    return false;
+                }
+            }
 
-                return !numberAlreadyExists;
-            }
-            else
-            {
-                return true;
-            }
+            return true;
+        }
+
+        private bool CellValueChangeIsValid(BoardState board, Cell cellValueChange)
+        {
+            var value = cellValueChange.Value;
+            var position = cellValueChange.Position;
+            var numberAlreadyExists = board.Row(position.Row)
+                .Concat(board.Column(position.Col))
+                .Concat(board.Box(position.Box))
+                .Any(cell => cell.Value == value);
+
+            return !numberAlreadyExists;
         }
 
         private bool ValidateOneNumberPerRow(BoardState board)

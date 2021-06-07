@@ -9,7 +9,7 @@ namespace SudokuSolver.Techniques.Wings
         public string Description => "XY-Wing";
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Advanced;
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var cells = board.Cells.Where(c => c.Candidates.Count == 2).ToList();
 
@@ -36,8 +36,8 @@ namespace SudokuSolver.Techniques.Wings
                                     if (candidatesToRemove.Any())
                                     {
                                         var candidatesCausingChange = xyWing.GetDefiningCandidates().ToImmutableHashSet();
-                                        var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
-                                        return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change, new XyWingTechniqueHinter(xyWing));
+                                        var change = BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                                        return new ChangeDescription(change, NoHints.Instance, this);
                                     }
                                 }
                             }
@@ -46,7 +46,7 @@ namespace SudokuSolver.Techniques.Wings
                 }
             }
 
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
         private ImmutableHashSet<Candidate> FindCandidatesToRemove(BoardState board, XyWing xyWing)
@@ -75,9 +75,9 @@ namespace SudokuSolver.Techniques.Wings
         public IEnumerable<ChangeHint> GetHints()
         {
             yield return new ChangeHint($"Use XY-Wing technique");
-            yield return new ChangeHint($"This is the pivot", ChangeDescription.ForCandidatesCausingChange(
+            yield return new ChangeHint($"This is the pivot", BoardStateChange.ForCandidatesCausingChange(
                 this.xyWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet()));
-            yield return new ChangeHint($"This is the XY-Wing", ChangeDescription.ForCandidatesCausingChange(
+            yield return new ChangeHint($"This is the XY-Wing", BoardStateChange.ForCandidatesCausingChange(
                 this.xyWing.GetDefiningCandidates().ToImmutableHashSet()));
         }
     }

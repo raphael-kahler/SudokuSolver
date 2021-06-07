@@ -8,13 +8,13 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
     {
         public static IEnumerable<object[]> FormsWxyzWingWith_RowPattern_TestInputs()
         {
-            yield return new object[] { new Cell((1, 1), 1, 2), true, 2 };
-            yield return new object[] { new Cell((1, 1), 1, 3), true, 3 };
-            yield return new object[] { new Cell((1, 1), 1, 4), true, 4 };
-            yield return new object[] { new Cell((1, 1), 1, 5), false, 0 };
-            yield return new object[] { new Cell((1, 1), 2, 3), false, 0 };
-            yield return new object[] { new Cell((2, 7), 1, 2), false, 0 };
-            yield return new object[] { new Cell((0, 0), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 2), true, 2 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 3), true, 3 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 4), true, 4 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 5), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 2, 3), false, 0 };
+            yield return new object[] { Cell.WithCandidates((2, 7), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 0), 1, 2), false, 0 };
         }
 
         [Theory]
@@ -23,22 +23,22 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
         {
             var set = new AlmostLockedSet(new List<Cell>
             {
-                new Cell((0, 2), 1, 2, 3, 4),
-                new Cell((0, 4), 2, 3, 4),
-                new Cell((0, 6), 2, 3, 4),
+                Cell.WithCandidates((0, 2), 1, 2, 3, 4),
+                Cell.WithCandidates((0, 4), 2, 3, 4),
+                Cell.WithCandidates((0, 6), 2, 3, 4),
             });
             AssertFormsWxyzWith(set, cell, shouldBeWing, zValue);
         }
 
         public static IEnumerable<object[]> FormsWxyzWingWith_ColumnPattern_TestInputs()
         {
-            yield return new object[] { new Cell((1, 1), 1, 2), true, 2 };
-            yield return new object[] { new Cell((1, 1), 1, 3), true, 3 };
-            yield return new object[] { new Cell((1, 1), 1, 4), true, 4 };
-            yield return new object[] { new Cell((1, 1), 1, 5), false, 0 };
-            yield return new object[] { new Cell((1, 1), 2, 3), false, 0 };
-            yield return new object[] { new Cell((7, 2), 1, 2), false, 0 };
-            yield return new object[] { new Cell((0, 0), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 2), true, 2 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 3), true, 3 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 4), true, 4 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 1, 5), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 1), 2, 3), false, 0 };
+            yield return new object[] { Cell.WithCandidates((7, 2), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 0), 1, 2), false, 0 };
         }
 
         [Theory]
@@ -47,30 +47,30 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
         {
             var set = new AlmostLockedSet(new List<Cell>
             {
-                new Cell((2, 0), 1, 2, 3, 4),
-                new Cell((4, 0), 2, 3, 4),
-                new Cell((6, 0), 2, 3, 4),
+                Cell.WithCandidates((2, 0), 1, 2, 3, 4),
+                Cell.WithCandidates((4, 0), 2, 3, 4),
+                Cell.WithCandidates((6, 0), 2, 3, 4),
             });
             AssertFormsWxyzWith(set, cell, shouldBeWing, zValue);
         }
 
         public static IEnumerable<object[]> FormsWxyzWingWith_BoxPattern_TestInputs()
         {
-            yield return new object[] { new Cell((0, 6), 1, 2), true, 2 };
-            yield return new object[] { new Cell((0, 6), 1, 3), true, 3 };
-            yield return new object[] { new Cell((0, 6), 1, 4), true, 4 };
-            yield return new object[] { new Cell((0, 6), 1, 5), false, 0 };
-            yield return new object[] { new Cell((0, 6), 2, 3), false, 0 };
-            yield return new object[] { new Cell((1, 6), 1, 2), false, 0 };
-            yield return new object[] { new Cell((2, 6), 1, 2), false, 0 };
-            yield return new object[] { new Cell((6, 2), 1, 2), true, 2 };
-            yield return new object[] { new Cell((6, 2), 1, 3), true, 3 };
-            yield return new object[] { new Cell((6, 2), 1, 4), true, 4 };
-            yield return new object[] { new Cell((6, 2), 1, 5), false, 0 };
-            yield return new object[] { new Cell((6, 2), 2, 3), false, 0 };
-            yield return new object[] { new Cell((6, 0), 1, 2), false, 0 };
-            yield return new object[] { new Cell((6, 1), 1, 2), false, 0 };
-            yield return new object[] { new Cell((0, 0), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 1, 2), true, 2 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 1, 3), true, 3 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 1, 4), true, 4 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 1, 5), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 2, 3), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 6), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((2, 6), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((6, 2), 1, 2), true, 2 };
+            yield return new object[] { Cell.WithCandidates((6, 2), 1, 3), true, 3 };
+            yield return new object[] { Cell.WithCandidates((6, 2), 1, 4), true, 4 };
+            yield return new object[] { Cell.WithCandidates((6, 2), 1, 5), false, 0 };
+            yield return new object[] { Cell.WithCandidates((6, 2), 2, 3), false, 0 };
+            yield return new object[] { Cell.WithCandidates((6, 0), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((6, 1), 1, 2), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 0), 1, 2), false, 0 };
         }
 
         [Theory]
@@ -79,21 +79,21 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
         {
             var set = new AlmostLockedSet(new List<Cell>
             {
-                new Cell((0, 2), 1, 2, 3, 4),
-                new Cell((1, 0), 2, 3, 4),
-                new Cell((2, 1), 2, 3, 4),
+                Cell.WithCandidates((0, 2), 1, 2, 3, 4),
+                Cell.WithCandidates((1, 0), 2, 3, 4),
+                Cell.WithCandidates((2, 1), 2, 3, 4),
             });
             AssertFormsWxyzWith(set, cell, shouldBeWing, zValue);
         }
 
         public static IEnumerable<object[]> FormsWxyzWingWith_BoxPattern_TwoWCells_TestInputs()
         {
-            yield return new object[] { new Cell((0, 6), 5, 8), true, 8 };
-            yield return new object[] { new Cell((0, 6), 4, 8), true, 8 };
-            yield return new object[] { new Cell((0, 6), 5, 9), false, 0 };
-            yield return new object[] { new Cell((1, 6), 5, 8), false, 0 };
-            yield return new object[] { new Cell((5, 1), 5, 8), false, 0 };
-            yield return new object[] { new Cell((5, 2), 5, 8), false, 0 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 5, 8), true, 8 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 4, 8), true, 8 };
+            yield return new object[] { Cell.WithCandidates((0, 6), 5, 9), false, 0 };
+            yield return new object[] { Cell.WithCandidates((1, 6), 5, 8), false, 0 };
+            yield return new object[] { Cell.WithCandidates((5, 1), 5, 8), false, 0 };
+            yield return new object[] { Cell.WithCandidates((5, 2), 5, 8), false, 0 };
         }
 
         [Theory]
@@ -102,9 +102,9 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
         {
             var set = new AlmostLockedSet(new List<Cell>
             {
-                new Cell((0, 1), 4, 5, 8),
-                new Cell((0, 2), 4, 5),
-                new Cell((2, 0), 8, 9),
+                Cell.WithCandidates((0, 1), 4, 5, 8),
+                Cell.WithCandidates((0, 2), 4, 5),
+                Cell.WithCandidates((2, 0), 8, 9),
             });
             AssertFormsWxyzWith(set, cell, shouldBeWing, zValue);
         }

@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using Xunit;
 
 namespace SudokuSolver.Tests
@@ -9,7 +9,7 @@ namespace SudokuSolver.Tests
         public void SetNumber_SetsNumberCorrectly()
         {
             var board = BoardFactory.CandidateBoard();
-            var change = new BoardStateChangeSetNumber(new Position(1, 2), value: 5);
+            var change = BoardStateChange.SetCell(new Position(1, 2), value: 5);
             var newBoard = change.ApplyTo(board);
 
             Assert.False(board.Cell(1, 2).Value.HasValue);
@@ -18,40 +18,14 @@ namespace SudokuSolver.Tests
         }
 
         [Fact]
-        public void SetNumber_SetsLastChange()
+        public void RemoveCandidates_RemovesCorrectCandidateNumbers()
         {
             var board = BoardFactory.CandidateBoard();
-            var change = new BoardStateChangeSetNumber(new Position(1, 2), value: 5);
+            var candidateRemovals = new List<Candidate> { new ((1, 2), 7), new ((8, 8), 2) };
+            var change = BoardStateChange.RemoveCandidates(candidateRemovals);
             var newBoard = change.ApplyTo(board);
 
-            Assert.NotEqual(change, board.LastChange);
-            Assert.Equal(change, newBoard.LastChange);
-        }
-
-        [Fact]
-        public void RemoveCandidate_SetsLastChange()
-        {
-            var board = BoardFactory.CandidateBoard();
-            var canidateRemovals = ImmutableList<Candidate>.Empty
-                .Add(new Candidate(new Position(1, 2), CandidateValue: 7));
-            var change = new BoardStateChangeCandidateRemoval(canidateRemovals);
-            var newBoard = change.ApplyTo(board);
-
-            Assert.NotEqual(change, board.LastChange);
-            Assert.Equal(change, newBoard.LastChange);
-        }
-
-        [Fact]
-        public void RemoveCandidate_RemovesCorrectCandidateNumbers()
-        {
-            var board = BoardFactory.CandidateBoard();
-            var canidateRemovals = ImmutableList<Candidate>.Empty
-                .Add(new Candidate(new Position(1, 2), CandidateValue: 7))
-                .Add(new Candidate(new Position(8, 8), CandidateValue: 2));
-            var change = new BoardStateChangeCandidateRemoval(canidateRemovals);
-            var newBoard = change.ApplyTo(board);
-
-            foreach (var removal in canidateRemovals)
+            foreach (var removal in candidateRemovals)
             {
                 Assert.Contains(removal.CandidateValue, board.Cell(removal.Position).Candidates);
                 Assert.DoesNotContain(removal.CandidateValue, newBoard.Cell(removal.Position).Candidates);
@@ -59,16 +33,14 @@ namespace SudokuSolver.Tests
         }
 
         [Fact]
-        public void RemoveCandidate_MultipleRempovalsOnSameCell()
+        public void RemoveCandidates_MultipleRempovalsOnSameCell()
         {
             var board = BoardFactory.CandidateBoard();
-            var canidateRemovals = ImmutableList<Candidate>.Empty
-                .Add(new Candidate(new Position(1, 1), CandidateValue: 7))
-                .Add(new Candidate(new Position(1, 1), CandidateValue: 2));
-            var change = new BoardStateChangeCandidateRemoval(canidateRemovals);
+            var candidateRemovals = new List<Candidate> { new ((1, 1), 7), new ((1, 1), 2) };
+            var change = BoardStateChange.RemoveCandidates(candidateRemovals);
             var newBoard = change.ApplyTo(board);
 
-            foreach (var removal in canidateRemovals)
+            foreach (var removal in candidateRemovals)
             {
                 Assert.Contains(removal.CandidateValue, board.Cell(removal.Position).Candidates);
                 Assert.DoesNotContain(removal.CandidateValue, newBoard.Cell(removal.Position).Candidates);
@@ -82,19 +54,6 @@ namespace SudokuSolver.Tests
             var newBoard = board.ApplyChange(BoardStateNoChange.Instance);
 
             Assert.Equal(board.Cells, newBoard.Cells);
-        }
-
-
-        [Fact]
-        public void NoChange_SetsLastChange()
-        {
-            var board = BoardFactory.CandidateBoard()
-                .ApplyChange(new BoardStateChangeSetNumber(new Position(1, 1), 4));
-            var change = BoardStateNoChange.Instance;
-            var newBoard = board.ApplyChange(change);
-
-            Assert.NotEqual(change, board.LastChange);
-            Assert.Equal(change, newBoard.LastChange);
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using SudokuSolver;
-using SudokuSolver.Techniques;
 
 namespace SudokuConsole
 {
@@ -33,7 +32,7 @@ namespace SudokuConsole
                     var inputValue = line[col];
                     if (int.TryParse(inputValue.ToString(), out int value))
                     {
-                        board = board.ApplyChange(new BoardStateChangeSetNumber(new Position(row, col), value));
+                        board = board.ApplyChange(BoardStateChange.SetCell(new Position(row, col), value));
                     }
                 }
             }
@@ -53,7 +52,7 @@ namespace SudokuConsole
                     var cellValues = columns[col].Select(value => int.Parse(value.ToString())).ToList();
                     if (cellValues.Count == 1)
                     {
-                        board = board.ApplyChange(new BoardStateChangeSetNumber(position, cellValues.Single()));
+                        board = board.ApplyChange(BoardStateChange.SetCell(position, cellValues.Single()));
                     }
                     else
                     {
@@ -62,7 +61,7 @@ namespace SudokuConsole
                             .Select(value => new Candidate(position, value))
                             .ToList();
 
-                        board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
+                        board = board.ApplyChange(BoardStateChange.RemoveCandidates(removals));
                     }
                 }
             }

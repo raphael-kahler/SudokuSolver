@@ -18,7 +18,7 @@ namespace SudokuSolver.Techniques
             this.cellCollector = cellCollector ?? throw new System.ArgumentNullException(nameof(cellCollector));
         }
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var candidatesToRemove = new List<Candidate>();
             foreach (var cellCollection in this.cellCollector.GetCollections(board))
@@ -28,15 +28,15 @@ namespace SudokuSolver.Techniques
                     var change = GetChangeForValue(board, cellCollection, value);
                     if (change.HasEffect)
                     {
-                        return new BoardStateChangeCandidateRemoval(change.CandidatesAffected, this, change, NoHints.Instance);
+                        return new ChangeDescription(change, NoHints.Instance, this);
                     }
                 }
             }
 
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
-        private IChangeDescription GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
+        private IBoardStateChange GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
         {
             var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -65,7 +65,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            return BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
 
         public static LockedCandidateClaiming Row() => new LockedCandidateClaiming(RowCellCollector.Instance);

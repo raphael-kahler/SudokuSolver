@@ -24,7 +24,7 @@ namespace SudokuSolver.Techniques
         }
         protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) => this.cellCollector.GetCollections(board);
 
-        protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
+        protected override IBoardStateChange FindChange(IEnumerable<Cell> cells)
         {
             var cellsForCandidates = Enumerable.Range(1, 9)
                 .Select(value => new CellsForCandidate(value, cells.Where(c => c.Candidates.Contains(value)).ToList()))
@@ -33,7 +33,7 @@ namespace SudokuSolver.Techniques
 
             if (cellsForCandidates.Count < this.size)
             {
-                return NoChangeDescription.Instance;
+                return BoardStateNoChange.Instance;
             }
 
             foreach(var combination in CollectionPermutator.Permutate(cellsForCandidates.Count, this.size))
@@ -61,11 +61,11 @@ namespace SudokuSolver.Techniques
                         }
                     }
 
-                    return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                    return BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
                 }
             };
 
-            return NoChangeDescription.Instance;
+            return BoardStateNoChange.Instance;
 
         }
 

@@ -7,24 +7,20 @@ namespace SudokuSolver.Techniques.Helpers
         public abstract string Description { get; }
         public abstract DifficultyLevel DifficultyLevel { get; }
         protected abstract IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board);
-        protected abstract IChangeDescription FindChange(IEnumerable<Cell> cells);
+        protected abstract IBoardStateChange FindChange(IEnumerable<Cell> cells);
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             foreach (var cellCollection in GetCellCollections(board))
             {
-                var changeDescription = FindChange(cellCollection);
-                if (changeDescription.HasEffect)
+                var change = FindChange(cellCollection);
+                if (change.HasEffect)
                 {
-                    return new BoardStateChangeCandidateRemoval(
-                        CandidatesToRemove: changeDescription.CandidatesAffected,
-                        FoundBy: this,
-                        Description: changeDescription,
-                        ChangeHinter: NoHints.Instance);
+                    return new ChangeDescription(change, NoHints.Instance, this);
                 }
             }
 
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
     }
 }

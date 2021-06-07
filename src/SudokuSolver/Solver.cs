@@ -7,7 +7,7 @@ namespace SudokuSolver
 {
     public interface ISolver
     {
-        IBoardStateChange GetNextChange(BoardState board);
+        IChangeDescription GetNextChange(BoardState board);
     }
 
     public class Solver : ISolver
@@ -33,52 +33,56 @@ namespace SudokuSolver
         public Solver GlobChanges() =>
             new Solver(this.techniques, true);
 
-        public IBoardStateChange GetNextChange(BoardState board)
+        public IChangeDescription GetNextChange(BoardState board)
         {
             var globbedChange = GetGlobbedChange(board);
-            if (globbedChange.CausesChange)
+            if (globbedChange.Change.HasEffect)
             {
                 return globbedChange;
             }
 
             foreach (var technique in this.techniques)
             {
-                var change = technique.GetPossibleBoardStateChange(board);
-                if (change.CausesChange)
+                var changeDescription = technique.GetPossibleBoardStateChange(board);
+                if (changeDescription.Change.HasEffect)
                 {
-                    return change;
+                    return changeDescription;
                 }
             }
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
-        private IBoardStateChange GetGlobbedChange(BoardState board)
+        private IChangeDescription GetGlobbedChange(BoardState board)
         {
-            var changes = new List<IBoardStateChange>();
+            var changes = new List<IChangeDescription>();
             if (!globChanges)
             {
-                return BoardStateNoChange.Instance;
+                return NoChangeDescription.Instance;
             }
             foreach (var technique in this.techniques)
             {
                 while (true)
                 {
-                    var change = technique.GetPossibleBoardStateChange(board);
-                    if (!change.CausesChange)
+                    var changeDescription = technique.GetPossibleBoardStateChange(board);
+                    if (!changeDescription.Change.HasEffect)
                     {
                         break;
                     }
-                    changes.Add(change);
-                    board = board.ApplyChange(change);
+                    changes.Add(changeDescription);
+                    board = board.ApplyChange(changeDescription.Change);
                 }
             }
             if (changes.Any())
             {
-                return new BoardStateChangeCombination(changes);
+                return new ChangeDescription(
+                    new BoardStateChangeCombination(changes.Select(c => c.Change).ToList()),
+                    NoHints.Instance,
+                    NotFound.Instance);
+                // return new BoardStateChangeCombination(changes);
             }
             else
             {
-                return BoardStateNoChange.Instance;
+                return NoChangeDescription.Instance;
             }
         }
     }
@@ -98,17 +102,17 @@ namespace SudokuSolver
         public ChainedSolver WithSolver(IEnumerable<ISolver> solvers) =>
             new ChainedSolver(this.solvers.AddRange(solvers));
 
-        public IBoardStateChange GetNextChange(BoardState board)
+        public IChangeDescription GetNextChange(BoardState board)
         {
             foreach (var solver in this.solvers)
             {
-                var change = solver.GetNextChange(board);
-                if (change.CausesChange)
+                var changeDescription = solver.GetNextChange(board);
+                if (changeDescription.Change.HasEffect)
                 {
-                    return change;
+                    return changeDescription;
                 }
             }
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
     }
 }

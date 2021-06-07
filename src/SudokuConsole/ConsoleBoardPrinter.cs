@@ -68,9 +68,9 @@ namespace SudokuConsole
             Console.WriteLine("╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
         }
 
-        internal void PrintLarge(BoardState board) => PrintLarge(board, NoChangeDescription.Instance);
+        internal void PrintLarge(BoardState board) => PrintLarge(board, BoardStateNoChange.Instance);
 
-        internal void PrintLarge(BoardState board, IChangeDescription changeDescription)
+        internal void PrintLarge(BoardState board, IBoardStateChange changeDescription)
         {
             Console.WriteLine("╔═══════╤═══════╤═══════╦═══════╤═══════╤═══════╦═══════╤═══════╤═══════╗");
             for (int row = 0; row < 9; ++row)
@@ -92,7 +92,7 @@ namespace SudokuConsole
             Console.WriteLine("╚═══════╧═══════╧═══════╩═══════╧═══════╧═══════╩═══════╧═══════╧═══════╝");
         }
 
-        private void PrintLineWithChanges(BoardState board, int row, int i, IChangeDescription changeDescription)
+        private void PrintLineWithChanges(BoardState board, int row, int i, IBoardStateChange changeDescription)
         {
             var builder = new StringBuilder("║");
             for (int col = 0; col < 9; ++col)
@@ -138,7 +138,7 @@ namespace SudokuConsole
             }
         }
 
-        private BoardColors GetColorsForPosition(Position position, int positionInCell, IChangeDescription changeDescription)
+        private BoardColors GetColorsForPosition(Position position, int positionInCell, IBoardStateChange changeDescription)
         {
             if (changeDescription.ValuesCausingChange.Any(c => c == position))
             {
@@ -159,7 +159,7 @@ namespace SudokuConsole
             return DefaultColors;
         }
 
-        private BoardColors GetColorsForPositionPadding(Position position, int positionInCell, IChangeDescription changeDescription)
+        private BoardColors GetColorsForPositionPadding(Position position, int positionInCell, IBoardStateChange changeDescription)
         {
             if (positionInCell % 3 != 1)
             {

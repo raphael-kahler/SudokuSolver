@@ -10,22 +10,26 @@ namespace SudokuSolver.Techniques
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Trivial;
         public string Description => "A cell has only one candidate.";
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var match = board.Cells.FirstOrDefault(c => !c.Value.HasValue && c.Candidates.Count == 1);
             return match != null
                 ? ConstructChange(match)
-                : BoardStateNoChange.Instance;
+                : NoChangeDescription.Instance;
         }
 
-        private BoardStateChangeSetNumber ConstructChange(Cell match)
+        private ChangeDescription ConstructChange(Cell match)
         {
             var candidate = match.Candidates.Single();
-            var changeExplanation = ChangeDescription.ValueSetter(
+            var changeExplanation = BoardStateChange.ValueSetter(
                 candidatesCausingChange: ImmutableHashSet<Candidate>.Empty.Add(new Candidate(match.Position, candidate)),
                 valueAffected: new Cell(match.Position, candidate, ImmutableHashSet<int>.Empty));
 
-            return new BoardStateChangeSetNumber(match.Position, candidate, this, changeExplanation);
+            return new ChangeDescription(
+                BoardStateChange.SetCell(match.Position, candidate),
+                NoHints.Instance,
+                this
+            );
         }
     }
 
@@ -48,7 +52,7 @@ namespace SudokuSolver.Techniques
         protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
             this.cellCollector.GetCollections(board);
 
-        protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
+        protected override IBoardStateChange FindChange(IEnumerable<Cell> cells)
         {
             var candidatesCausingChange = new HashSet<Candidate>();
             var candidatesToRemove = new HashSet<Candidate>();
@@ -83,7 +87,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.CandidatesRemovingCandidates(
+            return BoardStateChange.CandidatesRemovingCandidates(
                 candidatesCausingChange.ToImmutableHashSet(),
                 candidatesToRemove.ToImmutableHashSet());
         }

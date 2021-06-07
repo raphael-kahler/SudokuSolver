@@ -19,7 +19,7 @@ namespace SudokuSolver.Techniques
         protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
             this.cellCollector.GetCollections(board);
 
-        protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
+        protected override IBoardStateChange FindChange(IEnumerable<Cell> cells)
         {
             var valuesCausingChange = ImmutableHashSet<Position>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -39,7 +39,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.ValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            return BoardStateChange.ValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
         }
 
         public static EliminationByValue Row() => new EliminationByValue(RowCellCollector.Instance);

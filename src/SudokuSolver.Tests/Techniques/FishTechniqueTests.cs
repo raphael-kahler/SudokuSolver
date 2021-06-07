@@ -162,15 +162,13 @@ namespace SudokuSolver.Tests.Techniques
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !positionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals));
+            board = board.ApplyChange(BoardStateChange.RemoveCandidates(removals));
 
             // use fish technique
             var boardChange = fishTechnique.GetPossibleBoardStateChange(board);
 
             // validate
-            Assert.IsType<BoardStateChangeCandidateRemoval>(boardChange);
-            var candidateRemovalChange = boardChange as BoardStateChangeCandidateRemoval;
-            Assert.Equal(positionsAffected, candidateRemovalChange.CandidatesToRemove.Select(r => r.Position).ToHashSet());
+            Assert.Equal(positionsAffected, boardChange.Change.CandidatesAffected.Select(r => r.Position).ToHashSet());
         }
     }
 }

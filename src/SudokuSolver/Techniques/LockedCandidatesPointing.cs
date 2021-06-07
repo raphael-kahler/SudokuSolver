@@ -18,7 +18,7 @@ namespace SudokuSolver.Techniques
             Orientation = orientation ?? throw new System.ArgumentNullException(nameof(orientation));
         }
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             for (int box = 0; box < 9; ++box)
             {
@@ -28,14 +28,14 @@ namespace SudokuSolver.Techniques
                     var change = GetChangeForValue(board, cells, value);
                     if (change.HasEffect)
                     {
-                        return new BoardStateChangeCandidateRemoval(change.CandidatesAffected, this, change, NoHints.Instance);
+                        return new ChangeDescription(change, NoHints.Instance, this);
                     }
                 }
             }
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
-        private IChangeDescription GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
+        private IBoardStateChange GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
         {
             var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -64,7 +64,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            return BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
 
         public static LockedCandidatesPointing Row() => new LockedCandidatesPointing(RowOrientation.Instance);

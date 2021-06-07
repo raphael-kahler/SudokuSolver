@@ -18,7 +18,8 @@ namespace SudokuSolver
     public record Candidate(Position Position, int CandidateValue);
     public record Cell(Position Position, int? Value, IImmutableSet<int> Candidates)
     {
-        public Cell(Position position, params int[] candidates) : this(position, null, candidates.ToImmutableHashSet()) { }
+        public static Cell WithValue(Position position, int value) => new Cell(position, value, ImmutableHashSet<int>.Empty);
+        public static Cell WithCandidates(Position position, params int[] candidates) => new Cell(position, null, candidates.ToImmutableHashSet());
         public static Cell Empty(Position position) => new Cell(position, null, ImmutableHashSet<int>.Empty);
 
         public IEnumerable<Candidate> GetCandidatesWithPosition()
@@ -41,15 +42,10 @@ namespace SudokuSolver
     public record BoardState
     {
         public IImmutableList<Cell> Cells { get; }
-        public IBoardStateChange LastChange { get; init; }
 
-        public BoardState(IImmutableList<Cell> cells) : this(cells, BoardStateNoChange.Instance)
-        { }
-
-        public BoardState(IImmutableList<Cell> cells, IBoardStateChange lastChange)
+        public BoardState(IImmutableList<Cell> cells)
         {
             this.Cells = cells ?? throw new ArgumentNullException(nameof(cells));
-            this.LastChange = lastChange ?? throw new ArgumentNullException(nameof(lastChange));
 
             if (cells.Count != 81)
             {
