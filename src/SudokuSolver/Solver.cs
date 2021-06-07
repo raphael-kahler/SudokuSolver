@@ -74,11 +74,7 @@ namespace SudokuSolver
             }
             if (changes.Any())
             {
-                return new ChangeDescription(
-                    new BoardStateChangeCombination(changes.Select(c => c.Change).ToList()),
-                    NoHints.Instance,
-                    NotFound.Instance);
-                // return new BoardStateChangeCombination(changes);
+                return new CombinationChangeDescription(changes);
             }
             else
             {

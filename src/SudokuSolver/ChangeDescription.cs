@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques;
 
@@ -23,8 +22,15 @@ namespace SudokuSolver
         public IChangeHinter ChangeHinter => NoHints.Instance;
         public IBoardStateChange Change => BoardStateNoChange.Instance;
 
-        public BoardState ApplyTo(BoardState board) => board;
         private NoChangeDescription() { }
         public static NoChangeDescription Instance { get; } = new NoChangeDescription();
+    }
+
+    public record CombinationChangeDescription(IReadOnlyCollection<IChangeDescription> changeDescriptions)
+        : IChangeDescription
+    {
+        public ISolverTechniqueDescription FoundBy => new CombinedTechnique(changeDescriptions.Select(c => c.FoundBy).ToList());
+        public IChangeHinter ChangeHinter => NoHints.Instance;
+        public IBoardStateChange Change => new BoardStateChangeCombination(changeDescriptions.Select(c => c.Change).ToList());
     }
 }
