@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using SudokuSolver.Techniques;
-using SudokuSolver.Techniques.FishHelpers;
+using SudokuSolver.Techniques.FishTechniques;
 using SudokuSolver.Techniques.Helpers;
 using Xunit;
 
-namespace SudokuSolver.Tests
+namespace SudokuSolver.Tests.Techniques.FishTechniques
 {
     public class FishTests
     {

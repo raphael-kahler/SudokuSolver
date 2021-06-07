@@ -1,7 +1,6 @@
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
-using SudokuSolver.Techniques;
 using SudokuSolver.Techniques.Wings;
 using Xunit;
 

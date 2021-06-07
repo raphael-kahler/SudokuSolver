@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using SudokuSolver.Techniques.FishHelpers;
+using SudokuSolver.Techniques.FishTechniques;
 using SudokuSolver.Techniques.Helpers;
 using Xunit;
 
-namespace SudokuSolver.Tests.Techniques.FishHelpers
+namespace SudokuSolver.Tests.Techniques.FishTechniques
 {
     public class FishFinderTests
     {

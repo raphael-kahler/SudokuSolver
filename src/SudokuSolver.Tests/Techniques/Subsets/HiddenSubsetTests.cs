@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
-using SudokuSolver.Techniques.SubsetTechniques;
+using SudokuSolver.Techniques.Subsets;
 using Xunit;
 
-namespace SudokuSolver.Tests.Techniques
+namespace SudokuSolver.Tests.Techniques.Subsets
 {
     public class HiddenSubsetTests
     {
