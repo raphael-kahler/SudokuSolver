@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using SudokuSolver.Techniques.FishHelpers;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.FishTechniques
 {
     internal class FishTechnique : ISolverTechnique
     {

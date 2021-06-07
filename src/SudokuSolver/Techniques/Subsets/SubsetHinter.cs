@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.SubsetTechniques
+namespace SudokuSolver.Techniques.Subsets
 {
     internal record SubsetHinter(string TechniqueName, ICellCollector CellCollector, Position Position) : IChangeHinter
     {

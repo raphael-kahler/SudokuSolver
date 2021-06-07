@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.FishHelpers
+namespace SudokuSolver.Techniques.FishTechniques
 {
     internal interface IFishPart
     {
@@ -105,7 +105,7 @@ namespace SudokuSolver.Techniques.FishHelpers
         {
             Parts = parts ?? throw new ArgumentNullException(nameof(parts));
             Orientation = orientation ?? throw new ArgumentNullException(nameof(orientation));
-            PrimaryValues = parts.Select(p => Orientation.PrimaryDimension( p.LogicalPosition)).ToHashSet();
+            PrimaryValues = parts.Select(p => Orientation.PrimaryDimension(p.LogicalPosition)).ToHashSet();
             SecondaryValues = parts.Select(p => Orientation.SecondaryDimension(p.LogicalPosition)).ToHashSet();
         }
 

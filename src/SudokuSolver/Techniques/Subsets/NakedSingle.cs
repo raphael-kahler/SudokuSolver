@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace SudokuSolver.Techniques.SubsetTechniques
+namespace SudokuSolver.Techniques.Subsets
 {
     internal class NakedSingle : ISolverTechnique
     {

@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.Basics
 {
     internal class EliminationByValueTechnique : CollectionCandidateRemover
     {

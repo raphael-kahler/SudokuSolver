@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SudokuSolver.Techniques.Basics;
 using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques.Factories

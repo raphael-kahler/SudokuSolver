@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.SubsetTechniques
+namespace SudokuSolver.Techniques.Subsets
 {
     internal class NakedSubset : SubsetTechniqueBase
     {
