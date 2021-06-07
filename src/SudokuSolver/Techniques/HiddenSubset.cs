@@ -61,7 +61,7 @@ namespace SudokuSolver.Techniques
                         }
                     }
 
-                    return BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                    return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
                 }
             };
 

@@ -21,15 +21,11 @@ namespace SudokuSolver.Techniques
         private ChangeDescription ConstructChange(Cell match)
         {
             var candidate = match.Candidates.Single();
-            var changeExplanation = BoardStateChange.ValueSetter(
+            var change = BoardStateChange.ForCandidatesSettingValues(
                 candidatesCausingChange: ImmutableHashSet<Candidate>.Empty.Add(new Candidate(match.Position, candidate)),
                 valueAffected: new Cell(match.Position, candidate, ImmutableHashSet<int>.Empty));
 
-            return new ChangeDescription(
-                BoardStateChange.SetCell(match.Position, candidate),
-                NoHints.Instance,
-                this
-            );
+            return new ChangeDescription(change, NoHints.Instance, this);
         }
     }
 
@@ -87,7 +83,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return BoardStateChange.CandidatesRemovingCandidates(
+            return BoardStateChange.ForCandidatesRemovingCandidates(
                 candidatesCausingChange.ToImmutableHashSet(),
                 candidatesToRemove.ToImmutableHashSet());
         }

@@ -39,7 +39,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return BoardStateChange.ValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            return BoardStateChange.ForValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
         }
 
         public static EliminationByValue Row() => new EliminationByValue(RowCellCollector.Instance);

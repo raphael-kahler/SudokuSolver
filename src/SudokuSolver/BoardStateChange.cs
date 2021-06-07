@@ -25,21 +25,21 @@ namespace SudokuSolver
         IImmutableSet<Candidate> CandidatesAffected)
         : IBoardStateChange
     {
-        public static BoardStateChange ValueSetter(ImmutableHashSet<Candidate> candidatesCausingChange, Cell valueAffected) =>
+        public static BoardStateChange ForCandidatesSettingValues(ImmutableHashSet<Candidate> candidatesCausingChange, Cell valueAffected) =>
             new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty.Add(valueAffected), ImmutableHashSet<Candidate>.Empty);
 
-        public static IBoardStateChange ValuesRemovingCandidates(ImmutableHashSet<Position> valuesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
-            canidatesAffected.Any()
-                ? new BoardStateChange(valuesCausingChange, ImmutableHashSet<Candidate>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected)
-                : BoardStateNoChange.Instance;
-
-        public static IBoardStateChange CandidatesRemovingCandidates(ImmutableHashSet<Candidate> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
+        public static IBoardStateChange ForCandidatesRemovingCandidates(ImmutableHashSet<Candidate> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
             canidatesAffected.Any()
                 ? new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, canidatesAffected)
                 : BoardStateNoChange.Instance;
 
         public static IBoardStateChange ForCandidatesCausingChange(ImmutableHashSet<Candidate> candidatesCausingChange) =>
             new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, ImmutableHashSet<Candidate>.Empty);
+
+        public static IBoardStateChange ForValuesRemovingCandidates(ImmutableHashSet<Position> valuesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
+            canidatesAffected.Any()
+                ? new BoardStateChange(valuesCausingChange, ImmutableHashSet<Candidate>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected)
+                : BoardStateNoChange.Instance;
 
         public static IBoardStateChange NoChange() => BoardStateNoChange.Instance;
 

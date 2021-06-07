@@ -64,7 +64,7 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return BoardStateChange.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
 
         public static LockedCandidatesPointing Row() => new LockedCandidatesPointing(RowOrientation.Instance);
