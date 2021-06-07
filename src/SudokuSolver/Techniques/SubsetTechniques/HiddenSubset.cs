@@ -5,42 +5,39 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques.SubsetTechniques
 {
-    internal class HiddenSubset : CollectionCandidateRemover
+    internal class HiddenSubset : SubsetTechniqueBase
     {
         private record CellsForCandidate(int CandidateValue, IReadOnlyList<Cell> Cells);
-        private readonly int size;
-        private readonly ICellCollector cellCollector;
 
-        public override DifficultyLevel DifficultyLevel => size == 1 ? DifficultyLevel.Easy : DifficultyLevel.Medium;
+        public override DifficultyLevel DifficultyLevel => Size == 1 ? DifficultyLevel.Easy : DifficultyLevel.Medium;
 
         public override string Description =>
-            $"{size} number{(size > 1 ? "s are" : " is")} the candidate of only {size} " +
-            $"cell{(size > 1 ? "s" : string.Empty)} in a {cellCollector.CollectionName}. All other candidates of the cell{(size > 1 ? "s" : string.Empty)} can be removed.";
+            $"{Size} number{(Size > 1 ? "s are" : " is")} the candidate of only {Size} " +
+            $"cell{(Size > 1 ? "s" : string.Empty)} in a {CellCollector.CollectionName}. All other candidates of the cell{(Size > 1 ? "s" : string.Empty)} can be removed.";
 
-        internal HiddenSubset(int size, ICellCollector cellCollector)
-        {
-            this.size = size;
-            this.cellCollector = cellCollector;
-        }
+        internal HiddenSubset(int size, ICellCollector cellCollector) : base(size, cellCollector)
+        { }
 
-        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) => cellCollector.GetCollections(board);
+        protected override string TechniqueName() => $"Hidden {SizeName()}";
+
+        protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) => CellCollector.GetCollections(board);
 
         protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
         {
             var cellsForCandidates = Enumerable.Range(1, 9)
                 .Select(value => new CellsForCandidate(value, cells.Where(c => c.Candidates.Contains(value)).ToList()))
-                .Where(c => c.Cells.Count > 0 && c.Cells.Count <= size)
+                .Where(c => c.Cells.Count > 0 && c.Cells.Count <= Size)
                 .ToList();
 
-            if (cellsForCandidates.Count < size)
+            if (cellsForCandidates.Count < Size)
             {
                 return NoChangeDescription.Instance;
             }
 
-            foreach (var combination in CollectionPermutator.Permutate(cellsForCandidates.Count, size))
+            foreach (var combination in CollectionPermutator.Permutate(cellsForCandidates.Count, Size))
             {
                 var cellsForCombination = combination.SelectMany(idx => cellsForCandidates[idx].Cells.Select(c => c.Position)).ToHashSet();
-                if (cellsForCombination.Count == size)
+                if (cellsForCombination.Count == Size)
                 {
                     var candidatesInCombination = combination.Select(idx => cellsForCandidates[idx].CandidateValue);
                     var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
@@ -62,23 +59,11 @@ namespace SudokuSolver.Techniques.SubsetTechniques
                         }
                     }
 
-                    var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
-                    var hinter = new SubsetHinter(TechniqueName(), cellCollector, candidatesCausingChange.First().Position);
-                    return new ChangeDescription(change, hinter, this);
+                    return CreateChangeDescription(candidatesCausingChange, candidatesToRemove);
                 }
             };
 
             return NoChangeDescription.Instance;
         }
-
-        private string TechniqueName() => $"Hidden {SizeName()}";
-        private string SizeName() => size switch
-        {
-            1 => "Single",
-            2 => "Pair",
-            3 => "Triple",
-            4 => "Quad",
-            _ => "Collection"
-        };
     }
 }

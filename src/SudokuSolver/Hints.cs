@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace SudokuSolver
@@ -9,7 +8,7 @@ namespace SudokuSolver
         IEnumerable<ChangeHint> GetHints();
     }
 
-    public class NoHints : IChangeHinter
+    internal class NoHints : IChangeHinter
     {
         public IEnumerable<ChangeHint> GetHints() => Enumerable.Empty<ChangeHint>();
 
