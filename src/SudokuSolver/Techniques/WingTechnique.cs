@@ -4,8 +4,8 @@ namespace SudokuSolver.Techniques
 {
     public static class WingTechnique
     {
-        public static XyWingTechnique XyWing() => new XyWingTechnique();
-        public static XyzWingTechnique XyzWing() => new XyzWingTechnique();
-        public static WxyzWingTechnique WxyzWing() => new WxyzWingTechnique();
+        public static ISolverTechnique XyWing() => new XyWingTechnique();
+        public static ISolverTechnique XyzWing() => new XyzWingTechnique();
+        public static ISolverTechnique WxyzWing() => new WxyzWingTechnique();
     }
 }

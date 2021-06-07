@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using SudokuSolver.Techniques;
 using SudokuSolver.Techniques.Helpers;
+using SudokuSolver.Techniques.SubsetTechniques;
 using Xunit;
 
 namespace SudokuSolver.Tests.Techniques

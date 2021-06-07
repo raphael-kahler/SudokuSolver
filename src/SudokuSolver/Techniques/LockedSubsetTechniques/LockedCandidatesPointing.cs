@@ -3,9 +3,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.LockedSubsetTechniques
 {
-    public class LockedCandidatesPointing : ISolverTechnique
+    internal class LockedCandidatesPointingTechnique : ISolverTechnique
     {
         private IOrientation Orientation { get; }
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Medium;
@@ -13,7 +13,7 @@ namespace SudokuSolver.Techniques
             $"In one box all candidates of a number are in the same {Orientation.PrimaryDimensionName}. " +
             $"Remove candidates from other boxes of that {Orientation.PrimaryDimensionName}.";
 
-        internal LockedCandidatesPointing(IOrientation orientation)
+        internal LockedCandidatesPointingTechnique(IOrientation orientation)
         {
             Orientation = orientation ?? throw new System.ArgumentNullException(nameof(orientation));
         }
@@ -66,9 +66,5 @@ namespace SudokuSolver.Techniques
 
             return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
-
-        public static LockedCandidatesPointing Row() => new LockedCandidatesPointing(RowOrientation.Instance);
-        public static LockedCandidatesPointing Column() => new LockedCandidatesPointing(ColumnOrientation.Instance);
-        public static IEnumerable<LockedCandidatesPointing> AllDirections() => new List<LockedCandidatesPointing> { Row(), Column() };
     }
 }

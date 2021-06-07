@@ -6,7 +6,7 @@ using SudokuSolver.Techniques.Helpers.Sets;
 
 namespace SudokuSolver.Techniques.Wings
 {
-    public class WxyzWingTechnique : ISolverTechnique
+    internal class WxyzWingTechnique : ISolverTechnique
     {
         public string Description => "WXYZ-Wing";
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Expert;

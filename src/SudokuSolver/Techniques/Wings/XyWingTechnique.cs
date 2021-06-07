@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SudokuSolver.Techniques.Wings
 {
-    public class XyWingTechnique : ISolverTechnique
+    internal class XyWingTechnique : ISolverTechnique
     {
         public string Description => "XY-Wing";
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Advanced;

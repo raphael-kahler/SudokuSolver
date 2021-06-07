@@ -3,17 +3,17 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.LockedSubsetTechniques
 {
-    public class LockedCandidateClaiming : ISolverTechnique
+    internal class LockedCandidatesClaimingTechnique : ISolverTechnique
     {
         private readonly ICellCollector cellCollector;
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Medium;
         public string Description =>
-            $"In one {this.cellCollector.CollectionName} all candidates of a number are in the same box. " +
-            $"Remove candidates from other {this.cellCollector.CollectionName}s of that box.";
+            $"In one {cellCollector.CollectionName} all candidates of a number are in the same box. " +
+            $"Remove candidates from other {cellCollector.CollectionName}s of that box.";
 
-        internal LockedCandidateClaiming(ICellCollector cellCollector)
+        internal LockedCandidatesClaimingTechnique(ICellCollector cellCollector)
         {
             this.cellCollector = cellCollector ?? throw new System.ArgumentNullException(nameof(cellCollector));
         }
@@ -21,7 +21,7 @@ namespace SudokuSolver.Techniques
         public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var candidatesToRemove = new List<Candidate>();
-            foreach (var cellCollection in this.cellCollector.GetCollections(board))
+            foreach (var cellCollection in cellCollector.GetCollections(board))
             {
                 for (int value = 1; value <= 9; ++value)
                 {
@@ -67,9 +67,5 @@ namespace SudokuSolver.Techniques
 
             return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
         }
-
-        public static LockedCandidateClaiming Row() => new LockedCandidateClaiming(RowCellCollector.Instance);
-        public static LockedCandidateClaiming Column() => new LockedCandidateClaiming(ColumnCellCollector.Instance);
-        public static IEnumerable<LockedCandidateClaiming> AllDirections() => new List<LockedCandidateClaiming> { Row(), Column() };
     }
 }

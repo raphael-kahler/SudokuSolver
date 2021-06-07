@@ -5,13 +5,13 @@ using SudokuSolver.Techniques.Helpers;
 
 namespace SudokuSolver.Techniques
 {
-    public class EliminationByValue : CollectionCandidateRemover
+    internal class EliminationByValueTechnique : CollectionCandidateRemover
     {
         private readonly ICellCollector cellCollector;
         public override DifficultyLevel DifficultyLevel => DifficultyLevel.Trivial;
         public override string Description => $"Each number is only allowed once per {this.cellCollector.CollectionName}.";
 
-        internal EliminationByValue(ICellCollector cellCollector)
+        internal EliminationByValueTechnique(ICellCollector cellCollector)
         {
             this.cellCollector = cellCollector;
         }
@@ -19,7 +19,7 @@ namespace SudokuSolver.Techniques
         protected override IEnumerable<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
             this.cellCollector.GetCollections(board);
 
-        protected override IBoardStateChange FindChange(IEnumerable<Cell> cells)
+        protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
         {
             var valuesCausingChange = ImmutableHashSet<Position>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -39,12 +39,17 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return BoardStateChange.ForValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            var change = BoardStateChange.ForValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            return new ChangeDescription(change, NoHints.Instance, this);
         }
 
-        public static EliminationByValue Row() => new EliminationByValue(RowCellCollector.Instance);
-        public static EliminationByValue Column() => new EliminationByValue(ColumnCellCollector.Instance);
-        public static EliminationByValue Box() => new EliminationByValue(BoxCellCollector.Instance);
-        public static IEnumerable<EliminationByValue> AllDirections() => new List<EliminationByValue> { Row(), Column(), Box() };
+    }
+
+    public static class EliminationByValue
+    {
+        public static ISolverTechnique Row() => new EliminationByValueTechnique(RowCellCollector.Instance);
+        public static ISolverTechnique Column() => new EliminationByValueTechnique(ColumnCellCollector.Instance);
+        public static ISolverTechnique Box() => new EliminationByValueTechnique(BoxCellCollector.Instance);
+        public static IEnumerable<ISolverTechnique> AllDirections() => new List<ISolverTechnique> { Row(), Column(), Box() };
     }
 }
