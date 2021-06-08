@@ -6,7 +6,7 @@ namespace SudokuSolver
     {
         public static EliminationByValueFactory EliminationByValue => new EliminationByValueFactory();
         public static SubsetTechniqueFactory Subsets => new SubsetTechniqueFactory();
-        public static LockedSubsetTechniqueFactory LockedSubsets => new LockedSubsetTechniqueFactory();
+        public static LockedSubsetTechniqueFactory LockedCandidates => new LockedSubsetTechniqueFactory();
         public static FishTechniqueFactory Fish => new FishTechniqueFactory();
         public static WingTechniqueFactory Wings => new WingTechniqueFactory();
     }

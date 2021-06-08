@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.LockedSubsets
+namespace SudokuSolver.Techniques.LockedCandidates
 {
     internal class LockedCandidatesClaimingTechnique : ISolverTechnique
     {
@@ -25,10 +25,10 @@ namespace SudokuSolver.Techniques.LockedSubsets
             {
                 for (int value = 1; value <= 9; ++value)
                 {
-                    var change = GetChangeForValue(board, cellCollection, value);
-                    if (change.HasEffect)
+                    var changeDescription = GetChangeForValue(board, cellCollection, value);
+                    if (changeDescription.Change.HasEffect)
                     {
-                        return new ChangeDescription(change, NoHints.Instance, this);
+                        return changeDescription;
                     }
                 }
             }
@@ -36,7 +36,7 @@ namespace SudokuSolver.Techniques.LockedSubsets
             return NoChangeDescription.Instance;
         }
 
-        private IBoardStateChange GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
+        private ChangeDescription GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
         {
             var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -65,7 +65,22 @@ namespace SudokuSolver.Techniques.LockedSubsets
                 }
             }
 
-            return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            var hinter = candidatesCausingChange.Any()
+                ? new LockedCandidatesClaimingHinter(this.cellCollector, candidatesCausingChange)
+                : (IChangeHinter)NoHints.Instance;
+            return new ChangeDescription(change, hinter, this);
+        }
+    }
+
+    internal record LockedCandidatesClaimingHinter(ICellCollector CellCollector, ImmutableHashSet<Candidate> Causers) : IChangeHinter
+    {
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint("Use Locked Candidates Claiming");
+            yield return new ChangeHint($"Look for candidates that appear in only a single Box of {CellCollector.CollectionName} {CellCollector.Indexer.CollectionIndex(Causers.First().Position) + 1}");
+            yield return new ChangeHint($"The candidate value is {Causers.First().CandidateValue}");
+            yield return new ChangeHint($"These are the locked candidates", BoardStateChange.ForCandidatesCausingChange(Causers));
         }
     }
 }

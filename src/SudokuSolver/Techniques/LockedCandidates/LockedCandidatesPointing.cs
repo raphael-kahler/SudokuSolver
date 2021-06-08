@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.LockedSubsets
+namespace SudokuSolver.Techniques.LockedCandidates
 {
     internal class LockedCandidatesPointingTechnique : ISolverTechnique
     {
@@ -25,17 +25,17 @@ namespace SudokuSolver.Techniques.LockedSubsets
                 var cells = board.Box(box);
                 for (int value = 1; value <= 9; ++value)
                 {
-                    var change = GetChangeForValue(board, cells, value);
-                    if (change.HasEffect)
+                    var changeDescription = GetChangeForValue(board, cells, value);
+                    if (changeDescription.Change.HasEffect)
                     {
-                        return new ChangeDescription(change, NoHints.Instance, this);
+                        return changeDescription;
                     }
                 }
             }
             return NoChangeDescription.Instance;
         }
 
-        private IBoardStateChange GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
+        private IChangeDescription GetChangeForValue(BoardState board, IEnumerable<Cell> cells, int value)
         {
             var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
             var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
@@ -64,7 +64,22 @@ namespace SudokuSolver.Techniques.LockedSubsets
                 }
             }
 
-            return BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+            var hinter = candidatesCausingChange.Any()
+                ? new LockedCandidatesPointingHinter(Orientation, candidatesCausingChange)
+                : (IChangeHinter)NoHints.Instance;
+            return new ChangeDescription(change, hinter, this);
+        }
+    }
+
+    internal record LockedCandidatesPointingHinter(IOrientation Orientation, ImmutableHashSet<Candidate> Causers) : IChangeHinter
+    {
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint("Use Locked Candidates Pointing");
+            yield return new ChangeHint($"Look for candidates that appear in only a single {Orientation.PrimaryDimensionName} in Box {Causers.First().Position.Box + 1}");
+            yield return new ChangeHint($"The candidate value is {Causers.First().CandidateValue}");
+            yield return new ChangeHint($"These are the locked candidates", BoardStateChange.ForCandidatesCausingChange(Causers));
         }
     }
 }

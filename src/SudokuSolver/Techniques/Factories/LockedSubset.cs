@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using SudokuSolver.Techniques.Helpers;
-using SudokuSolver.Techniques.LockedSubsets;
+using SudokuSolver.Techniques.LockedCandidates;
 
 namespace SudokuSolver.Techniques.Factories
 {
