@@ -38,7 +38,7 @@
     private IBoardStateChange shownChange;
     private List<ChangeHint> hints;
     private int currentHint;
-    private bool NoMoreHints => currentHint > hints.Count || Board.IsComplete;
+    private bool NoMoreHints => currentHint > hints.Count || !changeDescription.Change.HasEffect;
     private List<string> hintDescriptions = new List<string>();
 
     private bool boardIsValid;
@@ -80,7 +80,7 @@
         this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
         this.currentHint = 0;
         this.hintDescriptions.Clear();
-        if (!Board.IsComplete)
+        if (changeDescription.Change.HasEffect)
         {
             ShowNextHint();
         }
