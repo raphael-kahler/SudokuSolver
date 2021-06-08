@@ -8,8 +8,8 @@ namespace SudokuSolver.Techniques.Factories
     {
         internal LockedSubsetTechniqueFactory() { }
 
-        public LockedCandidateClaimingFactory LockedCandidateClaiming => new LockedCandidateClaimingFactory();
-        public LockedCandidatesPointingFactory LockedCandidatesPointing => new LockedCandidatesPointingFactory();
+        public LockedCandidateClaimingFactory Claiming => new LockedCandidateClaimingFactory();
+        public LockedCandidatesPointingFactory Pointing => new LockedCandidatesPointingFactory();
     }
 
     public class LockedCandidateClaimingFactory

@@ -13,26 +13,27 @@ The following techniques are implemented so far. Each technique can individually
 | Technique |  Usage |
 | --------- |  ----- |
 | **Basic Techniques** | |
-| Each value can only appear once per row/column/box. | `EliminationByValue.AllDirections()` |
-| [Naked Single](http://sudopedia.enjoysudoku.com/Naked_Single.html) | `NakedSubset.NakedSingle()` |
-| [Naked Pair](http://sudopedia.enjoysudoku.com/Naked_Pair.html) | `NakedSubset.NakedPairs()` |
-| [Naked Triple](http://sudopedia.enjoysudoku.com/Naked_Triple.html) | `NakedSubset.NakedTriples()` |
-| [Naked Quad](http://sudopedia.enjoysudoku.com/Naked_Quad.html) | `NakedSubset.NakedQuads()` |
-| [Hidden Single](http://sudopedia.enjoysudoku.com/Hidden_Single.html) | `HiddenSubset.HiddenSingles()` |
-| [Hidden Pair](http://sudopedia.enjoysudoku.com/Hidden_Pair.html) | `HiddenSubset.HiddenPairs()` |
-| [Hidden Triple](http://sudopedia.enjoysudoku.com/Hidden_Triple.html) | `HiddenSubset.HiddenTriples()` |
-| [Hidden Quad](http://sudopedia.enjoysudoku.com/Hidden_Quad.html) | `HiddenSubset.HiddenQuads()` |
+| Each value can only appear once per row/column/box. | `Technique.EliminationByValue.AllDirections()` |
+| **Subset Techniques** | |
+| [Naked Single](http://sudopedia.enjoysudoku.com/Naked_Single.html) | `Technique.Subsets.NakedSingle()` |
+| [Naked Pair](http://sudopedia.enjoysudoku.com/Naked_Pair.html) | `Technique.Subsets.NakedPairs()` |
+| [Naked Triple](http://sudopedia.enjoysudoku.com/Naked_Triple.html) | `Technique.Subsets.NakedTriples()` |
+| [Naked Quad](http://sudopedia.enjoysudoku.com/Naked_Quad.html) | `Technique.Subsets.NakedQuads()` |
+| [Hidden Single](http://sudopedia.enjoysudoku.com/Hidden_Single.html) | `Technique.Subsets.HiddenSingles()` |
+| [Hidden Pair](http://sudopedia.enjoysudoku.com/Hidden_Pair.html) | `Technique.Subsets.HiddenPairs()` |
+| [Hidden Triple](http://sudopedia.enjoysudoku.com/Hidden_Triple.html) | `Technique.Subsets.HiddenTriples()` |
+| [Hidden Quad](http://sudopedia.enjoysudoku.com/Hidden_Quad.html) | `Technique.Subsets.HiddenQuads()` |
 | **Intersection Techniques** | |
-| [Locked Candidates Pointing](http://sudopedia.enjoysudoku.com/Locked_Candidates.html) | `LockedCandidatesPointing.AllDirections()` |
-| [Locked Candidates Claiming](http://sudopedia.enjoysudoku.com/Locked_Candidates.html) | `LockedCandidateClaiming.AllDirections()` |
+| [Locked Candidates Pointing](http://sudopedia.enjoysudoku.com/Locked_Candidates.html) | `Technique.LockedCandidates.Pointing.AllDirections()` |
+| [Locked Candidates Claiming](http://sudopedia.enjoysudoku.com/Locked_Candidates.html) | `Technique.LockedCandidates.Claiming.AllDirections()` |
 | **Fish Techniques** | |
-| 2-Fish: [X-Wing](http://sudopedia.enjoysudoku.com/X-Wing.html), and finned variants like [Sashimi X-Wing](http://sudopedia.enjoysudoku.com/Finned_X-Wing.html). | `FishTechnique.XWing()` |
-| 3-Fish: [SwordFish](http://sudopedia.enjoysudoku.com/Swordfish.html) and finned variants. |  `FishTechnique.Swordfish()` |
-| 4-Fish: [Jellyfish](http://sudopedia.enjoysudoku.com/Jellyfish.html) and finned variants. |  `FishTechnique.Jellyfish()` |
+| 2-Fish: [X-Wing](http://sudopedia.enjoysudoku.com/X-Wing.html), [Finned X-Wing](http://sudopedia.enjoysudoku.com/Finned_X-Wing.html), [Sashimi X-Wing](http://sudopedia.enjoysudoku.com/Finned_X-Wing.html) | `Technique.Fish.XWing()` |
+| 3-Fish: [SwordFish](http://sudopedia.enjoysudoku.com/Swordfish.html), [Finned Swordfish](http://sudopedia.enjoysudoku.com/Finned_Swordfish.html), [Sashimi Swordfish](http://sudopedia.enjoysudoku.com/Sashimi_Swordfish.html) |  `Technique.Fish.Swordfish()` |
+| 4-Fish: [Jellyfish](http://sudopedia.enjoysudoku.com/Jellyfish.html), [Finned Jellyfish](http://sudopedia.enjoysudoku.com/Finned_Jellyfish.html), [Sashimi Jellyfish](http://sudopedia.enjoysudoku.com/Sashimi_Jellyfish.html) |  `Technique.Fish.Jellyfish()` |
 | **Wing Techniques** | |
-| [XY-Wing](http://sudopedia.enjoysudoku.com/XY-Wing.html) | `WingTechnique.XyWing()` |
-| [XYZ-Wing](http://sudopedia.enjoysudoku.com/XYZ-Wing.html) | `WingTechnique.XyzWing()` |
-| [WXYZ-Wing](http://sudopedia.enjoysudoku.com/WXYZ-Wing.html) | `WingTechnique.WxyzWing()` |
+| [XY-Wing](http://sudopedia.enjoysudoku.com/XY-Wing.html) | `Technique.Wings.XyWing()` |
+| [XYZ-Wing](http://sudopedia.enjoysudoku.com/XYZ-Wing.html) | `Technique.Wings.XyzWing()` |
+| [WXYZ-Wing](http://sudopedia.enjoysudoku.com/WXYZ-Wing.html) | `Technique.Wings.WxyzWing()` |
 
 ## Usage
 
