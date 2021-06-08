@@ -22,18 +22,17 @@ namespace SudokuSolver.Techniques.FishTechniques
         {
             for (int value = 1; value <= 9; ++value)
             {
-                var change = GetChangeForValue(board, value);
-                if (change.HasEffect)
+                var changeDescription = GetChangeForValue(board, value);
+                if (changeDescription.Change.HasEffect)
                 {
-                    var hinter = new FishTechniqueHinter();
-                    return new ChangeDescription(change, hinter, this);
+                    return changeDescription;
                 }
             }
 
             return NoChangeDescription.Instance;
         }
 
-        private IBoardStateChange GetChangeForValue(BoardState board, int value)
+        private IChangeDescription GetChangeForValue(BoardState board, int value)
         {
             var cellCollections = GetCellCollections(board)
                 .Select(cells => cells.Where(c => c.Candidates.Contains(value)).Select(c => c.Position).ToList())
@@ -51,11 +50,13 @@ namespace SudokuSolver.Techniques.FishTechniques
                 if (removals.Any())
                 {
                     var causers = fish.DefiningCandidates(value).ToImmutableHashSet();
-                    return BoardStateChange.ForCandidatesRemovingCandidates(causers, removals);
+                    var change = BoardStateChange.ForCandidatesRemovingCandidates(causers, removals);
+                    var hinter = new FishTechniqueHinter(fish, Size, value, Orientation);
+                    return new ChangeDescription(change, hinter, this);
                 }
             }
 
-            return BoardStateNoChange.Instance;
+            return NoChangeDescription.Instance;
         }
 
         private IList<IEnumerable<Cell>> GetCellCollections(BoardState board) =>
@@ -66,11 +67,15 @@ namespace SudokuSolver.Techniques.FishTechniques
         private IFishFinder GetFishFinder() => Size == 2 ? new TwoFishFinder(Orientation) : new LargeFishFinder(Size, Orientation);
     }
 
-    internal class FishTechniqueHinter : IChangeHinter
+    internal record FishTechniqueHinter(IFish Fish, int Size, int CandidateValue, IOrientation Orientation) : IChangeHinter
     {
         public IEnumerable<ChangeHint> GetHints()
         {
-            throw new System.NotImplementedException();
+            yield return new ChangeHint($"Use a {FishNamer.GetFishName(Size)} ({Size}-Fish) technique");
+            yield return new ChangeHint($"The fish is for candidates of value {CandidateValue}");
+            yield return new ChangeHint($"The fish is {Orientation.PrimaryDimensionName} based");
+            yield return new ChangeHint($"It is a {Fish.FishType} {FishNamer.GetFishName(Size)}");
+            yield return new ChangeHint($"This is the fish", BoardStateChange.ForCandidatesCausingChange(Fish.DefiningCandidates(CandidateValue).ToImmutableHashSet()));
         }
     }
 }

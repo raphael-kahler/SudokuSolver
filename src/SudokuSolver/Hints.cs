@@ -16,7 +16,7 @@ namespace SudokuSolver
         public static NoHints Instance { get; } = new NoHints();
     }
 
-    public record ChangeHint(string Description, IBoardStateChange ChangeDescription)
+    public record ChangeHint(string Description, IBoardStateChange Change)
     {
         public ChangeHint(string description) : this(description, BoardStateNoChange.Instance)
         { }

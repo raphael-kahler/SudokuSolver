@@ -113,7 +113,7 @@
         if (this.currentHint < this.hints.Count)
         {
             var hint = this.hints[currentHint++];
-            this.shownChange = hint.ChangeDescription;
+            this.shownChange = hint.Change;
             this.hintDescriptions.Add(hint.Description);
         }
         else if (this.currentHint == this.hints.Count)

@@ -12,7 +12,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // no fish
             yield return new object[]
             {
-                false,
+                FishType.NoFish,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -23,7 +23,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // x-wing
             yield return new object[]
             {
-                true,
+                FishType.Regular,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -34,7 +34,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // sashimi x-wing
             yield return new object[]
             {
-                true,
+                FishType.Sashimi,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -45,7 +45,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // sashimi x-wing (reversed row order)
             yield return new object[]
             {
-                true,
+                FishType.Sashimi,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -53,10 +53,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (4, 4), (4, 7) }
                 }
             };
-            // two-finned sashimi x-wing
+            // finned x-wing
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -64,10 +64,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (4, 1), (4, 2), (4, 8) }
                 }
             };
-            // two-finned sashimi x-wing (reversed order)
+            // finned x-wing (reversed order)
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -78,7 +78,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // x-wing + plus fin
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -89,7 +89,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // x-wing + plus two fins
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new TwoFishFinder(RowOrientation.Instance),
                 new List<IList<Position>>
                 {
@@ -100,7 +100,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // no fish
             yield return new object[]
             {
-                false,
+                FishType.NoFish,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 5) },
@@ -111,7 +111,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // no fish
             yield return new object[]
             {
-                false,
+                FishType.NoFish,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 5), (1, 6), (1, 7) },
@@ -122,7 +122,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // three-fish
             yield return new object[]
             {
-                true,
+                FishType.Regular,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 6) },
@@ -130,10 +130,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (7, 4), (7, 6) },
                 }
             };
-            // finned three-fish
+            // sashimi three-fish
             yield return new object[]
             {
-                true,
+                FishType.Sashimi,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 7) },
@@ -141,10 +141,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (7, 4), (7, 6) },
                 }
             };
-            // two-finned three-fish
+            // two-finned sashimi three-fish
             yield return new object[]
             {
-                true,
+                FishType.Sashimi,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 4), (1, 7), (1, 8) },
@@ -152,10 +152,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (7, 1), (7, 4), (7, 6) },
                 }
             };
-            // three-fish + extra fin
+            // finned three-fish
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 4), (1, 6), (1, 7) },
@@ -163,10 +163,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (7, 4), (7, 6) },
                 }
             };
-            // three-fish + extra two-fin
+            // two-fin three-fish
             yield return new object[]
             {
-                true,
+                FishType.Finned,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 4), (1, 6), (1, 7), (1, 8) },
@@ -177,7 +177,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // no fish
             yield return new object[]
             {
-                false,
+                FishType.NoFish,
                 new LargeFishFinder(3, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (2, 0), (2, 2) },
@@ -188,7 +188,7 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
             // four-row fish
             yield return new object[]
             {
-                true,
+                FishType.Regular,
                 new LargeFishFinder(4, RowOrientation.Instance),
                 new List<IList<Position>> {
                     new List<Position> { (1, 1), (1, 5) },
@@ -201,10 +201,10 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
 
         [Theory]
         [MemberData(nameof(FishFinder_FishPatternInputs))]
-        internal void GetFishType(bool isFish, IFishFinder fishFinder, IList<IList<Position>> rows)
+        internal void GetFishType(FishType fishType, IFishFinder fishFinder, IList<IList<Position>> rows)
         {
             var fish = fishFinder.GetFishType(rows);
-            Assert.Equal(isFish, fish.IsFish);
+            Assert.Equal(fishType, fish.FishType);
         }
     }
 }
