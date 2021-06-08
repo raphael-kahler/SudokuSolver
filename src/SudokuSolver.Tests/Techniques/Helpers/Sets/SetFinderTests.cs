@@ -14,11 +14,11 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
                 2,
                 new List<Cell>
                 {
-                    new Cell((0, 0), 1, 2, 3, 4, 5),
-                    new Cell((0, 1), 1, 2, 3),
-                    new Cell((0, 2), 2, 3),
-                    new Cell((0, 3), 3, 4, 5),
-                    new Cell((0, 4), 1, 2),
+                    Cell.WithCandidates((0, 0), 1, 2, 3, 4, 5),
+                    Cell.WithCandidates((0, 1), 1, 2, 3),
+                    Cell.WithCandidates((0, 2), 2, 3),
+                    Cell.WithCandidates((0, 3), 3, 4, 5),
+                    Cell.WithCandidates((0, 4), 1, 2),
                 },
                 new List<IList<int>>
                 {
@@ -32,13 +32,13 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
                 3,
                 new List<Cell>
                 {
-                    new Cell((0, 0), 1, 2, 3, 4, 5, 6),
-                    new Cell((0, 1), 1, 2, 3, 4),
-                    new Cell((0, 2), 1, 2, 3),
-                    new Cell((0, 3), 2, 3, 4),
-                    new Cell((0, 4), 4, 5, 6),
-                    new Cell((0, 5), 1, 2),
-                    new Cell((0, 6), 3, 4),
+                    Cell.WithCandidates((0, 0), 1, 2, 3, 4, 5, 6),
+                    Cell.WithCandidates((0, 1), 1, 2, 3, 4),
+                    Cell.WithCandidates((0, 2), 1, 2, 3),
+                    Cell.WithCandidates((0, 3), 2, 3, 4),
+                    Cell.WithCandidates((0, 4), 4, 5, 6),
+                    Cell.WithCandidates((0, 5), 1, 2),
+                    Cell.WithCandidates((0, 6), 3, 4),
                 },
                 new List<IList<int>>
                 {

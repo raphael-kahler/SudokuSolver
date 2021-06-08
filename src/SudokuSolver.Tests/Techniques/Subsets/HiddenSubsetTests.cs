@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using SudokuSolver.Techniques;
 using SudokuSolver.Techniques.Helpers;
+using SudokuSolver.Techniques.Subsets;
 using Xunit;
 
-namespace SudokuSolver.Tests.Techniques
+namespace SudokuSolver.Tests.Techniques.Subsets
 {
     public class HiddenSubsetTests
     {
@@ -34,19 +34,17 @@ namespace SudokuSolver.Tests.Techniques
                 var candidatesToRemove = Enumerable.Range(1, size)
                     .Select(value => new Candidate(cell.Position, value))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(BoardStateChange.RemoveCandidates(candidatesToRemove));
             }
 
             var technique = new HiddenSubset(size, cellCollector);
             var change = technique.GetPossibleBoardStateChange(board);
 
-            Assert.IsType<BoardStateChangeCandidateRemoval>(change);
-            var removalChange = change as BoardStateChangeCandidateRemoval;
             foreach (var cell in cellCollector.GetCollection(board, 0).Take(size))
             {
                 for (int val = size + 1; val <= 9; ++val)
                 {
-                    Assert.Contains(new Candidate(cell.Position, val), removalChange.CandidatesToRemove);
+                    Assert.Contains(new Candidate(cell.Position, val), change.Change.CandidatesAffected);
                 }
             }
         }
@@ -74,26 +72,24 @@ namespace SudokuSolver.Tests.Techniques
                     new Candidate(cells[i].Position, i + 1),
                     new Candidate(cells[i].Position, (i + 1) % size + 1),
                 };
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(BoardStateChange.RemoveCandidates(candidatesToRemove));
             }
             foreach (var cell in cells.Skip(size))
             {
                 var candidatesToRemove = Enumerable.Range(1, size)
                     .Select(value => new Candidate(cell.Position, value))
                     .ToList();
-                board = board.ApplyChange(new BoardStateChangeCandidateRemoval(candidatesToRemove, NotFound.Instance, NoChangeDescription.Instance));
+                board = board.ApplyChange(BoardStateChange.RemoveCandidates(candidatesToRemove));
             }
 
             var technique = new HiddenSubset(size, cellCollector);
             var change = technique.GetPossibleBoardStateChange(board);
 
-            Assert.IsType<BoardStateChangeCandidateRemoval>(change);
-            var removalChange = change as BoardStateChangeCandidateRemoval;
             for (int i = 0; i < size; ++i)
             {
                 for (int val = size + 1; val <= 9; ++val)
                 {
-                    Assert.Contains(new Candidate(cells[i].Position, val), removalChange.CandidatesToRemove);
+                    Assert.Contains(new Candidate(cells[i].Position, val), change.Change.CandidatesAffected);
                 }
             }
         }

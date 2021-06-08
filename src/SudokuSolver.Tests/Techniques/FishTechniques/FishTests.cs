@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using SudokuSolver.Techniques;
-using SudokuSolver.Techniques.FishHelpers;
+using SudokuSolver.Techniques.FishTechniques;
 using SudokuSolver.Techniques.Helpers;
 using Xunit;
 
-namespace SudokuSolver.Tests
+namespace SudokuSolver.Tests.Techniques.FishTechniques
 {
     public class FishTests
     {
@@ -25,7 +24,7 @@ namespace SudokuSolver.Tests
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(BoardStateChange.RemoveCandidates(removals));
 
             // set up fish
             var fish = new FinnedFish(
@@ -57,7 +56,7 @@ namespace SudokuSolver.Tests
                 .Where(c => !fishPositions.Contains(c.Position) && !positionsAffected.Contains(c.Position) && !posistionsNotAffected.Contains(c.Position))
                 .Select(c => new Candidate(c.Position, candidateValue))
                 .ToList();
-            board = board.ApplyChange(new BoardStateChangeCandidateRemoval(removals, NotFound.Instance, NoChangeDescription.Instance));
+            board = board.ApplyChange(BoardStateChange.RemoveCandidates(removals));
 
             // set up fish
             var fish = new FinnedFish(

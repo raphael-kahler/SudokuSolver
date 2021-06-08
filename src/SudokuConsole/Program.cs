@@ -33,7 +33,7 @@ namespace SudokuConsole
             using var boardPrinter = new ConsoleBoardPrinter();
             var board = InputReader.CreateBoardFromFile(options.InputFile);
             var rules = new StandardSudokuRules();
-            Solver solver = CreateSolver();
+            ISolver solver = CreateSolver();
             try
             {
                 Console.WriteLine("Initial board.");
@@ -55,67 +55,73 @@ namespace SudokuConsole
             }
         }
 
-        private static Solver CreateSolver() => new Solver()
-            .WithTechnique(NakedSubset.NakedSingle())
-            .WithTechnique(EliminationByValue.AllDirections())
-            .WithTechnique(HiddenSubset.HiddenSingles())
-            .WithTechnique(LockedCandidatesPointing.AllDirections())
-            .WithTechnique(LockedCandidateClaiming.AllDirections())
-            .WithTechnique(NakedSubset.NakedPairs())
-            .WithTechnique(HiddenSubset.HiddenPairs())
-            .WithTechnique(NakedSubset.NakedTriples())
-            .WithTechnique(HiddenSubset.HiddenTriples())
-            .WithTechnique(NakedSubset.NakedQuads())
-            .WithTechnique(HiddenSubset.HiddenQuads())
-            .WithTechnique(FishTechnique.XWing())
-            .WithTechnique(WingTechnique.XyWing())
-            .WithTechnique(FishTechnique.Swordfish())
-            .WithTechnique(FishTechnique.Jellyfish())
-            .WithTechnique(WingTechnique.XyzWing())
-            .WithTechnique(WingTechnique.WxyzWing());
+        private static ISolver CreateSolver()
+        {
+            return new ChainedSolver()
+                .WithSolver(new Solver().With(Technique.Subsets.NakedSingle()).GlobChanges())
+                .WithSolver(new Solver().With(Technique.EliminationByValue.AllDirections()).GlobChanges())
+                .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleRow()).GlobChanges())
+                .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleColumn()).GlobChanges())
+                .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleBox()).GlobChanges())
+                .WithSolver(new Solver()
+                    .With(Technique.LockedCandidates.LockedCandidatesPointing.AllDirections())
+                    .With(Technique.LockedCandidates.LockedCandidateClaiming.AllDirections())
+                    .With(Technique.Subsets.NakedPairs())
+                    .With(Technique.Subsets.HiddenPairs())
+                    .With(Technique.Subsets.NakedTriples())
+                    .With(Technique.Subsets.HiddenTriples())
+                    .With(Technique.Subsets.NakedQuads())
+                    .With(Technique.Subsets.HiddenQuads())
+                    .With(Technique.Fish.XWing())
+                    .With(Technique.Wings.XyWing())
+                    .With(Technique.Fish.Swordfish())
+                    .With(Technique.Fish.Jellyfish())
+                    .With(Technique.Wings.XyzWing())
+                    .With(Technique.Wings.WxyzWing()));
+        }
 
-        private static IBoardStateChange SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
+        private static IChangeDescription SolveNextStep(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
             if (board.IsComplete)
             {
                 Console.WriteLine("Sudoku is already solved.");
-                return new BoardStateNoChange();
+                return NoChangeDescription.Instance;
             }
-            var change = solver.GetNextChange(board);
-            if (!change.CausesChange)
+            var changeDescription = solver.GetNextChange(board);
+            if (!changeDescription.Change.HasEffect)
             {
                 Console.WriteLine("Couldn't find any more steps for solving the Sudoku :(");
-                return change;
+                return changeDescription;
             }
 
-            var newBoard = board.ApplyChange(change);
-            Console.WriteLine($"{change.FoundBy.DifficultyLevel} step: {change.FoundBy.Description}");
-            boardPrinter.PrintLarge(newBoard, change.Description);
+            var newBoard = board.ApplyChange(changeDescription.Change);
+            Console.WriteLine($"{changeDescription.FoundBy.DifficultyLevel} step: {changeDescription.FoundBy.Description}");
+            boardPrinter.PrintLarge(newBoard, changeDescription.Change);
 
             if (!rules.BoardIsValid(newBoard))
             {
                 Console.WriteLine("Oh no! Got into an invalid state :(");
-                return change;
+                return changeDescription;
             }
 
             if (newBoard.IsComplete)
             {
                 Console.WriteLine("Solved :)");
-                return change;
+                return changeDescription;
             }
 
-            return change;
+            return changeDescription;
         }
 
-        private static void SolveCompletely(BoardState board, ConsoleBoardPrinter boardPrinter, Solver solver, ISudokuRules rules)
+        private static void SolveCompletely(BoardState board, ConsoleBoardPrinter boardPrinter, ISolver solver, ISudokuRules rules)
         {
-            var changeHistory = new List<IBoardStateChange>();
+            var changeHistory = new List<IChangeDescription>();
             while (true)
             {
-                var change = SolveNextStep(board, boardPrinter, solver, rules);
-                board = board.ApplyChange(change);
-                changeHistory.Add(change);
-                if (!change.CausesChange)
+                var changeDescription = SolveNextStep(board, boardPrinter, solver, rules);
+                board = board.ApplyChange(changeDescription.Change);
+                changeHistory.Add(changeDescription);
+                if (!changeDescription.Change.HasEffect)
                 {
                     break;
                 }
@@ -127,7 +133,7 @@ namespace SudokuConsole
             }
         }
 
-        private static void PrintSummary(IReadOnlyList<IBoardStateChange> changeHistory)
+        private static void PrintSummary(IReadOnlyList<IChangeDescription> changeHistory)
         {
             Console.WriteLine();
             Console.WriteLine("Applied techniques in order:");

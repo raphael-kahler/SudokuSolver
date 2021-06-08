@@ -11,7 +11,7 @@
                 <td class="cell @(rowClass) @(colClass)">
                     <SudokuCell Cell="@(Board.Cell(row, col))"
                                 Selected="@selected"
-                                ChangeDescription="@(Change.Description)"
+                                Change="@(Change)"
                                 OnClickCallback="OnCellClicked"/>
                 </td>
             }
@@ -42,7 +42,7 @@
     public bool InputMode { get; set; }
 
     [Parameter]
-    public IBoardStateChange Change { get; set; } = new BoardStateNoChange();
+    public IBoardStateChange Change { get; set; } = BoardStateNoChange.Instance;
 
     [Parameter]
     public EventCallback<BoardState> SolveSudokuCallback { get; set; }
@@ -81,11 +81,11 @@
         }
         if (value > 0 && value <= 9)
         {
-            Board = Board.ApplyChange(new BoardStateChangeSetNumber(SelectedPos, value, NotFound.Instance, NoChangeDescription.Instance));
+            Board = Board.ApplyChange(BoardStateChange.SetCell(SelectedPos, value));
         }
         else
         {
-            Board = Board.ApplyChange(new BoardStateChangeClearCell(SelectedPos));
+            Board = Board.ApplyChange(BoardStateChange.ClearCell(SelectedPos));
         }
 
         this.readyToSolve = Board.Cells.Any(c => c.Value.HasValue);

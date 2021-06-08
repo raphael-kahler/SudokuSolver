@@ -6,12 +6,12 @@ using SudokuSolver.Techniques.Helpers.Sets;
 
 namespace SudokuSolver.Techniques.Wings
 {
-    public class WxyzWingTechnique : ISolverTechnique
+    internal class WxyzWingTechnique : ISolverTechnique
     {
         public string Description => "WXYZ-Wing";
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Expert;
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var cellsWithTwoCandidates = board.Cells.Where(c => c.Candidates.Count == 2);
 
@@ -30,14 +30,14 @@ namespace SudokuSolver.Techniques.Wings
                         if (candidatesToRemove.Any())
                         {
                             var candidatesCausingChange = wxyzWing.GetDefiningCandidates().ToImmutableHashSet();
-                            var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
-                            return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change);
+                            var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                            return new ChangeDescription(change, NoHints.Instance, this);
                         }
                     }
                 }
             }
 
-            return new BoardStateNoChange();
+            return NoChangeDescription.Instance;
         }
 
         private IEnumerable<Cell> AffectedCells(BoardState board, WxyzWing wing) => wing.CollectionType switch
@@ -61,6 +61,24 @@ namespace SudokuSolver.Techniques.Wings
             }
 
             return candidatesToRemove;
+        }
+    }
+
+    internal class WxyzWingTechniqueHinter : IChangeHinter
+    {
+        private readonly WxyzWing wxyzWing;
+
+        public WxyzWingTechniqueHinter(WxyzWing xyzWing) =>
+            this.wxyzWing = xyzWing ?? throw new System.ArgumentNullException(nameof(xyzWing));
+
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use WXYZ-Wing technique");
+            yield return new ChangeHint($"The Z value is {this.wxyzWing.ZValue}");
+            yield return new ChangeHint($"This is the W cell", BoardStateChange.ForCandidatesCausingChange(
+                this.wxyzWing.WzCell.GetCandidatesWithPosition().ToImmutableHashSet()));
+            yield return new ChangeHint($"This is the WXYZ-Wing", BoardStateChange.ForCandidatesCausingChange(
+                this.wxyzWing.GetDefiningCandidates().ToImmutableHashSet()));
         }
     }
 }

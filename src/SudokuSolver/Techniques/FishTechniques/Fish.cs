@@ -4,8 +4,16 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques.FishHelpers
+namespace SudokuSolver.Techniques.FishTechniques
 {
+    internal enum FishType
+    {
+        NoFish,
+        Regular,
+        Finned,
+        Sashimi
+    }
+
     internal interface IFishPart
     {
         bool IsFin { get; }
@@ -62,6 +70,7 @@ namespace SudokuSolver.Techniques.FishHelpers
     internal interface IFish
     {
         bool IsFish { get; }
+        FishType FishType { get; }
         IEnumerable<Candidate> DefiningCandidates(int candidateValue);
         IEnumerable<Candidate> DetermineCandidateRemovals(BoardState board, int value);
     }
@@ -69,6 +78,7 @@ namespace SudokuSolver.Techniques.FishHelpers
     internal class NoFish : IFish
     {
         public bool IsFish => false;
+        public FishType FishType => FishType.NoFish;
 
         public IEnumerable<Candidate> DefiningCandidates(int candidateValue) =>
             Enumerable.Empty<Candidate>();
@@ -83,6 +93,7 @@ namespace SudokuSolver.Techniques.FishHelpers
     internal abstract class Fish : IFish
     {
         public bool IsFish => true;
+        public abstract FishType FishType { get; }
 
         public abstract IEnumerable<Candidate> DefiningCandidates(int candidateValue);
 
@@ -96,6 +107,7 @@ namespace SudokuSolver.Techniques.FishHelpers
 
     internal class RegularFish : Fish
     {
+        public override FishType FishType => FishType.Regular;
         protected IImmutableList<FishCorner> Parts { get; }
         private IReadOnlySet<int> PrimaryValues { get; }
         private IReadOnlySet<int> SecondaryValues { get; }
@@ -105,7 +117,7 @@ namespace SudokuSolver.Techniques.FishHelpers
         {
             Parts = parts ?? throw new ArgumentNullException(nameof(parts));
             Orientation = orientation ?? throw new ArgumentNullException(nameof(orientation));
-            PrimaryValues = parts.Select(p => Orientation.PrimaryDimension( p.LogicalPosition)).ToHashSet();
+            PrimaryValues = parts.Select(p => Orientation.PrimaryDimension(p.LogicalPosition)).ToHashSet();
             SecondaryValues = parts.Select(p => Orientation.SecondaryDimension(p.LogicalPosition)).ToHashSet();
         }
 
@@ -119,6 +131,7 @@ namespace SudokuSolver.Techniques.FishHelpers
 
     internal class FinnedFish : Fish
     {
+        public override FishType FishType => IsSashimi() ? FishType.Sashimi : FishType.Finned;
         public IImmutableList<FishCorner> Parts { get; }
         public FishFin Fin { get; }
         private IReadOnlySet<int> PrimaryValues { get; }
@@ -162,5 +175,7 @@ namespace SudokuSolver.Techniques.FishHelpers
 
         private IEnumerable<int> AffectedSecondaryValues() =>
             Fin.Fins.Select(f => Orientation.SecondaryDimension(f)).Append(Orientation.SecondaryDimension(CornerMatchingFin.LogicalPosition));
+
+        private bool IsSashimi() => !Fin.Fins.Any(p => p == Fin.LogicalPosition);
     }
 }

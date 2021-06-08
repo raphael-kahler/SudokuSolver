@@ -3,15 +3,15 @@ using System.Collections.Immutable;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.Basics
 {
-    public class EliminationByValue : CollectionCandidateRemover
+    internal class EliminationByValueTechnique : CollectionCandidateRemover
     {
         private readonly ICellCollector cellCollector;
         public override DifficultyLevel DifficultyLevel => DifficultyLevel.Trivial;
         public override string Description => $"Each number is only allowed once per {this.cellCollector.CollectionName}.";
 
-        internal EliminationByValue(ICellCollector cellCollector)
+        internal EliminationByValueTechnique(ICellCollector cellCollector)
         {
             this.cellCollector = cellCollector;
         }
@@ -39,12 +39,9 @@ namespace SudokuSolver.Techniques
                 }
             }
 
-            return ChangeDescription.ValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            var change = BoardStateChange.ForValuesRemovingCandidates(valuesCausingChange, candidatesToRemove);
+            return new ChangeDescription(change, NoHints.Instance, this);
         }
 
-        public static EliminationByValue Row() => new EliminationByValue(RowCellCollector.Instance);
-        public static EliminationByValue Column() => new EliminationByValue(ColumnCellCollector.Instance);
-        public static EliminationByValue Box() => new EliminationByValue(BoxCellCollector.Instance);
-        public static IEnumerable<EliminationByValue> AllDirections() => new List<EliminationByValue> { Row(), Column(), Box() };
     }
 }

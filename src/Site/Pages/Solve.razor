@@ -43,7 +43,7 @@
                 {
                     if (value > 0)
                     {
-                        board = board.ApplyChange(new BoardStateChangeSetNumber(new Position(row, col), value));
+                        board = board.ApplyChange(BoardStateChange.SetCell(new Position(row, col), value));
                     }
                 }
                 else

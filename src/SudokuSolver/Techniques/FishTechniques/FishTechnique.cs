@@ -1,50 +1,35 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using SudokuSolver.Techniques.FishHelpers;
 using SudokuSolver.Techniques.Helpers;
 
-namespace SudokuSolver.Techniques
+namespace SudokuSolver.Techniques.FishTechniques
 {
-    public class FishTechnique : ISolverTechnique
+    internal class FishTechnique : ISolverTechnique
     {
         public string Description => $"{Size}-{Orientation.PrimaryDimensionName} Fish.";
         public DifficultyLevel DifficultyLevel => Size < 3 ? DifficultyLevel.Advanced : DifficultyLevel.Expert;
         private int Size { get; }
         private IOrientation Orientation { get; }
 
-        private FishTechnique(int size, IOrientation oritentation)
+        internal FishTechnique(int size, IOrientation oritentation)
         {
             Size = size;
             Orientation = oritentation ?? throw new System.ArgumentNullException(nameof(oritentation));
         }
 
-        public static FishTechnique TwoRow() => new FishTechnique(2, RowOrientation.Instance);
-        public static FishTechnique TwoColumn() => new FishTechnique(2, ColumnOrientation.Instance);
-        public static FishTechnique ThreeRow() => new FishTechnique(3, RowOrientation.Instance);
-        public static FishTechnique ThreeColumn() => new FishTechnique(3, ColumnOrientation.Instance);
-        public static FishTechnique FourRow() => new FishTechnique(4, RowOrientation.Instance);
-        public static FishTechnique FourColumn() => new FishTechnique(4, ColumnOrientation.Instance);
-
-        public static IEnumerable<FishTechnique> TwoFish() => new List<FishTechnique> { TwoRow(), TwoColumn() };
-        public static IEnumerable<FishTechnique> ThreeFish() => new List<FishTechnique> { ThreeRow(), ThreeColumn() };
-        public static IEnumerable<FishTechnique> FourFish() => new List<FishTechnique> { FourRow(), FourColumn() };
-        public static IEnumerable<FishTechnique> XWing() => TwoFish();
-        public static IEnumerable<FishTechnique> Swordfish() => ThreeFish();
-        public static IEnumerable<FishTechnique> Jellyfish() => FourFish();
-
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             for (int value = 1; value <= 9; ++value)
             {
                 var changeDescription = GetChangeForValue(board, value);
-                if (changeDescription.HasEffect)
+                if (changeDescription.Change.HasEffect)
                 {
-                    return new BoardStateChangeCandidateRemoval(changeDescription.CandidatesAffected, this, changeDescription);
+                    return changeDescription;
                 }
             }
 
-            return new BoardStateNoChange();
+            return NoChangeDescription.Instance;
         }
 
         private IChangeDescription GetChangeForValue(BoardState board, int value)
@@ -65,7 +50,9 @@ namespace SudokuSolver.Techniques
                 if (removals.Any())
                 {
                     var causers = fish.DefiningCandidates(value).ToImmutableHashSet();
-                    return ChangeDescription.CandidatesRemovingCandidates(causers, removals);
+                    var change = BoardStateChange.ForCandidatesRemovingCandidates(causers, removals);
+                    var hinter = new FishTechniqueHinter(fish, Size, value, Orientation);
+                    return new ChangeDescription(change, hinter, this);
                 }
             }
 
@@ -78,5 +65,17 @@ namespace SudokuSolver.Techniques
                 .ToList();
 
         private IFishFinder GetFishFinder() => Size == 2 ? new TwoFishFinder(Orientation) : new LargeFishFinder(Size, Orientation);
+    }
+
+    internal record FishTechniqueHinter(IFish Fish, int Size, int CandidateValue, IOrientation Orientation) : IChangeHinter
+    {
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use a {FishNamer.GetFishName(Size)} ({Size}-Fish) technique");
+            yield return new ChangeHint($"The fish is for candidates of value {CandidateValue}");
+            yield return new ChangeHint($"The fish is {Orientation.PrimaryDimensionName} based");
+            yield return new ChangeHint($"It is a {Fish.FishType} {FishNamer.GetFishName(Size)}");
+            yield return new ChangeHint($"This is the fish", BoardStateChange.ForCandidatesCausingChange(Fish.DefiningCandidates(CandidateValue).ToImmutableHashSet()));
+        }
     }
 }

@@ -1,14 +1,15 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace SudokuSolver.Techniques.Wings
 {
-    public class XyzWingTechnique : ISolverTechnique
+    internal class XyzWingTechnique : ISolverTechnique
     {
         public string Description => "XYZ-Wing";
         public DifficultyLevel DifficultyLevel => DifficultyLevel.Expert;
 
-        public IBoardStateChange GetPossibleBoardStateChange(BoardState board)
+        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
         {
             var cells = board.Cells.Where(c => c.Candidates.Count == 3);
 
@@ -39,8 +40,8 @@ namespace SudokuSolver.Techniques.Wings
                                         if (candidatesToRemove.Any())
                                         {
                                             var candidatesCausingChange = xyzWing.GetDefiningCandidates().ToImmutableHashSet();
-                                            var change = ChangeDescription.CandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
-                                            return new BoardStateChangeCandidateRemoval(candidatesToRemove, this, change);
+                                            var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                                            return new ChangeDescription(change, NoHints.Instance, this);
                                         }
                                     }
                                 }
@@ -50,7 +51,7 @@ namespace SudokuSolver.Techniques.Wings
                 }
             }
 
-            return new BoardStateNoChange();
+            return NoChangeDescription.Instance;
         }
 
         private ImmutableHashSet<Candidate> FindCandidatesToRemove(BoardState board, XyzWing xyzWing)
@@ -66,6 +67,24 @@ namespace SudokuSolver.Techniques.Wings
             }
 
             return candidatesToRemove;
+        }
+    }
+
+    internal class XyzWingTechniqueHinter : IChangeHinter
+    {
+        private readonly XyzWing xyzWing;
+
+        public XyzWingTechniqueHinter(XyzWing xyzWing) =>
+            this.xyzWing = xyzWing ?? throw new System.ArgumentNullException(nameof(xyzWing));
+
+        public IEnumerable<ChangeHint> GetHints()
+        {
+            yield return new ChangeHint($"Use XYZ-Wing technique");
+            yield return new ChangeHint($"The Z value is {this.xyzWing.ZValue}");
+            yield return new ChangeHint($"This is the pivot", BoardStateChange.ForCandidatesCausingChange(
+                this.xyzWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet()));
+            yield return new ChangeHint($"This is the XYZ-Wing", BoardStateChange.ForCandidatesCausingChange(
+                this.xyzWing.GetDefiningCandidates().ToImmutableHashSet()));
         }
     }
 }

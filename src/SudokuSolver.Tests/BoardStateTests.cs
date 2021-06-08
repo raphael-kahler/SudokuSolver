@@ -26,7 +26,7 @@ namespace SudokuSolver.Tests
             {
                 for (int col = 0; col < 9; ++col)
                 {
-                    var wrongCells = board.Cells.Remove(board.Cell(row, col)).Add(BoardFactory.EmptyCell(100, 100));
+                    var wrongCells = board.Cells.Remove(board.Cell(row, col)).Add(Cell.Empty((100, 100)));
                     Assert.Throws<ArgumentException>(() => new BoardState(wrongCells));
                 }
             }
@@ -59,23 +59,15 @@ namespace SudokuSolver.Tests
         public void Cell_Equality()
         {
             Assert.Equal(
-                new Cell((1, 2), 1, 4, 7),
-                new Cell((1, 2), 1, 4, 7)
+                Cell.WithCandidates((1, 2), 1, 4, 7),
+                Cell.WithCandidates((1, 2), 1, 4, 7)
             );
         }
 
         [Fact]
-        public void Cell_Equality_Null()
-        {
-            Assert.NotEqual(new Cell((1, 2), 1, 4, 7), null);
-            Assert.NotEqual(null, new Cell((1, 2), 1, 4, 7));
-        }
-
-
-        [Fact]
         public void Cell_Equals_Null()
         {
-            Assert.False(new Cell((1, 2), 1, 4, 7).Equals(null));
+            Assert.False(Cell.WithCandidates((1, 2), 1, 4, 7).Equals(null));
         }
     }
 }
