@@ -1,13 +1,15 @@
 <div class="box-rounded" @onclick=OnClicked>
-    @if (IsCollection) {
-        <img class="img-status margin-right" src="img/no.svg" alt="expand">
-    }
     @if (FoundChange is null) {
         <img class="img-status spin" src="img/load.svg" alt="processing">
     } else if (FoundChange.Change.HasEffect) {
         <img class="img-status" src="img/ok.svg" alt="step found">
     } else {
         <img class="img-status" src="img/no.svg" alt="no step found">
+    }
+    @if (IsCollection) {
+        var flipClass = collectionExpanded ? "flip-up" : "flip-down";
+        flip = false;
+        <img class="img-status margin-left @(flipClass)" src="img/chevron-down.svg" alt="expand">
     }
     <span class="margin-left">
         @Name
@@ -24,12 +26,16 @@
     [Parameter]
     public bool IsCollection { get; set; }
 
+    private bool flip;
+    private bool collectionExpanded;
+
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
 
     private async Task OnClicked(MouseEventArgs e)
     {
-        Console.WriteLine("Clicked Technique");
+        collectionExpanded = !collectionExpanded;
+        flip = true;
         await OnClickCallback.InvokeAsync(e);
     }
 }

@@ -21,11 +21,39 @@
     animation: spin 1.4s infinite linear;
 }
 
+.flip-up {
+    animation: flip-up 0.25s 1 linear;
+    animation-fill-mode: forwards;
+}
+
+.flip-down {
+    animation: flip-down 0.25s 1 linear;
+    animation-fill-mode: forwards;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
     }
     100% {
         transform: rotate(-360deg);
+    }
+}
+
+@keyframes flip-up {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes flip-down {
+    0% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }

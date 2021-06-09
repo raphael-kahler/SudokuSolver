@@ -1,3 +1,15 @@
 .indent {
     margin-left: 12px;
 }
+
+.hidden {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height, 0.2s linear;
+}
+
+.open {
+    overflow: hidden;
+    max-height: 144px;
+    transition: all, 0.2s linear;
+}
