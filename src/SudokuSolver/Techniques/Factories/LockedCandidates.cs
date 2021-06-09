@@ -4,17 +4,17 @@ using SudokuSolver.Techniques.LockedCandidates;
 
 namespace SudokuSolver.Techniques.Factories
 {
-    public class LockedSubsetTechniqueFactory
+    public class LockedCandidatesTechniqueFactory
     {
-        internal LockedSubsetTechniqueFactory() { }
+        internal LockedCandidatesTechniqueFactory() { }
 
-        public LockedCandidateClaimingFactory Claiming => new LockedCandidateClaimingFactory();
+        public LockedCandidatesClaimingFactory Claiming => new LockedCandidatesClaimingFactory();
         public LockedCandidatesPointingFactory Pointing => new LockedCandidatesPointingFactory();
     }
 
-    public class LockedCandidateClaimingFactory
+    public class LockedCandidatesClaimingFactory
     {
-        internal LockedCandidateClaimingFactory() { }
+        internal LockedCandidatesClaimingFactory() { }
 
         public ISolverTechnique Row() => new LockedCandidatesClaimingTechnique(RowCellCollector.Instance);
         public ISolverTechnique Column() => new LockedCandidatesClaimingTechnique(ColumnCellCollector.Instance);
