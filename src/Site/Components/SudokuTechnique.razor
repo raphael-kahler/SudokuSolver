@@ -1,0 +1,35 @@
+<div class="box-rounded" @onclick=OnClicked>
+    @if (IsCollection) {
+        <img class="img-status margin-right" src="img/no.svg" alt="expand">
+    }
+    @if (FoundChange is null) {
+        <img class="img-status spin" src="img/load.svg" alt="processing">
+    } else if (FoundChange.Change.HasEffect) {
+        <img class="img-status" src="img/ok.svg" alt="step found">
+    } else {
+        <img class="img-status" src="img/no.svg" alt="no step found">
+    }
+    <span class="margin-left">
+        @Name
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public IChangeDescription FoundChange { get; set; }
+
+    [Parameter]
+    public bool IsCollection { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
+
+    private async Task OnClicked(MouseEventArgs e)
+    {
+        Console.WriteLine("Clicked Technique");
+        await OnClickCallback.InvokeAsync(e);
+    }
+}

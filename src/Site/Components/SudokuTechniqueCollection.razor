@@ -1,0 +1,18 @@
+<SudokuTechnique Name="Hidden Subsets" IsCollection=true OnClickCallback="OnClicked"/>
+<div hidden=@(!expanded) class="indent">
+    @foreach (var technique in techniques) {
+        <SudokuTechnique Name=@technique />
+    }
+</div>
+
+@code {
+    private List<string> techniques = new List<string> { "Hidden Single", "Hidden Pair", "Hidden Triple", "Hidden Quad" };
+
+    private bool expanded;
+
+    private void OnClicked(MouseEventArgs e)
+    {
+        Console.WriteLine("Expanding/Shrinking");
+        expanded = !expanded;
+    }
+}

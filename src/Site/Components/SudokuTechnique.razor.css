@@ -1,0 +1,31 @@
+.box-rounded {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+.margin-left {
+    margin-left: 6px;
+}
+
+.margin-right {
+    margin-right: 6px;
+}
+
+.img-status {
+    width: 12px;
+    height: 12px;
+}
+
+.spin {
+    animation: spin 1.4s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}

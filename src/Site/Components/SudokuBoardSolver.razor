@@ -1,4 +1,11 @@
 <div class="puzzle-area">
+    <div>
+        <SudokuTechnique Name="XY-Wing" />
+        <SudokuTechnique Name="Hidden Triple" />
+        <SudokuTechnique Name="Swordfish" FoundChange="@(NoChangeDescription.Instance)" />
+        <SudokuTechniqueCollection/>
+    </div>
+
     <SudokuBoard Board="@(Board)" Change="@(shownChange)"/>
 
     <div class="btn-toolbar justify-content-between solver-btn-area">
