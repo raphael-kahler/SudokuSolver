@@ -12,13 +12,15 @@
         <img class="img-status margin-left @(flipClass)" src="img/chevron-down.svg" alt="expand">
     }
     <span class="margin-left">
-        @Name
+        @Technique.Name
     </span>
 </div>
 
 @code {
+    @implements IDisposable
+
     [Parameter]
-    public string Name { get; set; }
+    public ITechnique Technique { get; set; }
 
     [Parameter]
     public IChangeDescription FoundChange { get; set; }
@@ -29,6 +31,29 @@
     private bool flip;
     private bool collectionExpanded;
 
+    private ITechnique connectedTechnique { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated -= OnChangeComputed;
+        }
+        connectedTechnique = Technique;
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated += OnChangeComputed;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated -= OnChangeComputed;
+        }
+    }
+
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
 
@@ -37,5 +62,15 @@
         collectionExpanded = !collectionExpanded;
         flip = true;
         await OnClickCallback.InvokeAsync(e);
+    }
+
+    private void OnChangeComputed(object sender, IChangeDescription change)
+    {
+        if (change != null)
+        {
+            Console.WriteLine($"{Technique.Name} found change: {change.Change.HasEffect}");
+        }
+        FoundChange = change;
+        StateHasChanged();
     }
 }

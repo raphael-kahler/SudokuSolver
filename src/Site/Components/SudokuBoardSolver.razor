@@ -48,10 +48,11 @@
     private List<string> hintDescriptions = new List<string>();
 
     private List<ITechnique> techniqueList;
+    private TechniqueCollection techniqueCollection;
 
     private bool boardIsValid;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         this.boardStates = new List<BoardState> { Board };
         this.rules = new StandardSudokuRules();
@@ -158,12 +159,12 @@
                 new TechniqueWrapper("WXYZ-Wing", Technique.Wings.WxyzWing()),
             }),
         };
-
+        this.techniqueCollection = new TechniqueCollection("Techniques", this.techniqueList);
         this.boardIsValid = this.rules.BoardIsValid(Board);
-        ComputeChangeAndHints();
+        await ComputeChangeAndHints();
     }
 
-    private void ComputeChangeAndHints()
+    private async Task ComputeChangeAndHints()
     {
         this.changeDescription = ComputeNextStep();
         this.shownChange = BoardStateNoChange.Instance;
@@ -174,15 +175,17 @@
         {
             ShowNextHint();
         }
+        await this.techniqueCollection.FindChangeFor(Board);
     }
 
-    private void SolveNextStep()
+    private async Task SolveNextStep()
     {
         this.boardIsValid = this.rules.BoardChangeIsValid(Board, this.changeDescription.Change);
         var newBoard = Board.ApplyChange(this.changeDescription.Change);
         Board = newBoard;
         this.boardStates.Add(Board);
-        ComputeChangeAndHints();
+        this.techniqueCollection.ClearSolverChanges();
+        await ComputeChangeAndHints();
     }
 
     private IChangeDescription ComputeNextStep() =>
@@ -190,14 +193,15 @@
             ? NoChangeDescription.Instance
             : solver.GetNextChange(Board);
 
-    private void GoBackOneStep()
+    private async Task GoBackOneStep()
     {
         if (this.boardStates.Count > 1)
         {
             this.boardStates.RemoveAt(this.boardStates.Count - 1);
             Board = this.boardStates[this.boardStates.Count - 1];
             this.boardIsValid = true;
-            ComputeChangeAndHints();
+            this.techniqueCollection.ClearSolverChanges();
+            await ComputeChangeAndHints();
         }
     }
 

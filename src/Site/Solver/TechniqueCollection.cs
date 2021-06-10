@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using SudokuSolver;
 using SudokuSolver.Techniques;
 
@@ -7,17 +10,23 @@ namespace Site.Solver
     public interface ITechnique
     {
         string Name { get; }
-
         bool IsCollection { get; }
+        IChangeDescription FoundChange { get; }
+        event EventHandler<IChangeDescription> ChangeDescriptionUpdated;
+
+        void ClearSolverChanges();
+        Task<IChangeDescription> FindChangeFor(BoardState board);
     }
 
     public class TechniqueCollection : ITechnique
     {
         public bool IsCollection => true;
         public string Name { get; }
-        public IReadOnlyList<ITechnique> TechniqueCollections { get; }
+        public IReadOnlyList<ITechnique> Techniques { get; }
+        public IChangeDescription FoundChange { get; private set; }
+        public event EventHandler<IChangeDescription> ChangeDescriptionUpdated;
 
-        public TechniqueCollection(string name, IReadOnlyList<ITechnique> techniqueCollections)
+        public TechniqueCollection(string name, IReadOnlyList<ITechnique> techniques)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -25,16 +34,26 @@ namespace Site.Solver
             }
 
             Name = name;
-            TechniqueCollections = techniqueCollections ?? throw new System.ArgumentNullException(nameof(techniqueCollections));
+            Techniques = techniques ?? throw new System.ArgumentNullException(nameof(techniques));
         }
 
-        // public void FindChangeFor(BoardState board)
-        // {
-        //     foreach (var collection in TechniqueCollections)
-        //     {
-        //         collection.FindChangeFor(board);
-        //     }
-        // }
+        public async Task<IChangeDescription> FindChangeFor(BoardState board)
+        {
+            var changes = await Task.WhenAll<IChangeDescription>(Techniques.Select(async technique => await technique.FindChangeFor(board)));
+            FoundChange = changes.FirstOrDefault(change => change.Change.HasEffect) ?? NoChangeDescription.Instance;
+            ChangeDescriptionUpdated?.Invoke(this, FoundChange);
+            return FoundChange;
+        }
+
+        public void ClearSolverChanges()
+        {
+            FoundChange = null;
+            ChangeDescriptionUpdated?.Invoke(this, FoundChange);
+            foreach (var technique in Techniques)
+            {
+                technique.ClearSolverChanges();
+            }
+        }
     }
 
     public class TechniqueWrapper : ITechnique
@@ -42,6 +61,8 @@ namespace Site.Solver
         public bool IsCollection => false;
         public string Name { get; }
         public ISolverTechnique Technique { get; }
+        public IChangeDescription FoundChange { get; private set; }
+        public event EventHandler<IChangeDescription> ChangeDescriptionUpdated;
 
         public TechniqueWrapper(string name, ISolverTechnique technique)
         {
@@ -52,6 +73,22 @@ namespace Site.Solver
 
             Name = name;
             Technique = technique ?? throw new System.ArgumentNullException(nameof(technique));
+        }
+
+        public void ClearSolverChanges()
+        {
+            FoundChange = null;
+            ChangeDescriptionUpdated?.Invoke(this, FoundChange);
+        }
+
+        public async Task<IChangeDescription> FindChangeFor(BoardState board)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next(1, 10)));
+            FoundChange = NoChangeDescription.Instance;
+            FoundChange = Technique.GetPossibleBoardStateChange(board);
+            // FoundChange = await Task.Run<IChangeDescription>(() => Technique.GetPossibleBoardStateChange(board));
+            ChangeDescriptionUpdated?.Invoke(this, FoundChange);
+            return FoundChange;
         }
     }
 }

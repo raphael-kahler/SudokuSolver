@@ -1,10 +1,10 @@
 <div>
-    <SudokuTechnique Name=@Technique.Name IsCollection=Technique.IsCollection OnClickCallback="OnClicked"/>
+    <SudokuTechnique Technique=Technique IsCollection=Technique.IsCollection OnClickCallback="OnClicked"/>
     @if (Technique is TechniqueCollection collection)
     {
         var hiddenClass = expanded ? "open" : "hidden";
         <div class="indent @(hiddenClass)">
-            @foreach (var technique in collection.TechniqueCollections) {
+            @foreach (var technique in collection.Techniques) {
                 <SudokuTechniqueCollection Technique=technique />
             }
         </div>
