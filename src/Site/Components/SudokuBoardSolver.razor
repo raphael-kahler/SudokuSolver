@@ -1,7 +1,7 @@
 <div class="puzzle-area">
     <div>
         @foreach (var technique in this.techniqueList) {
-            <SudokuTechniqueCollection Technique="@(technique)"/>
+            <SudokuTechniqueCollection Technique="@(technique)" OnShowHintCallback="OnShowHint" OnShowChangeCallback="OnShowChange" />
         }
     </div>
 
@@ -172,7 +172,7 @@
         this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
         this.currentHint = 0;
         this.hintDescriptions.Clear();
-        if (changeDescription.Change.HasEffect)
+        if (this.changeDescription.Change.HasEffect)
         {
             ShowNextHint();
         }
@@ -220,5 +220,29 @@
             this.shownChange = this.changeDescription.Change;
             this.hintDescriptions.Add($"{this.changeDescription.FoundBy.DifficultyLevel} step: {this.changeDescription.FoundBy.Description}");
         }
+    }
+
+    private void OnShowHint(IChangeDescription change)
+    {
+        Console.WriteLine("Show Hint");
+        this.changeDescription = change;
+        this.shownChange = BoardStateNoChange.Instance;
+        this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
+        this.currentHint = 0;
+        this.hintDescriptions.Clear();
+        if (this.changeDescription.Change.HasEffect)
+        {
+            ShowNextHint();
+        }
+    }
+
+    private void OnShowChange(IChangeDescription change)
+    {
+        Console.WriteLine("Show Change");
+        this.changeDescription = change;
+        this.shownChange = change.Change;
+        this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
+        this.currentHint = 0;
+        this.hintDescriptions.Clear();
     }
 }

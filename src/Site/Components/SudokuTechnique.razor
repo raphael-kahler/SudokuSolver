@@ -40,6 +40,12 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
 
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowHintCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowChangeCallback { get; set; }
+
     private bool collectionExpanded;
 
     private ITechnique connectedTechnique { get; set; }
@@ -81,13 +87,7 @@
         StateHasChanged();
     }
 
-    private void ShowHint()
-    {
+    private Task ShowHint() => OnShowHintCallback.InvokeAsync(FoundChange);
 
-    }
-
-    private void ShowChange()
-    {
-
-    }
+    private Task ShowChange() => OnShowChangeCallback.InvokeAsync(FoundChange);
 }

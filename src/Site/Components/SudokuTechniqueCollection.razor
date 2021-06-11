@@ -1,11 +1,17 @@
 <div>
-    <SudokuTechnique Technique=Technique IsCollection=Technique.IsCollection OnClickCallback="OnClicked"/>
+    <SudokuTechnique Technique=Technique
+                     IsCollection=Technique.IsCollection
+                     OnClickCallback="OnClicked"
+                     OnShowHintCallback="OnShowHint"
+                     OnShowChangeCallback="OnShowChange"/>
     @if (Technique is TechniqueCollection collection)
     {
         var hiddenClass = expanded ? "open" : "hidden";
         <div class="indent @(hiddenClass)">
             @foreach (var technique in collection.Techniques) {
-                <SudokuTechniqueCollection Technique=technique />
+                <SudokuTechniqueCollection Technique=technique
+                                           OnShowHintCallback="OnShowHint"
+                                           OnShowChangeCallback="OnShowChange"/>
             }
         </div>
     }
@@ -15,6 +21,12 @@
     [Parameter]
     public ITechnique Technique { get; set; }
 
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowHintCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowChangeCallback { get; set; }
+
     private List<string> techniques = new List<string> { "Hidden Single", "Hidden Pair", "Hidden Triple", "Hidden Quad" };
 
     private bool expanded;
@@ -23,4 +35,8 @@
     {
         expanded = !expanded;
     }
+
+    private void OnShowHint(IChangeDescription change) => OnShowHintCallback.InvokeAsync(change);
+
+    private void OnShowChange(IChangeDescription change) => OnShowChangeCallback.InvokeAsync(change);
 }
