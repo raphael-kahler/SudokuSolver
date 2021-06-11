@@ -2,6 +2,17 @@
     border: 1px solid black;
     border-radius: 10px;
     padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.box-sm {
+    height: 24px;
+    width: 64px;
+    padding: 0 5px;
+    border: 1px solid black;
+    border-radius: 8px;
 }
 
 .margin-left {
@@ -15,6 +26,10 @@
 .img-status {
     width: 12px;
     height: 12px;
+}
+
+.row-end {
+    flex: auto;
 }
 
 .spin {

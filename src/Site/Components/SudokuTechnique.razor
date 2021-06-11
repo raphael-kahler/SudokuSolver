@@ -6,14 +6,23 @@
     } else {
         <img class="img-status" src="img/no.svg" alt="no step found">
     }
+
     @if (IsCollection) {
         var flipClass = collectionExpanded ? "flip-up" : "flip-down";
-        flip = false;
         <img class="img-status margin-left @(flipClass)" src="img/chevron-down.svg" alt="expand">
     }
+
     <span class="margin-left">
         @Technique.Name
     </span>
+
+    @if (!IsCollection && FoundChange != null && FoundChange.Change.HasEffect)
+    {
+        <div class="row-end">
+            <button class="btn btn-sm btn-outline-secondary box-sm" @onclick="ShowHint">Hint</button>
+            <button class="btn btn-sm btn-outline-secondary box-sm" @onclick="ShowChange">Show</button>
+        </div>
+    }
 </div>
 
 @code {
@@ -28,7 +37,9 @@
     [Parameter]
     public bool IsCollection { get; set; }
 
-    private bool flip;
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
+
     private bool collectionExpanded;
 
     private ITechnique connectedTechnique { get; set; }
@@ -54,13 +65,9 @@
         }
     }
 
-    [Parameter]
-    public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
-
     private async Task OnClicked(MouseEventArgs e)
     {
         collectionExpanded = !collectionExpanded;
-        flip = true;
         await OnClickCallback.InvokeAsync(e);
     }
 
@@ -72,5 +79,15 @@
         }
         FoundChange = change;
         StateHasChanged();
+    }
+
+    private void ShowHint()
+    {
+
+    }
+
+    private void ShowChange()
+    {
+
     }
 }
