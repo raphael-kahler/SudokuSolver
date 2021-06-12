@@ -40,9 +40,9 @@
         } else {
             if (Board.IsComplete) {
                 <p>Sudoku solved!</p>
-            } else if (this.techniqueCollection.FoundChange == null) {
+            } else if (showTechniqueSelection && techniqueCollection.FoundChange == null) {
                 <p>Running all solving techniques...</p>
-            } else if (this.techniqueCollection.FoundChange.Change.HasEffect) {
+            } else if (showTechniqueSelection && techniqueCollection.FoundChange.Change.HasEffect) {
                 <p>Select a technique to apply.</p>
             } else {
                 <p>Couldn't find any more steps for solving the Sudoku :(</p>
