@@ -1,9 +1,21 @@
 <div class="puzzle-area">
     <div>
-        @foreach (var technique in this.techniqueList) {
-            <SudokuTechniqueCollection Technique="@(technique)" OnShowHintCallback="OnShowHint" OnShowChangeCallback="OnShowChange" />
-        }
+        <span>easiest step</span>
+        <label class="switch">
+            <input type="checkbox" @onchange="ToggleTechniqueSelection">
+            <span class="slider round"></span>
+        </label>
+        <span>technique selection</span>
     </div>
+
+    @if (showTechniqueSelection)
+    {
+        <div>
+            @foreach (var technique in this.techniqueList) {
+                <SudokuTechniqueCollection Technique="@(technique)" OnShowHintCallback="OnShowHint" OnShowChangeCallback="OnShowChange" />
+            }
+        </div>
+    }
 
     <SudokuBoard Board="@(Board)" Change="@(shownChange)"/>
 
@@ -40,6 +52,8 @@
 @code {
     [Parameter]
     public BoardState Board { get; set; }
+
+    private bool showTechniqueSelection;
 
     private List<BoardState> boardStates;
     private ISolver solver;
@@ -169,7 +183,7 @@
 
         ComputeInitialBoardChanges();
         SetChangeDescription(NoChangeDescription.Instance);
-        await ComputeNextStep();
+        await ComputeNextStepForTechniques();
     }
 
     private void ComputeInitialBoardChanges()
@@ -187,7 +201,7 @@
         }
     }
 
-    private async Task<IChangeDescription> ComputeNextStep()
+    private async Task<IChangeDescription> ComputeNextStepForTechniques()
     {
         if (Board.IsComplete || !this.boardIsValid)
         {
@@ -206,7 +220,7 @@
         this.boardStates.Add(Board);
 
         SetChangeDescription(NoChangeDescription.Instance);
-        await ComputeNextStep();
+        await ComputeNextStepForTechniques();
     }
 
     private async Task BackClick()
@@ -218,7 +232,7 @@
             this.boardIsValid = true;
 
             SetChangeDescription(NoChangeDescription.Instance);
-            await ComputeNextStep();
+            await ComputeNextStepForTechniques();
         }
     }
 
@@ -280,6 +294,16 @@
         if (this.changeDescription.Change.HasEffect)
         {
             ShowAllHints();
+        }
+    }
+
+    private async Task ToggleTechniqueSelection(ChangeEventArgs e)
+    {
+        Console.WriteLine("toggled: " + e.Value);
+        this.showTechniqueSelection = (bool)e.Value;
+        if (this.showTechniqueSelection)
+        {
+            await ComputeNextStepForTechniques();
         }
     }
 }
