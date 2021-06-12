@@ -40,8 +40,10 @@
         } else {
             if (Board.IsComplete) {
                 <p>Sudoku solved!</p>
-            } else if (false /*todo: check if any techniques can be applied*/) {
-                <p>Select which technique to apply.</p>
+            } else if (this.techniqueCollection.FoundChange == null) {
+                <p>Running all solving techniques...</p>
+            } else if (this.techniqueCollection.FoundChange.Change.HasEffect) {
+                <p>Select a technique to apply.</p>
             } else {
                 <p>Couldn't find any more steps for solving the Sudoku :(</p>
             }
@@ -81,7 +83,7 @@
 
         ComputeInitialBoardChanges();
         SetChangeDescription(NoChangeDescription.Instance);
-        await ComputeNextStepForTechniques();
+        await ComputeNextStep();
     }
 
     private void ComputeInitialBoardChanges()
@@ -99,13 +101,26 @@
         }
     }
 
-    private async Task<IChangeDescription> ComputeNextStepForTechniques()
+    private async Task ComputeNextStep()
     {
         if (Board.IsComplete || !this.boardIsValid)
         {
-            return NoChangeDescription.Instance;
+            return;
         }
 
+        if (this.showTechniqueSelection)
+        {
+            await ComputeNextStepForTechniques();
+        }
+        else
+        {
+            var change = this.solver.GetNextChange(Board);
+            OnShowHint(change);
+        }
+    }
+
+    private async Task<IChangeDescription> ComputeNextStepForTechniques()
+    {
         this.techniqueCollection.ClearSolverChanges();
         return await this.techniqueCollection.FindChangeFor(Board);
     }
@@ -118,7 +133,7 @@
         this.boardStates.Add(Board);
 
         SetChangeDescription(NoChangeDescription.Instance);
-        await ComputeNextStepForTechniques();
+        await ComputeNextStep();
     }
 
     private async Task BackClick()
@@ -130,7 +145,7 @@
             this.boardIsValid = true;
 
             SetChangeDescription(NoChangeDescription.Instance);
-            await ComputeNextStepForTechniques();
+            await ComputeNextStep();
         }
     }
 
@@ -175,7 +190,7 @@
         ClearHints();
     }
 
-    private async Task OnShowHint(IChangeDescription change)
+    private void OnShowHint(IChangeDescription change)
     {
         Console.WriteLine("Show Hint");
         SetChangeDescription(change);
@@ -185,7 +200,7 @@
         }
     }
 
-    private async Task OnShowChange(IChangeDescription change)
+    private void OnShowChange(IChangeDescription change)
     {
         Console.WriteLine("Show Change");
         SetChangeDescription(change);
@@ -199,9 +214,6 @@
     {
         Console.WriteLine("toggled: " + e.Value);
         this.showTechniqueSelection = (bool)e.Value;
-        if (this.showTechniqueSelection)
-        {
-            await ComputeNextStepForTechniques();
-        }
+        await ComputeNextStep();
     }
 }
