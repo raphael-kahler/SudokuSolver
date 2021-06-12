@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SudokuSolver;
 using SudokuSolver.Techniques;
 
-namespace Site.Solver
+namespace Site.Lib
 {
     public interface ITechnique
     {
