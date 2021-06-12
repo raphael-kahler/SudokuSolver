@@ -8,6 +8,20 @@
         <span>technique selection</span>
     </div>
 
+    <div class="switch-button">
+        <input class="switch-button-checkbox" type="checkbox" @onchange="ToggleTechniqueSelection"/>
+        <label class="switch-button-label" for="">
+            <span class="switch-button-label-span">easiest step</span>
+        </label>
+    </div>
+
+	<div class="toggle">
+		<input type="radio" name="sizeBy" value="weight" id="sizeWeight" checked="checked" />
+		<label for="sizeWeight">Easiest step only</label>
+		<input type="radio" name="sizeBy" value="dimensions" id="sizeDimensions" />
+		<label for="sizeDimensions">Technique selection</label>
+	</div>
+
     @if (showTechniqueSelection)
     {
         <div>
