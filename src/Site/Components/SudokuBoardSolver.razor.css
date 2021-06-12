@@ -1,9 +1,10 @@
 .puzzle-area {
-    width: 448px;
+  margin-top: 45px;
+  width: 448px;
 }
 
 .solver-btn-area {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
 /* The switch - the box around the slider */
