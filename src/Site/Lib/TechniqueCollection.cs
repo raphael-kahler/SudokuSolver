@@ -16,6 +16,7 @@ namespace Site.Lib
 
         void ClearSolverChanges();
         Task<IChangeDescription> FindChangeFor(BoardState board);
+        Task<IChangeDescription> FindNextChangeFor(BoardState board);
     }
 
     public class TechniqueCollection : ITechnique
@@ -43,6 +44,27 @@ namespace Site.Lib
             FoundChange = changes.FirstOrDefault(change => change.Change.HasEffect) ?? NoChangeDescription.Instance;
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
             return FoundChange;
+        }
+
+        public async Task<IChangeDescription> FindNextChangeFor(BoardState board)
+        {
+            if (FoundChange != null)
+            {
+                return FoundChange;
+            }
+            var nextTechnique = Techniques.FirstOrDefault(t => t.FoundChange == null);
+            if (nextTechnique != null)
+            {
+                await nextTechnique.FindNextChangeFor(board);
+            }
+            if (Techniques.All(t => t.FoundChange != null))
+            {
+                FoundChange = Techniques.FirstOrDefault(t => t.FoundChange.Change.HasEffect)?.FoundChange ?? NoChangeDescription.Instance;
+                ChangeDescriptionUpdated?.Invoke(this, FoundChange);
+                return FoundChange;
+            }
+
+            return null;
         }
 
         public void ClearSolverChanges()
@@ -90,5 +112,7 @@ namespace Site.Lib
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
             return FoundChange;
         }
+
+        public Task<IChangeDescription> FindNextChangeFor(BoardState board) => FindChangeFor(board);
     }
 }

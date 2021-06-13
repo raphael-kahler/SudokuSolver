@@ -136,7 +136,12 @@
     private async Task<IChangeDescription> ComputeNextStepForTechniques()
     {
         this.techniqueCollection.ClearSolverChanges();
-        return await this.techniqueCollection.FindChangeFor(Board);
+        IChangeDescription change = null;
+        while (change == null)
+        {
+            change = await this.techniqueCollection.FindNextChangeFor(Board);
+        }
+        return change;
     }
 
     private async Task NextStepClick()
