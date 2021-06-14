@@ -105,7 +105,7 @@ namespace Site.Lib
 
         public async Task<IChangeDescription> FindChangeFor(BoardState board)
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next(1, 10)));
+            await Task.Delay(TimeSpan.FromMilliseconds(1));
             FoundChange = NoChangeDescription.Instance;
             FoundChange = FindChange(board);
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
