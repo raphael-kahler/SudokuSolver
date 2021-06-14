@@ -119,6 +119,17 @@ namespace SudokuSolver.Tests.Techniques.FishTechniques
                     new List<Position> { (7, 4), (7, 6) },
                 }
             };
+            // no fish
+            yield return new object[]
+            {
+                FishType.NoFish,
+                new LargeFishFinder(3, RowOrientation.Instance),
+                new List<IList<Position>> {
+                    new List<Position> { (0, 4), (0, 8) },
+                    new List<Position> { (1, 4), (1, 8) },
+                    new List<Position> { (4, 1), (4, 2) },
+                }
+            };
             // three-fish
             yield return new object[]
             {

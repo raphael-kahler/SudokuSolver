@@ -36,6 +36,13 @@ namespace SudokuSolver.Techniques.FishTechniques
             {
                 if (extraFishPositions.Count() == 2)
                 {
+                    var primaryPosCount = extraFishPositions.Select(p => orientation.PrimaryDimension(p.Value.Single())).Distinct().Count();
+                    if (primaryPosCount == 1)
+                    {
+                        // If there are two extra positions they need to be in to different primary positions
+                        return NoFish.Instance;
+                    }
+
                     // special case where two single positions remain. Use one as position and the other as fin
                     var finPos = extraFishPositions.First().Value.Single();
                     var finLogicalSecondaryDim = extraFishPositions.Skip(1).First().Key;
