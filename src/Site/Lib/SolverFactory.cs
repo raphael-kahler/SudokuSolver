@@ -32,15 +32,11 @@ namespace Site.Lib
             new TechniqueCollection("Techniques", new List<ITechnique>
             {
                 new TechniqueCollection("Basic", new List<ITechnique> {
-                    new TechniqueCollection("Elimination By Value", new List<ITechnique> {
-                        new TechniqueWrapper("Elimination by Row", Technique.EliminationByValue.Row()),
-                        new TechniqueWrapper("Elimination by Column", Technique.EliminationByValue.Column()),
-                        new TechniqueWrapper("Elimination by Box", Technique.EliminationByValue.Box()),
-                    })
+                    new SolverWrapper("Elimination by Value", new Solver().With(Technique.EliminationByValue.AllDirections()).GlobChanges()),
                 }),
                 new TechniqueCollection("Subsets", new List<ITechnique> {
                     new TechniqueCollection("Naked", new List<ITechnique> {
-                        new TechniqueWrapper("Naked Single", Technique.Subsets.NakedSingle()),
+                        new SolverWrapper("Naked Single", new Solver().With(Technique.Subsets.NakedSingle()).GlobChanges()),
                         new TechniqueCollection("Naked Pair", new List<ITechnique> {
                             new TechniqueWrapper("Naked Pair (Row)", Technique.Subsets.NakedPairRow()),
                             new TechniqueWrapper("Naked Pair (Column)", Technique.Subsets.NakedPairColumn()),

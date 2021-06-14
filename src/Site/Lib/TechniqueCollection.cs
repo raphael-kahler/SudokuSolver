@@ -78,15 +78,14 @@ namespace Site.Lib
         }
     }
 
-    public class TechniqueWrapper : ITechnique
+    public abstract class BaseTechnique : ITechnique
     {
         public bool IsCollection => false;
         public string Name { get; }
-        public ISolverTechnique Technique { get; }
         public IChangeDescription FoundChange { get; private set; }
         public event EventHandler<IChangeDescription> ChangeDescriptionUpdated;
 
-        public TechniqueWrapper(string name, ISolverTechnique technique)
+        public BaseTechnique(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -94,7 +93,6 @@ namespace Site.Lib
             }
 
             Name = name;
-            Technique = technique ?? throw new System.ArgumentNullException(nameof(technique));
         }
 
         public void ClearSolverChanges()
@@ -103,15 +101,39 @@ namespace Site.Lib
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
         }
 
+        public Task<IChangeDescription> FindNextChangeFor(BoardState board) => FindChangeFor(board);
+
         public async Task<IChangeDescription> FindChangeFor(BoardState board)
         {
             await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next(1, 10)));
             FoundChange = NoChangeDescription.Instance;
-            FoundChange = Technique.GetPossibleBoardStateChange(board);
+            FoundChange = FindChange(board);
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
             return FoundChange;
         }
 
-        public Task<IChangeDescription> FindNextChangeFor(BoardState board) => FindChangeFor(board);
+        protected abstract IChangeDescription FindChange(BoardState board);
+    }
+
+    public class TechniqueWrapper : BaseTechnique
+    {
+        private readonly ISolverTechnique technique;
+
+        public TechniqueWrapper(string name, ISolverTechnique technique) : base(name) =>
+            this.technique = technique ?? throw new System.ArgumentNullException(nameof(technique));
+
+        protected override IChangeDescription FindChange(BoardState board) =>
+            this.technique.GetPossibleBoardStateChange(board);
+    }
+
+    public class SolverWrapper : BaseTechnique
+    {
+        private readonly ISolver solver;
+
+        public SolverWrapper(string name, ISolver solver) : base(name) =>
+            this.solver = solver ?? throw new System.ArgumentNullException(nameof(solver));
+
+        protected override IChangeDescription FindChange(BoardState board) =>
+            this.solver.GetNextChange(board);
     }
 }
