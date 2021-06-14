@@ -1,3 +1,5 @@
+@using System.Threading
+
 <div class="puzzle-area">
     <div class="text-center margin-bottom-sm">
         <BoolButtonGroup FalseText="Easiest Step" TrueText="Technique Selection" OnToggleCallback="ToggleTechniqueSelection" />
@@ -63,6 +65,8 @@
     private List<string> hintDescriptions = new List<string>();
 
     private TechniqueCollection techniqueCollection;
+    private CancellationTokenSource techniqueCanceller = new CancellationTokenSource();
+    private readonly object lockObj = new object();
 
     private bool boardIsValid;
 
@@ -116,9 +120,16 @@
 
     private async Task<IChangeDescription> ComputeNextStepForTechniques()
     {
+        this.techniqueCanceller.Cancel(); // cancel any other running computations
+        lock (this.lockObj)
+        {
+            this.techniqueCanceller = new CancellationTokenSource();
+        }
         this.techniqueCollection.ClearSolverChanges();
+
+        var cancellationToken = this.techniqueCanceller.Token;
         IChangeDescription change = null;
-        while (change == null)
+        while (change == null && !cancellationToken.IsCancellationRequested)
         {
             change = await this.techniqueCollection.FindNextChangeFor(Board);
         }
