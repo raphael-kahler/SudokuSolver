@@ -1,0 +1,91 @@
+<div class="box-rounded" @onclick=OnClicked>
+    @if (FoundChange is null) {
+        <img class="img-status spin" src="img/load.svg" alt="processing">
+    } else if (FoundChange.Change.HasEffect) {
+        <img class="img-status" src="img/ok.svg" alt="step found">
+    } else {
+        <img class="img-status" src="img/no.svg" alt="no step found">
+    }
+
+    @if (IsCollection) {
+        var flipClass = collectionExpanded ? "flip-up" : "flip-down";
+        <img class="img-status margin-left @(flipClass)" src="img/chevron-down.svg" alt="expand">
+    }
+
+    <span class="margin-left">
+        @Technique.Name
+    </span>
+
+    @if (!IsCollection && FoundChange != null && FoundChange.Change.HasEffect)
+    {
+        <div class="row-end">
+            <button class="btn btn-sm btn-outline-secondary box-sm" @onclick="ShowHint">Hint</button>
+            <button class="btn btn-sm btn-outline-secondary box-sm" @onclick="ShowChange">Show</button>
+        </div>
+    }
+</div>
+
+@code {
+    @implements IDisposable
+
+    [Parameter]
+    public ITechnique Technique { get; set; }
+
+    private IChangeDescription FoundChange => Technique.FoundChange;
+
+    [Parameter]
+    public bool IsCollection { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowHintCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<IChangeDescription> OnShowChangeCallback { get; set; }
+
+    private bool collectionExpanded;
+
+    private ITechnique connectedTechnique { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated -= OnChangeComputed;
+        }
+        connectedTechnique = Technique;
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated += OnChangeComputed;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (connectedTechnique != null)
+        {
+            connectedTechnique.ChangeDescriptionUpdated -= OnChangeComputed;
+        }
+    }
+
+    private async Task OnClicked(MouseEventArgs e)
+    {
+        collectionExpanded = !collectionExpanded;
+        await OnClickCallback.InvokeAsync(e);
+    }
+
+    private void OnChangeComputed(object sender, IChangeDescription change)
+    {
+        if (change != null)
+        {
+            Console.WriteLine($"{Technique.Name} found change: {change.Change.HasEffect}");
+        }
+        StateHasChanged();
+    }
+
+    private Task ShowHint() => OnShowHintCallback.InvokeAsync(FoundChange);
+
+    private Task ShowChange() => OnShowChangeCallback.InvokeAsync(FoundChange);
+}

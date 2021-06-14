@@ -1,0 +1,74 @@
+.box-rounded {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.box-sm {
+    height: 24px;
+    width: 64px;
+    padding: 0 5px;
+    border: 1px solid black;
+    border-radius: 8px;
+}
+
+.margin-left {
+    margin-left: 6px;
+}
+
+.margin-right {
+    margin-right: 6px;
+}
+
+.img-status {
+    width: 12px;
+    height: 12px;
+}
+
+.row-end {
+    flex: auto;
+}
+
+.spin {
+    animation: spin 1.4s infinite linear;
+}
+
+.flip-up {
+    animation: flip-up 0.25s 1 linear;
+    animation-fill-mode: forwards;
+}
+
+.flip-down {
+    animation: flip-down 0.25s 1 linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes flip-up {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes flip-down {
+    0% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}

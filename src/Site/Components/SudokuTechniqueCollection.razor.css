@@ -1,0 +1,16 @@
+.indent {
+    margin-left: 12px;
+}
+
+.hidden {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height, 0.2s linear;
+}
+
+.open {
+    overflow: hidden;
+    /* todo: need to find a way to dynamically set the correct max height as menus and submenus expand */
+    /* max-height: 1440px; */
+    transition: all, 0.2s linear;
+}

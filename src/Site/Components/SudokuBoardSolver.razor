@@ -1,35 +1,58 @@
+@using System.Threading
+
 <div class="puzzle-area">
+    <div class="text-center margin-bottom-sm">
+        <BoolButtonGroup FalseText="Easiest Step" TrueText="Technique Selection" OnToggleCallback="ToggleTechniqueSelection" />
+    </div>
+
+    @if (showTechniqueSelection)
+    {
+        <div>
+            @foreach (var technique in this.techniqueCollection.Techniques) {
+                <SudokuTechniqueCollection Technique="@(technique)" OnShowHintCallback="OnShowHint" OnShowChangeCallback="OnShowChange" />
+            }
+        </div>
+    }
+
     <SudokuBoard Board="@(Board)" Change="@(shownChange)"/>
 
     <div class="btn-toolbar justify-content-between solver-btn-area">
-        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(boardStates.Count <= 1)" @onclick="GoBackOneStep">Back</button>
-        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(NoMoreHints)" @onclick="ShowNextHint">Hint</button>
-        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(!changeDescription.Change.HasEffect)" @onclick="SolveNextStep">Next step</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(boardStates.Count <= 1)" @onclick="BackClick">Back</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(NoMoreHints)" @onclick="NextHintClick">Hint</button>
+        <button class="btn btn-outline-secondary sudoku-btn" disabled="@(!changeDescription.Change.HasEffect)" @onclick="NextStepClick">Next step</button>
     </div>
 
-    <ul hidden="@(!hintDescriptions.Any())">
-        @foreach (var hintDescription in hintDescriptions)
-        {
-            <li>@hintDescription</li>
-        }
-    </ul>
+    <div>
+        <ul hidden="@(!hintDescriptions.Any())">
+            @foreach (var hintDescription in hintDescriptions)
+            {
+                <li>@hintDescription</li>
+            }
+        </ul>
 
-    @if (!boardIsValid) {
-        <p>Oh no! The Sudoku puzzle got into an invalid state :(</p>
-    } else if (changeDescription.Change.HasEffect) {
-        @* <p>@(change.FoundBy.DifficultyLevel) step: @(change.FoundBy.Description)</p> *@
-    } else {
-        if (Board.IsComplete) {
-            <p>Sudoku solved!</p>
+        @if (!boardIsValid) {
+            <p>Oh no! The Sudoku puzzle got into an invalid state :(</p>
+        } else if (changeDescription.Change.HasEffect) {
+            @* <p>@(change.FoundBy.DifficultyLevel) step: @(change.FoundBy.Description)</p> *@
         } else {
-            <p>Couldn't find any more steps for solving the Sudoku :(</p>
+            if (Board.IsComplete) {
+                <p>Sudoku solved!</p>
+            } else if (showTechniqueSelection && techniqueCollection.FoundChange == null) {
+                <p>Running all solving techniques...</p>
+            } else if (showTechniqueSelection && techniqueCollection.FoundChange.Change.HasEffect) {
+                <p>Select a technique to apply.</p>
+            } else {
+                <p>Couldn't find any more steps for solving the Sudoku :(</p>
+            }
         }
-    }
+    </div>
 </div>
 
 @code {
     [Parameter]
     public BoardState Board { get; set; }
+
+    private bool showTechniqueSelection;
 
     private List<BoardState> boardStates;
     private ISolver solver;
@@ -41,89 +64,169 @@
     private bool NoMoreHints => currentHint > hints.Count || !changeDescription.Change.HasEffect;
     private List<string> hintDescriptions = new List<string>();
 
+    private TechniqueCollection techniqueCollection;
+    private CancellationTokenSource techniqueCanceller = new CancellationTokenSource();
+    private readonly object lockObj = new object();
+
     private bool boardIsValid;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         this.boardStates = new List<BoardState> { Board };
         this.rules = new StandardSudokuRules();
-        this.solver = new ChainedSolver()
-            .WithSolver(new Solver().With(Technique.Subsets.NakedSingle()).GlobChanges())
-            .WithSolver(new Solver().With(Technique.EliminationByValue.AllDirections()).GlobChanges())
-            .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleRow()).GlobChanges())
-            .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleColumn()).GlobChanges())
-            .WithSolver(new Solver().With(Technique.Subsets.HiddenSingleBox()).GlobChanges())
-            .WithSolver(new Solver()
-                .With(Technique.LockedCandidates.Pointing.AllDirections())
-                .With(Technique.LockedCandidates.Claiming.AllDirections())
-                .With(Technique.Subsets.NakedPairs())
-                .With(Technique.Subsets.HiddenPairs())
-                .With(Technique.Subsets.NakedTriples())
-                .With(Technique.Subsets.HiddenTriples())
-                .With(Technique.Subsets.NakedQuads())
-                .With(Technique.Subsets.HiddenQuads())
-                .With(Technique.Fish.XWing())
-                .With(Technique.Wings.XyWing())
-                .With(Technique.Fish.Swordfish())
-                .With(Technique.Fish.Jellyfish())
-                .With(Technique.Wings.XyzWing())
-                .With(Technique.Wings.WxyzWing()));
+
+        this.solver = SolverFactory.DefaultSolver();
+        this.techniqueCollection = SolverFactory.TechniqueList();
 
         this.boardIsValid = this.rules.BoardIsValid(Board);
-        ComputeChangeAndHints();
+
+        ComputeInitialBoardChanges();
+        SetChangeDescription(NoChangeDescription.Instance);
+        await ComputeNextStep();
     }
 
-    private void ComputeChangeAndHints()
+    private void ComputeInitialBoardChanges()
     {
-        this.changeDescription = ComputeNextStep();
-        this.shownChange = BoardStateNoChange.Instance;
-        this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
-        this.currentHint = 0;
-        this.hintDescriptions.Clear();
+        if (Board.IsComplete || !this.boardIsValid)
+        {
+            return;
+        }
+
+        var solver = new Solver().With(Technique.EliminationByValue.AllDirections()).GlobChanges();
+        var changeDescription = solver.GetNextChange(Board);
         if (changeDescription.Change.HasEffect)
         {
-            ShowNextHint();
+            Board = Board.ApplyChange(changeDescription.Change);
         }
     }
 
-    private void SolveNextStep()
+    private async Task ComputeNextStep()
+    {
+        if (Board.IsComplete || !this.boardIsValid)
+        {
+            if (this.showTechniqueSelection)
+            {
+                this.techniqueCollection.SetToNotFound();
+            }
+            return;
+        }
+
+        if (this.showTechniqueSelection)
+        {
+            SetChangeDescription(NoChangeDescription.Instance);
+            await ComputeNextStepForTechniques();
+        }
+        else
+        {
+            var change = this.solver.GetNextChange(Board);
+            OnShowHint(change);
+        }
+    }
+
+    private async Task<IChangeDescription> ComputeNextStepForTechniques()
+    {
+        this.techniqueCanceller.Cancel(); // cancel any other running computations
+        lock (this.lockObj)
+        {
+            this.techniqueCanceller = new CancellationTokenSource();
+        }
+        this.techniqueCollection.Reset();
+
+        var cancellationToken = this.techniqueCanceller.Token;
+        IChangeDescription change = null;
+        while (change == null && !cancellationToken.IsCancellationRequested)
+        {
+            change = await this.techniqueCollection.FindNextChangeFor(Board);
+        }
+        return change;
+    }
+
+    private async Task NextStepClick()
     {
         this.boardIsValid = this.rules.BoardChangeIsValid(Board, this.changeDescription.Change);
         var newBoard = Board.ApplyChange(this.changeDescription.Change);
         Board = newBoard;
         this.boardStates.Add(Board);
-        ComputeChangeAndHints();
+
+        SetChangeDescription(NoChangeDescription.Instance);
+        await ComputeNextStep();
     }
 
-    private IChangeDescription ComputeNextStep() =>
-        (Board.IsComplete || !this.boardIsValid)
-            ? NoChangeDescription.Instance
-            : solver.GetNextChange(Board);
-
-    private void GoBackOneStep()
+    private async Task BackClick()
     {
         if (this.boardStates.Count > 1)
         {
             this.boardStates.RemoveAt(this.boardStates.Count - 1);
             Board = this.boardStates[this.boardStates.Count - 1];
             this.boardIsValid = true;
-            ComputeChangeAndHints();
+
+            SetChangeDescription(NoChangeDescription.Instance);
+            await ComputeNextStep();
         }
     }
 
-    private void ShowNextHint()
+    private void NextHintClick() => ShowNextHint();
+
+    private bool ShowNextHint()
     {
         if (this.currentHint < this.hints.Count)
         {
             var hint = this.hints[currentHint++];
             this.shownChange = hint.Change;
             this.hintDescriptions.Add(hint.Description);
+            return true;
         }
         else if (this.currentHint == this.hints.Count)
         {
             this.currentHint++;
             this.shownChange = this.changeDescription.Change;
             this.hintDescriptions.Add($"{this.changeDescription.FoundBy.DifficultyLevel} step: {this.changeDescription.FoundBy.Description}");
+            return true;
         }
+
+        return false;
+    }
+
+    private void ShowAllHints()
+    {
+        while (ShowNextHint()) { }
+    }
+
+    private void ClearHints()
+    {
+        this.shownChange = this.changeDescription.Change;
+        this.hints = this.changeDescription.ChangeHinter.GetHints().ToList();
+        this.currentHint = 0;
+        this.hintDescriptions.Clear();
+    }
+
+    private void SetChangeDescription(IChangeDescription changeDescription)
+    {
+        this.changeDescription = changeDescription;
+        ClearHints();
+    }
+
+    private void OnShowHint(IChangeDescription change)
+    {
+        SetChangeDescription(change);
+        if (this.changeDescription.Change.HasEffect)
+        {
+            ShowNextHint();
+        }
+    }
+
+    private void OnShowChange(IChangeDescription change)
+    {
+        SetChangeDescription(change);
+        if (this.changeDescription.Change.HasEffect)
+        {
+            ShowAllHints();
+        }
+    }
+
+    private async Task ToggleTechniqueSelection(bool value)
+    {
+        this.showTechniqueSelection = value;
+        await ComputeNextStep();
     }
 }
