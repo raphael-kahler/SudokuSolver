@@ -1,26 +1,7 @@
 <div class="puzzle-area">
-    <div class="text-center">
-        <span>easiest step</span>
-        <label class="switch">
-            <input type="checkbox" @onchange="ToggleTechniqueSelection">
-            <span class="slider round"></span>
-        </label>
-        <span>technique selection</span>
+    <div class="text-center margin-bottom-sm">
+        <BoolButtonGroup FalseText="Easiest Step" TrueText="Technique Selection" OnToggleCallback="ToggleTechniqueSelection" />
     </div>
-
-    <div class="switch-button">
-        <input class="switch-button-checkbox" type="checkbox" @onchange="ToggleTechniqueSelection"/>
-        <label class="switch-button-label" for="">
-            <span class="switch-button-label-span">easiest step</span>
-        </label>
-    </div>
-
-	<div class="toggle">
-		<input type="radio" name="sizeBy" value="weight" id="sizeWeight" checked="checked" />
-		<label for="sizeWeight">Easiest step only</label>
-		<input type="radio" name="sizeBy" value="dimensions" id="sizeDimensions" />
-		<label for="sizeDimensions">Technique selection</label>
-	</div>
 
     @if (showTechniqueSelection)
     {
@@ -229,10 +210,10 @@
         }
     }
 
-    private async Task ToggleTechniqueSelection(ChangeEventArgs e)
+    private async Task ToggleTechniqueSelection(bool value)
     {
-        Console.WriteLine("toggled: " + e.Value);
-        this.showTechniqueSelection = (bool)e.Value;
+        Console.WriteLine("toggled: " + value);
+        this.showTechniqueSelection = value;
         await ComputeNextStep();
     }
 }

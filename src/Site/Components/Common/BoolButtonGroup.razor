@@ -1,0 +1,34 @@
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-outline-secondary @GetActiveClass(!selectedValue)">
+        <input type="radio" name="options" autocomplete="off" checked="@(!selectedValue)" @onchange="() => OnSelection(false)">
+        @FalseText
+    </label>
+    <label class="btn btn-outline-secondary @GetActiveClass(selectedValue)">
+        <input type="radio" name="options" autocomplete="off" checked="@(selectedValue)" @onchange="() => OnSelection(true)">
+        @TrueText
+    </label>
+</div>
+
+@code {
+    private bool selectedValue;
+
+    [Parameter]
+    public string FalseText { get; set; }
+
+    [Parameter]
+    public string TrueText { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnToggleCallback { get; set; }
+
+    private string GetActiveClass(bool shouldBeActive) => shouldBeActive ? "active" : string.Empty;
+
+    private async Task OnSelection(bool value)
+    {
+        if (value != selectedValue)
+        {
+            this.selectedValue = value;
+            await OnToggleCallback.InvokeAsync(value);
+        };
+    }
+}

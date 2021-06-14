@@ -108,7 +108,6 @@ namespace Site.Lib
             await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next(1, 10)));
             FoundChange = NoChangeDescription.Instance;
             FoundChange = Technique.GetPossibleBoardStateChange(board);
-            // FoundChange = await Task.Run<IChangeDescription>(() => Technique.GetPossibleBoardStateChange(board));
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
             return FoundChange;
         }
