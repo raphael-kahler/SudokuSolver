@@ -14,7 +14,8 @@ namespace Site.Lib
         IChangeDescription FoundChange { get; }
         event EventHandler<IChangeDescription> ChangeDescriptionUpdated;
 
-        void ClearSolverChanges();
+        void Reset();
+        void SetToNotFound();
         Task<IChangeDescription> FindChangeFor(BoardState board);
         Task<IChangeDescription> FindNextChangeFor(BoardState board);
     }
@@ -67,13 +68,16 @@ namespace Site.Lib
             return null;
         }
 
-        public void ClearSolverChanges()
+        public void Reset() => SetSolverChanges(null, t => t.Reset());
+        public void SetToNotFound() => SetSolverChanges(NoChangeDescription.Instance, t => t.SetToNotFound());
+
+        private void SetSolverChanges(IChangeDescription change, Action<ITechnique> techniqueAction)
         {
-            FoundChange = null;
+            FoundChange = change;
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
             foreach (var technique in Techniques)
             {
-                technique.ClearSolverChanges();
+                techniqueAction(technique);
             }
         }
     }
@@ -95,9 +99,12 @@ namespace Site.Lib
             Name = name;
         }
 
-        public void ClearSolverChanges()
+        public void Reset() => SetSolverChanges(null);
+        public void SetToNotFound() => SetSolverChanges(NoChangeDescription.Instance);
+
+        private void SetSolverChanges(IChangeDescription change)
         {
-            FoundChange = null;
+            FoundChange = change;
             ChangeDescriptionUpdated?.Invoke(this, FoundChange);
         }
 

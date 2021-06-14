@@ -104,6 +104,10 @@
     {
         if (Board.IsComplete || !this.boardIsValid)
         {
+            if (this.showTechniqueSelection)
+            {
+                this.techniqueCollection.SetToNotFound();
+            }
             return;
         }
 
@@ -126,7 +130,7 @@
         {
             this.techniqueCanceller = new CancellationTokenSource();
         }
-        this.techniqueCollection.ClearSolverChanges();
+        this.techniqueCollection.Reset();
 
         var cancellationToken = this.techniqueCanceller.Token;
         IChangeDescription change = null;

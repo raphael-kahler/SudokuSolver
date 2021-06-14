@@ -31,8 +31,7 @@
     [Parameter]
     public ITechnique Technique { get; set; }
 
-    [Parameter]
-    public IChangeDescription FoundChange { get; set; }
+    private IChangeDescription FoundChange => Technique.FoundChange;
 
     [Parameter]
     public bool IsCollection { get; set; }
@@ -83,7 +82,6 @@
         {
             Console.WriteLine($"{Technique.Name} found change: {change.Change.HasEffect}");
         }
-        FoundChange = change;
         StateHasChanged();
     }
 
