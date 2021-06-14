@@ -192,7 +192,6 @@
 
     private void OnShowHint(IChangeDescription change)
     {
-        Console.WriteLine("Show Hint");
         SetChangeDescription(change);
         if (this.changeDescription.Change.HasEffect)
         {
@@ -202,7 +201,6 @@
 
     private void OnShowChange(IChangeDescription change)
     {
-        Console.WriteLine("Show Change");
         SetChangeDescription(change);
         if (this.changeDescription.Change.HasEffect)
         {
@@ -212,7 +210,6 @@
 
     private async Task ToggleTechniqueSelection(bool value)
     {
-        Console.WriteLine("toggled: " + value);
         this.showTechniqueSelection = value;
         await ComputeNextStep();
     }
