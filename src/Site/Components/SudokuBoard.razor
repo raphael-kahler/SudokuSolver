@@ -66,6 +66,10 @@
             {
                 SetValue(value);
             }
+            else if (e.Key == " ")
+            {
+                SetValue(0);
+            }
             else
             {
                 MovePosition(e);
@@ -89,6 +93,7 @@
         }
 
         this.readyToSolve = Board.Cells.Any(c => c.Value.HasValue);
+        SelectedPos = NextPosition(SelectedPos);
     }
 
     private void MovePosition(KeyboardEventArgs e)
@@ -116,6 +121,22 @@
         "ArrowRight" => new Position(currentPosition.Row, currentPosition.Col + 1),
         _ => currentPosition
     };
+
+    private Position NextPosition(Position currentPosition)
+    {
+        if (currentPosition.Col < 8)
+        {
+            return new Position(currentPosition.Row, currentPosition.Col + 1);
+        }
+        else if (currentPosition.Row < 8)
+        {
+            return new Position(currentPosition.Row + 1, 0);
+        }
+        else
+        {
+            return currentPosition;
+        }
+    }
 
     private void OnCellClicked(Position position)
     {
