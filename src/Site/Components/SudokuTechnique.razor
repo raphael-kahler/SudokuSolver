@@ -78,10 +78,6 @@
 
     private void OnChangeComputed(object sender, IChangeDescription change)
     {
-        if (change != null)
-        {
-            Console.WriteLine($"{Technique.Name} found change: {change.Change.HasEffect}");
-        }
         StateHasChanged();
     }
 

@@ -15,7 +15,6 @@
 
     protected override void OnInitialized()
     {
-        Console.WriteLine("OnInitialized");
         var query = new Uri(NavigationManager.Uri).Query;
         var queryParameters = HttpUtility.ParseQueryString(query);
         var puzzleInput = queryParameters["puzzle"];
@@ -29,7 +28,6 @@
     {
         if (puzzleInput.Length != 81)
         {
-            Console.WriteLine($"Sudoku puzzle string needs to be 81 characters long, but was {puzzleInput.Length} characters long instead.");
             return null;
         }
         var board = BoardFactory.CandidateBoard();
@@ -48,7 +46,6 @@
                 }
                 else
                 {
-                    Console.WriteLine($"Sudoku puzzle string can only consist of integers 0-9, but found character '{inputValue}' instead.");
                     return null;
                 }
             }
