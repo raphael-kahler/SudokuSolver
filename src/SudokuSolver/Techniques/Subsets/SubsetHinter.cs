@@ -8,7 +8,7 @@ namespace SudokuSolver.Techniques.Subsets
         public IEnumerable<ChangeHint> GetHints()
         {
             yield return new ChangeHint($"Find a {TechniqueName} in a {CellCollector.CollectionName}");
-            yield return new ChangeHint($"It is in {CellCollector.CollectionName} {CellCollector.Indexer.CollectionIndex(Position)}");
+            yield return new ChangeHint($"It is in {CellCollector.CollectionName} {CellCollector.Indexer.CollectionIndex(Position) + 1}");
         }
     }
 }
