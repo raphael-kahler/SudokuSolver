@@ -22,40 +22,46 @@ namespace SudokuSolver.Techniques.Subsets
 
         protected override IChangeDescription FindChange(IEnumerable<Cell> cells)
         {
-            var candidatesCausingChange = ImmutableHashSet<Candidate>.Empty;
-            var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
 
-            var cellsWithTwoCandidates = cells.Where(c => c.Candidates.Count == Size).ToList();
-            for (int i = 0; i < cellsWithTwoCandidates.Count - 1; ++i)
+            var cellsWithCandidates = cells.Where(c => c.Candidates.Count > 0 && c.Candidates.Count <= Size).ToList();
+
+            if (cellsWithCandidates.Count < Size)
             {
-                var candidates = cellsWithTwoCandidates[i].Candidates;
-                var numMatchingCells = cellsWithTwoCandidates.Skip(i + 1).Count(c => c.Candidates.SetEquals(candidates));
-                if (numMatchingCells == Size - 1)
+                return NoChangeDescription.Instance;
+            }
+
+            var combinations = CollectionPermutator.Permutate(cellsWithCandidates.Count, Size);
+            foreach (var combination in combinations)
+            {
+                var candidateCount = combination.SelectMany(idx => cellsWithCandidates[idx].Candidates).Distinct().Count();
+                if (candidateCount == Size)
                 {
+                    var candidatesCausingChange = combination.SelectMany(idx => cellsWithCandidates[idx].GetCandidatesWithPosition()).ToImmutableHashSet();
+                    var candidates = candidatesCausingChange.Select(c => c.CandidateValue);
+
+                    var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
                     foreach (var cell in cells)
                     {
-                        if (cell.Candidates.SetEquals(candidates))
+                        if (!candidatesCausingChange.Any(c => c.Position == cell.Position))
                         {
-                            foreach (var candidate in candidates)
+                            foreach (var candidate in cell.Candidates)
                             {
-                                candidatesCausingChange = candidatesCausingChange.Add(new Candidate(cell.Position, candidate));
-                            }
-                        }
-                        else
-                        {
-                            foreach (var candidate in candidates)
-                            {
-                                if (cell.Candidates.Contains(candidate))
+                                if (candidates.Contains(candidate))
                                 {
                                     candidatesToRemove = candidatesToRemove.Add(new Candidate(cell.Position, candidate));
                                 }
                             }
                         }
                     }
+
+                    if (candidatesToRemove.Any())
+                    {
+                        return CreateChangeDescription(candidatesCausingChange, candidatesToRemove);
+                    }
                 }
             }
 
-            return CreateChangeDescription(candidatesCausingChange, candidatesToRemove);
+            return NoChangeDescription.Instance;
         }
     }
 }

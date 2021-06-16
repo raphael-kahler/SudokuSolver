@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using SudokuSolver.Techniques.Helpers;
 using SudokuSolver.Techniques.Subsets;
@@ -87,6 +88,60 @@ namespace SudokuSolver.Tests.Techniques.Subsets
                     Assert.Contains(new Candidate(cell.Position, val), change.Change.CandidatesAffected);
                 }
             }
+        }
+
+        [Fact]
+        public void GetPossibleBoardStateChange_Triple_Row_EachCellOnlyContainsASubsetOfCandidates()
+        {
+            var technique = Technique.Subsets.NakedTripleRow();
+            var board = BoardFactory.CandidateBoard()
+                .ApplyChange(BoardStateChange.SetCell(Cell.WithCandidates((0, 0), 1, 2)))
+                .ApplyChange(BoardStateChange.SetCell(Cell.WithCandidates((0, 1), 2, 3)))
+                .ApplyChange(BoardStateChange.SetCell(Cell.WithCandidates((0, 2), 1, 3)));
+
+            var change = technique.GetPossibleBoardStateChange(board);
+
+            Assert.True(change.Change.HasEffect);
+            Assert.Equal(18, change.Change.CandidatesAffected.Count);
+            for (int col = 3; col < 9; ++col)
+            {
+                for (int value = 1; value <=3; ++value)
+                {
+                    Assert.Contains(new Candidate((0, col), value), change.Change.CandidatesAffected);
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> GetPossibleBoardStateChange_Pair_Row_NoChangeCombinations_Inputs()
+        {
+            yield return new object[] { new List<Cell> {
+                Cell.WithCandidates((0, 2), 4, 9),
+                Cell.WithValue((0, 6), 3)
+            } };
+            yield return new object[] { new List<Cell> {
+                Cell.WithCandidates((0, 2), 4, 9),
+                Cell.WithCandidates((0, 6), 4, 6)
+            } };
+            yield return new object[] { new List<Cell> {
+                Cell.WithCandidates((0, 2), 4, 9),
+                Cell.WithCandidates((0, 6), 4, 6)
+            } };
+        }
+
+        [Theory]
+        [MemberData(nameof(GetPossibleBoardStateChange_Pair_Row_NoChangeCombinations_Inputs))]
+        public void GetPossibleBoardStateChange_Pair_Row_NoChangeCombinations(IList<Cell> cellsToSet)
+        {
+            var technique = Technique.Subsets.NakedPairRow();
+            var board = BoardFactory.CandidateBoard();
+            foreach (var cell in cellsToSet)
+            {
+                board = board.ApplyChange(BoardStateChange.SetCell(cell));
+            }
+
+            var change = technique.GetPossibleBoardStateChange(board);
+
+            Assert.False(change.Change.HasEffect);
         }
     }
 }
