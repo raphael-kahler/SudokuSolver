@@ -20,36 +20,11 @@
         var puzzleInput = queryParameters["puzzle"];
         if (!string.IsNullOrWhiteSpace(puzzleInput))
         {
-            this.initialBoard = ParseInput(puzzleInput);
-        }
-    }
-
-    private BoardState ParseInput(string puzzleInput)
-    {
-        if (puzzleInput.Length != 81)
-        {
-            return null;
-        }
-        var board = BoardFactory.CandidateBoard();
-        for (int row = 0; row < 9; ++ row)
-        {
-            for (int col = 0; col < 9; ++col)
+            var maybePuzzle = BoardFactory.CreateFromSudokuString(puzzleInput);
+            if (maybePuzzle.Is)
             {
-                var idx = row * 9 + col;
-                var inputValue = puzzleInput[idx];
-                if (int.TryParse(inputValue.ToString(), out int value))
-                {
-                    if (value > 0)
-                    {
-                        board = board.ApplyChange(BoardStateChange.SetCell(new Position(row, col), value));
-                    }
-                }
-                else
-                {
-                    return null;
-                }
+                this.initialBoard = maybePuzzle.Value;
             }
         }
-        return board;
     }
 }

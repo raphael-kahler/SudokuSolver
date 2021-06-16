@@ -16,35 +16,6 @@
 
     protected override void OnInitialized()
     {
-        this.initialBoard = BoardFactory.CandidateBoard()
-            .ApplyChange(BoardStateChange.SetCell((0, 2), 8))
-            .ApplyChange(BoardStateChange.SetCell((0, 7), 9))
-            .ApplyChange(BoardStateChange.SetCell((1, 1), 5))
-            .ApplyChange(BoardStateChange.SetCell((2, 0), 7))
-            .ApplyChange(BoardStateChange.SetCell((2, 5), 9))
-            .ApplyChange(BoardStateChange.SetCell((2, 6), 1))
-            .ApplyChange(BoardStateChange.SetCell((2, 8), 5))
-            .ApplyChange(BoardStateChange.SetCell((3, 3), 7))
-            .ApplyChange(BoardStateChange.SetCell((3, 4), 4))
-            .ApplyChange(BoardStateChange.SetCell((4, 3), 6))
-            .ApplyChange(BoardStateChange.SetCell((4, 5), 2))
-            .ApplyChange(BoardStateChange.SetCell((4, 6), 5))
-            .ApplyChange(BoardStateChange.SetCell((4, 8), 4))
-            .ApplyChange(BoardStateChange.SetCell((5, 2), 4))
-            .ApplyChange(BoardStateChange.SetCell((5, 4), 8))
-            .ApplyChange(BoardStateChange.SetCell((5, 8), 9))
-            .ApplyChange(BoardStateChange.SetCell((6, 2), 9))
-            .ApplyChange(BoardStateChange.SetCell((6, 4), 2))
-            .ApplyChange(BoardStateChange.SetCell((6, 7), 5))
-            .ApplyChange(BoardStateChange.SetCell((6, 8), 6))
-            .ApplyChange(BoardStateChange.SetCell((7, 0), 5))
-            .ApplyChange(BoardStateChange.SetCell((7, 6), 4))
-            .ApplyChange(BoardStateChange.SetCell((7, 7), 7))
-            .ApplyChange(BoardStateChange.SetCell((7, 8), 3))
-            .ApplyChange(BoardStateChange.SetCell((8, 2), 6))
-            .ApplyChange(BoardStateChange.SetCell((8, 4), 5))
-            .ApplyChange(BoardStateChange.SetCell((8, 5), 3))
-            .ApplyChange(BoardStateChange.SetCell((8, 6), 9))
-            .ApplyChange(BoardStateChange.SetCell((8, 7), 2));
+        this.initialBoard = BoardFactory.CreateFromSudokuString("008000090050000000700009105000740000000602504004080009009020056500000473006053920").Value;
     }
 }

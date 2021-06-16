@@ -1,6 +1,6 @@
 namespace SudokuSolver.Functional
 {
-    internal struct Maybe<T>
+    public struct Maybe<T>
     {
         private readonly bool isValue;
         public T Value { get; }
