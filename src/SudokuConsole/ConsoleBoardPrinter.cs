@@ -148,7 +148,7 @@ namespace SudokuConsole
             {
                 return ChangeResultColors;
             }
-            else if (changeDescription.CandidatesCausingChange.Any(c => c.Position == position && c.CandidateValue == positionInCell))
+            else if (changeDescription.CandidatesCausingChange.Any(g => g.Any(c => c.Position == position && c.CandidateValue == positionInCell)))
             {
                 return ChangeCauseColors;
             }

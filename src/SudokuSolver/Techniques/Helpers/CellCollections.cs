@@ -13,5 +13,8 @@ namespace SudokuSolver.Techniques.Helpers
 
         public static IEnumerable<IEnumerable<Cell>> GetBoxes(BoardState board) =>
             Enumerable.Range(0, 9).Select(box => board.Box(box));
+
+        public static IEnumerable<IEnumerable<Cell>> GetAllCollections(BoardState board) =>
+            GetRows(board).Concat(GetColumns(board)).Concat(GetBoxes(board));
     }
 }

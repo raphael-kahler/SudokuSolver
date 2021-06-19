@@ -21,6 +21,7 @@ namespace Site.Lib
                     .With(Technique.Subsets.HiddenTriples())
                     .With(Technique.Subsets.NakedQuads())
                     .With(Technique.Subsets.HiddenQuads())
+                    .With(Technique.Colors.SimpleColoring())
                     .With(Technique.Fish.XWing())
                     .With(Technique.Wings.XyWing())
                     .With(Technique.Fish.Swordfish())
@@ -85,6 +86,9 @@ namespace Site.Lib
                         new TechniqueWrapper("Claiming (Row)", Technique.LockedCandidates.Claiming.Row()),
                         new TechniqueWrapper("Claiming (Column)", Technique.LockedCandidates.Claiming.Column()),
                     }),
+                }),
+                new TechniqueCollection("Colorings", new List<ITechnique> {
+                    new TechniqueWrapper("Simple Coloring", Technique.Colors.SimpleColoring()),
                 }),
                 new TechniqueCollection("Fish", new List<ITechnique> {
                     new TechniqueCollection("X-Wing (2-Fish)", new List<ITechnique> {

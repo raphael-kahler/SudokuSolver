@@ -31,8 +31,12 @@
     animation: flash-in 2s cubic-bezier(0.51, 0.34, 0.09, 1.13) 1;
 }
 
-.cause {
+.group0 {
     background-color: #ffe3bd;
+}
+
+.group1 {
+    background-color: #71a5e9;
 }
 
 .affected {

@@ -72,6 +72,7 @@ namespace SudokuConsole
                     .With(Technique.Subsets.HiddenTriples())
                     .With(Technique.Subsets.NakedQuads())
                     .With(Technique.Subsets.HiddenQuads())
+                    .With(Technique.Colors.SimpleColoring())
                     .With(Technique.Fish.XWing())
                     .With(Technique.Wings.XyWing())
                     .With(Technique.Fish.Swordfish())

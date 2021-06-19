@@ -8,7 +8,7 @@ namespace SudokuSolver
     {
         bool HasEffect { get; }
         IImmutableSet<Position> ValuesCausingChange { get; }
-        IImmutableSet<Candidate> CandidatesCausingChange { get; }
+        IImmutableList<IImmutableSet<Candidate>> CandidatesCausingChange { get; }
 
         IImmutableSet<Cell> ValuesAffected { get; }
         IImmutableSet<Candidate> CandidatesAffected { get; }
@@ -20,25 +20,30 @@ namespace SudokuSolver
 
     public record BoardStateChange(
         IImmutableSet<Position> ValuesCausingChange,
-        IImmutableSet<Candidate> CandidatesCausingChange,
+        IImmutableList<IImmutableSet<Candidate>> CandidatesCausingChange,
         IImmutableSet<Cell> ValuesAffected,
         IImmutableSet<Candidate> CandidatesAffected)
         : IBoardStateChange
     {
         public static BoardStateChange ForCandidatesSettingValues(ImmutableHashSet<Candidate> candidatesCausingChange, Cell valueAffected) =>
-            new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty.Add(valueAffected), ImmutableHashSet<Candidate>.Empty);
+            new BoardStateChange(ImmutableHashSet<Position>.Empty, ImmutableList<IImmutableSet<Candidate>>.Empty.Add(candidatesCausingChange), ImmutableHashSet<Cell>.Empty.Add(valueAffected), ImmutableHashSet<Candidate>.Empty);
 
         public static IBoardStateChange ForCandidatesRemovingCandidates(ImmutableHashSet<Candidate> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
+            canidatesAffected.Any()
+                ? new BoardStateChange(ImmutableHashSet<Position>.Empty, ImmutableList<IImmutableSet<Candidate>>.Empty.Add(candidatesCausingChange), ImmutableHashSet<Cell>.Empty, canidatesAffected)
+                : BoardStateNoChange.Instance;
+
+        public static IBoardStateChange ForCandidateGroupsRemovingCandidates(IImmutableList<IImmutableSet<Candidate>> candidatesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
             canidatesAffected.Any()
                 ? new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, canidatesAffected)
                 : BoardStateNoChange.Instance;
 
         public static IBoardStateChange ForCandidatesCausingChange(ImmutableHashSet<Candidate> candidatesCausingChange) =>
-            new BoardStateChange(ImmutableHashSet<Position>.Empty, candidatesCausingChange, ImmutableHashSet<Cell>.Empty, ImmutableHashSet<Candidate>.Empty);
+            new BoardStateChange(ImmutableHashSet<Position>.Empty, ImmutableList<IImmutableSet<Candidate>>.Empty.Add(candidatesCausingChange), ImmutableHashSet<Cell>.Empty, ImmutableHashSet<Candidate>.Empty);
 
         public static IBoardStateChange ForValuesRemovingCandidates(ImmutableHashSet<Position> valuesCausingChange, ImmutableHashSet<Candidate> canidatesAffected) =>
             canidatesAffected.Any()
-                ? new BoardStateChange(valuesCausingChange, ImmutableHashSet<Candidate>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected)
+                ? new BoardStateChange(valuesCausingChange, ImmutableList<IImmutableSet<Candidate>>.Empty, ImmutableHashSet<Cell>.Empty, canidatesAffected)
                 : BoardStateNoChange.Instance;
 
         public static IBoardStateChange NoChange() => BoardStateNoChange.Instance;
@@ -46,7 +51,7 @@ namespace SudokuSolver
         public static BoardStateChange SetCell(Cell cell) =>
             new BoardStateChange(
                 ImmutableHashSet<Position>.Empty,
-                ImmutableHashSet<Candidate>.Empty,
+                ImmutableList<IImmutableSet<Candidate>>.Empty,
                 ImmutableHashSet<Cell>.Empty.Add(cell),
                 ImmutableHashSet<Candidate>.Empty);
 
@@ -56,7 +61,7 @@ namespace SudokuSolver
         public static BoardStateChange RemoveCandidates(IEnumerable<Candidate> candidateRemovals) =>
             new BoardStateChange(
                 ImmutableHashSet<Position>.Empty,
-                ImmutableHashSet<Candidate>.Empty,
+                ImmutableList<IImmutableSet<Candidate>>.Empty,
                 ImmutableHashSet<Cell>.Empty,
                 candidateRemovals.ToImmutableHashSet());
 
@@ -64,13 +69,13 @@ namespace SudokuSolver
 
         public bool RelatedToRow(int row) =>
             ValuesCausingChange.Any(p => p.Row == row) ||
-            CandidatesCausingChange.Any(c => c.Position.Row == row) ||
+            CandidatesCausingChange.Any(group => group.Any(c => c.Position.Row == row)) ||
             ValuesAffected.Any(v => v.Position.Row == row) ||
             CandidatesAffected.Any(c => c.Position.Row == row);
 
         public bool RelatedToPosition(Position position) =>
             ValuesCausingChange.Any(p => p == position) ||
-            CandidatesCausingChange.Any(c => c.Position == position) ||
+            CandidatesCausingChange.Any(group => group.Any(c => c.Position == position)) ||
             ValuesAffected.Any(v => v.Position == position) ||
             CandidatesAffected.Any(c => c.Position == position);
 
@@ -97,7 +102,7 @@ namespace SudokuSolver
         private BoardStateNoChange() { }
         public static BoardStateNoChange Instance { get; } = new BoardStateNoChange();
         public IImmutableSet<Position> ValuesCausingChange => ImmutableHashSet<Position>.Empty;
-        public IImmutableSet<Candidate> CandidatesCausingChange => ImmutableHashSet<Candidate>.Empty;
+        public IImmutableList<IImmutableSet<Candidate>> CandidatesCausingChange => ImmutableList<IImmutableSet<Candidate>>.Empty;
         public IImmutableSet<Cell> ValuesAffected => ImmutableHashSet<Cell>.Empty;
         public IImmutableSet<Candidate> CandidatesAffected => ImmutableHashSet<Candidate>.Empty;
         public bool HasEffect => false;
@@ -116,8 +121,9 @@ namespace SudokuSolver
         public IImmutableSet<Position> ValuesCausingChange =>
             ChangeDescriptions.SelectMany(c => c.ValuesCausingChange).ToImmutableHashSet();
 
-        public IImmutableSet<Candidate> CandidatesCausingChange =>
-            ChangeDescriptions.SelectMany(c => c.CandidatesCausingChange).ToImmutableHashSet();
+        public IImmutableList<IImmutableSet<Candidate>> CandidatesCausingChange => ImmutableList<IImmutableSet<Candidate>>.Empty.Add(
+            ChangeDescriptions.SelectMany(c => c.CandidatesCausingChange).SelectMany(g => g).ToImmutableHashSet()
+        );
 
         public IImmutableSet<Cell> ValuesAffected =>
             ChangeDescriptions.SelectMany(c => c.ValuesAffected).ToImmutableHashSet();

@@ -1,7 +1,7 @@
 <div class="cellContent @(Selected ? "selected" : string.Empty)"
      @onclick="@OnClicked">
     @if (Cell.Value != null) {
-        var changeClass = Change.ValuesCausingChange.Any(c => c == Cell.Position) ? "cause"
+        var changeClass = Change.ValuesCausingChange.Any(c => c == Cell.Position) ? "cause group0"
             : Change.ValuesAffected.Any(c => c.Position == Cell.Position) ? "affected"
             : string.Empty;
         <div class="cellValue @(changeClass)">
@@ -15,10 +15,7 @@
                     @for (int col = 1; col <= 3; ++col) {
                         var value = 3 * row + col;
                         bool hasValue = Cell.Candidates.Contains(value);
-                        var changeClass = !hasValue ? string.Empty
-                            : Change.CandidatesCausingChange.Any(c => c.Position == Cell.Position && c.CandidateValue == value) ? "cause"
-                            : Change.CandidatesAffected.Any(c => c.Position == Cell.Position && c.CandidateValue == value) ? "affected"
-                            : string.Empty;
+                        var changeClass = !hasValue ? string.Empty : GetCandidateClass(new Candidate(Cell.Position, value));
 
                         <td class="candidateCell @(changeClass)">
                             @(hasValue ? value : null)
@@ -46,5 +43,21 @@
     private async Task OnClicked(MouseEventArgs e)
     {
         await OnClickCallback.InvokeAsync(Cell.Position);
+    }
+
+    private string GetCandidateClass(Candidate candidate)
+    {
+        for (int i = 0; i < Change.CandidatesCausingChange.Count; ++i)
+        {
+            if (Change.CandidatesCausingChange[i].Contains(candidate))
+            {
+                return $"cause group{i}";
+            }
+        }
+        if (Change.CandidatesAffected.Contains(candidate))
+        {
+            return "affected";
+        }
+        return string.Empty;
     }
 }
