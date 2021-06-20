@@ -3,6 +3,7 @@
 @if (initialBoard != null) {
     <h4 >How to solve this Sudoku?</h4>
     <p>Follow the steps to find out.</p>
+    <p>Not the right Sudoku? <a href="@GetEditLink()">Change the input</a>.</p>
     <SudokuBoardSolver Board="@initialBoard"/>
 } else {
     <SudokuInputError />
@@ -15,16 +16,13 @@
 
     protected override void OnInitialized()
     {
-        var query = new Uri(NavigationManager.Uri).Query;
-        var queryParameters = HttpUtility.ParseQueryString(query);
-        var puzzleInput = queryParameters["puzzle"];
-        if (!string.IsNullOrWhiteSpace(puzzleInput))
-        {
-            var maybePuzzle = BoardFactory.CreateFromSudokuString(puzzleInput);
-            if (maybePuzzle.Is)
-            {
-                this.initialBoard = maybePuzzle.Value;
-            }
-        }
+        var maybePuzzle = BoardQueries.GetSudokuBoardFromQuery(NavigationManager);
+        this.initialBoard = maybePuzzle.Is ? maybePuzzle.Value : null;
+    }
+
+    private string GetEditLink()
+    {
+        var sudokuString = BoardFactory.GetBoardString(this.initialBoard);
+        return $"new?puzzle={sudokuString}";
     }
 }

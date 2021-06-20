@@ -18,33 +18,13 @@
 
     protected override void OnInitialized()
     {
-        this.initialBoard = BoardFactory.EmptyBoard();
+        var maybePuzzle = BoardQueries.GetSudokuBoardFromQuery(NavigationManager, zerosAreEmpty: true);
+        this.initialBoard = maybePuzzle.Is ? maybePuzzle.Value : BoardFactory.EmptyBoard();
     }
 
     private void SudokuReadyToSolve(BoardState board)
     {
-        var sudokuString = GetBoardString(board);
+        var sudokuString = BoardFactory.GetBoardString(board);
         NavigationManager.NavigateTo($"/solve?puzzle={sudokuString}", false);
-    }
-
-    private string GetBoardString(BoardState board)
-    {
-        var builder = new System.Text.StringBuilder();
-        for (int row = 0; row < 9; ++row)
-        {
-            for (int col = 0; col < 9; ++col)
-            {
-                var cell = board.Cell(row, col);
-                if (cell.Value.HasValue)
-                {
-                    builder.Append(cell.Value.Value);
-                }
-                else
-                {
-                    builder.Append("0");
-                }
-            }
-        }
-        return builder.ToString();
     }
 }

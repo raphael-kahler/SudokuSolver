@@ -30,13 +30,13 @@ namespace SudokuSolver
             return new BoardState(cells);
         }
 
-        public static Maybe<BoardState> CreateFromSudokuString(string sudokuString)
+        public static Maybe<BoardState> CreateFromSudokuString(string sudokuString, bool zerosAreEmpty = false)
         {
             if (sudokuString.Length != 81)
             {
                 return Maybe<BoardState>.None;
             }
-            var board = BoardFactory.CandidateBoard();
+            var board = zerosAreEmpty ? EmptyBoard() : CandidateBoard();
             for (int row = 0; row < 9; ++ row)
             {
                 for (int col = 0; col < 9; ++col)
@@ -57,6 +57,27 @@ namespace SudokuSolver
                 }
             }
             return board;
+        }
+
+        public static string GetBoardString(BoardState board)
+        {
+            var builder = new System.Text.StringBuilder();
+            for (int row = 0; row < 9; ++row)
+            {
+                for (int col = 0; col < 9; ++col)
+                {
+                    var cell = board.Cell(row, col);
+                    if (cell.Value.HasValue)
+                    {
+                        builder.Append(cell.Value.Value);
+                    }
+                    else
+                    {
+                        builder.Append("0");
+                    }
+                }
+            }
+            return builder.ToString();
         }
     }
 }

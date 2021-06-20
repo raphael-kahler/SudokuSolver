@@ -50,6 +50,11 @@
     private ElementReference boardDiv;  // set by the @ref attribute
     private bool readyToSolve;
 
+    protected override void OnInitialized()
+    {
+        this.readyToSolve = Board.Cells.Any(c => c.Value.HasValue);
+    }
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
