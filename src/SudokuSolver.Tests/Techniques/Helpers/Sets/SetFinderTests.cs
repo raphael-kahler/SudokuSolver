@@ -1,16 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
 using SudokuSolver.Techniques.Helpers.Sets;
-using Xunit;
 
-namespace SudokuSolver.Tests.Techniques.Helpers.Sets
+namespace SudokuSolver.Tests.Techniques.Helpers.Sets;
+
+public class SetFinderTests
 {
-    public class SetFinderTests
+    public static IEnumerable<object[]> AlmostLockedSet_TestInputs()
     {
-        public static IEnumerable<object[]> AlmostLockedSet_TestInputs()
+        yield return new object[]
         {
-            yield return new object[]
-            {
                 2,
                 new List<Cell>
                 {
@@ -26,9 +23,9 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
                     new int[] { 1, 4 },
                     new int[] { 2, 4 },
                 }
-            };
-            yield return new object[]
-            {
+        };
+        yield return new object[]
+        {
                 3,
                 new List<Cell>
                 {
@@ -53,21 +50,20 @@ namespace SudokuSolver.Tests.Techniques.Helpers.Sets
                     new int[] { 2, 5, 6 },
                     new int[] { 3, 5, 6 },
                 }
-            };
-        }
+        };
+    }
 
-        [Theory]
-        [MemberData(nameof(AlmostLockedSet_TestInputs))]
-        public void FindAlmostLockedSets_FindsCorrectSets(int size, IList<Cell> cells, IList<IList<int>> expectedSets)
+    [Theory]
+    [MemberData(nameof(AlmostLockedSet_TestInputs))]
+    public void FindAlmostLockedSets_FindsCorrectSets(int size, IList<Cell> cells, IList<IList<int>> expectedSets)
+    {
+        var almostLockedSets = SetFinder.FindAlmostLockedSets(cells, size).ToList();
+        Assert.Equal(expectedSets.Count, almostLockedSets.Count);
+        foreach (var expectedSet in expectedSets)
         {
-            var almostLockedSets = SetFinder.FindAlmostLockedSets(cells, size).ToList();
-            Assert.Equal(expectedSets.Count, almostLockedSets.Count);
-            foreach (var expectedSet in expectedSets)
-            {
-                var set = new AlmostLockedSet(expectedSet.Select(idx => cells[idx]).ToList());
-                // var set = expectedSet.Select(idx => cells[idx]);
-                Assert.Contains(set, almostLockedSets);
-            }
+            var set = new AlmostLockedSet(expectedSet.Select(idx => cells[idx]).ToList());
+            // var set = expectedSet.Select(idx => cells[idx]);
+            Assert.Contains(set, almostLockedSets);
         }
     }
 }

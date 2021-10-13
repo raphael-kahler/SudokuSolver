@@ -1,84 +1,79 @@
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+namespace SudokuSolver.Techniques.Wings;
 
-namespace SudokuSolver.Techniques.Wings
+internal class XyWingTechnique : ISolverTechnique
 {
-    internal class XyWingTechnique : ISolverTechnique
+    public string Description => "XY-Wing";
+    public DifficultyLevel DifficultyLevel => DifficultyLevel.Advanced;
+
+    public IChangeDescription GetPossibleBoardStateChange(BoardState board)
     {
-        public string Description => "XY-Wing";
-        public DifficultyLevel DifficultyLevel => DifficultyLevel.Advanced;
+        var cells = board.Cells.Where(c => c.Candidates.Count == 2).ToList();
 
-        public IChangeDescription GetPossibleBoardStateChange(BoardState board)
+        for (int i = 0; i < cells.Count - 2; ++i)
         {
-            var cells = board.Cells.Where(c => c.Candidates.Count == 2).ToList();
-
-            for (int i = 0; i < cells.Count - 2; ++i)
+            var cell1 = cells[i];
+            for (int j = i + 1; j < cells.Count - 1; ++j)
             {
-                var cell1 = cells[i];
-                for (int j = i + 1; j < cells.Count - 1; ++j)
+                var cell2 = cells[j];
+                if (cell1.Position.ConnectsTo(cell2.Position))
                 {
-                    var cell2 = cells[j];
-                    if (cell1.Position.ConnectsTo(cell2.Position))
+                    var sharedCandidates = cell1.Candidates.Intersect(cell2.Candidates);
+                    if (sharedCandidates.Count == 1)
                     {
-                        var sharedCandidates = cell1.Candidates.Intersect(cell2.Candidates);
-                        if (sharedCandidates.Count == 1)
+                        var lastCellCandidates = cell1.Candidates.SymmetricExcept(cell2.Candidates);
+                        for (int k = j + 1; k < cells.Count; ++k)
                         {
-                            var lastCellCandidates = cell1.Candidates.SymmetricExcept(cell2.Candidates);
-                            for (int k = j + 1; k < cells.Count; ++k)
+                            var cell3 = cells[k];
+                            bool connects = cell3.Position.ConnectsTo(cell1.Position) || cell3.Position.ConnectsTo(cell2.Position);
+                            if (connects && cell3.Candidates.SetEquals(lastCellCandidates))
                             {
-                                var cell3 = cells[k];
-                                bool connects = cell3.Position.ConnectsTo(cell1.Position) || cell3.Position.ConnectsTo(cell2.Position);
-                                if (connects && cell3.Candidates.SetEquals(lastCellCandidates))
+                                var xyWing = new XyWing(cell1, cell2, cell3);
+                                var candidatesToRemove = FindCandidatesToRemove(board, xyWing);
+                                if (candidatesToRemove.Any())
                                 {
-                                    var xyWing = new XyWing(cell1, cell2, cell3);
-                                    var candidatesToRemove = FindCandidatesToRemove(board, xyWing);
-                                    if (candidatesToRemove.Any())
-                                    {
-                                        var candidatesCausingChange = xyWing.GetDefiningCandidates().ToImmutableHashSet();
-                                        var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
-                                        return new ChangeDescription(change, NoHints.Instance, this);
-                                    }
+                                    var candidatesCausingChange = xyWing.GetDefiningCandidates().ToImmutableHashSet();
+                                    var change = BoardStateChange.ForCandidatesRemovingCandidates(candidatesCausingChange, candidatesToRemove);
+                                    return new ChangeDescription(change, NoHints.Instance, this);
                                 }
                             }
                         }
                     }
                 }
             }
-
-            return NoChangeDescription.Instance;
         }
 
-        private ImmutableHashSet<Candidate> FindCandidatesToRemove(BoardState board, XyWing xyWing)
-        {
-            var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
-
-            foreach (var cell in board.Cells)
-            {
-                if (xyWing.AppliesTo(cell))
-                {
-                    candidatesToRemove = candidatesToRemove.Add(new Candidate(cell.Position, xyWing.WingValue));
-                }
-            }
-
-            return candidatesToRemove;
-        }
+        return NoChangeDescription.Instance;
     }
 
-    internal class XyWingTechniqueHinter : IChangeHinter
+    private ImmutableHashSet<Candidate> FindCandidatesToRemove(BoardState board, XyWing xyWing)
     {
-        private readonly XyWing xyWing;
+        var candidatesToRemove = ImmutableHashSet<Candidate>.Empty;
 
-        public XyWingTechniqueHinter(XyWing xyWing) =>
-            this.xyWing = xyWing ?? throw new System.ArgumentNullException(nameof(xyWing));
-
-        public IEnumerable<ChangeHint> GetHints()
+        foreach (var cell in board.Cells)
         {
-            yield return new ChangeHint($"Use XY-Wing technique");
-            yield return new ChangeHint($"This is the pivot", BoardStateChange.ForCandidatesCausingChange(
-                this.xyWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet()));
-            yield return new ChangeHint($"This is the XY-Wing", BoardStateChange.ForCandidatesCausingChange(
-                this.xyWing.GetDefiningCandidates().ToImmutableHashSet()));
+            if (xyWing.AppliesTo(cell))
+            {
+                candidatesToRemove = candidatesToRemove.Add(new Candidate(cell.Position, xyWing.WingValue));
+            }
         }
+
+        return candidatesToRemove;
+    }
+}
+
+internal class XyWingTechniqueHinter : IChangeHinter
+{
+    private readonly XyWing xyWing;
+
+    public XyWingTechniqueHinter(XyWing xyWing) =>
+        this.xyWing = xyWing ?? throw new System.ArgumentNullException(nameof(xyWing));
+
+    public IEnumerable<ChangeHint> GetHints()
+    {
+        yield return new ChangeHint($"Use XY-Wing technique");
+        yield return new ChangeHint($"This is the pivot", BoardStateChange.ForCandidatesCausingChange(
+            this.xyWing.Pivot.GetCandidatesWithPosition().ToImmutableHashSet()));
+        yield return new ChangeHint($"This is the XY-Wing", BoardStateChange.ForCandidatesCausingChange(
+            this.xyWing.GetDefiningCandidates().ToImmutableHashSet()));
     }
 }

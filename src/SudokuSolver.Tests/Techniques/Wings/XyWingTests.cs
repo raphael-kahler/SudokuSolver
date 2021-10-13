@@ -1,30 +1,27 @@
-using System.Collections.Immutable;
 using SudokuSolver.Techniques.Wings;
-using Xunit;
 
-namespace SudokuSolver.Tests.Techniques.Wings
+namespace SudokuSolver.Tests.Techniques.Wings;
+
+public class XyWingTests
 {
-    public class XyWingTests
+    [Theory]
+    [InlineData(1, 2, 1, true)]
+    [InlineData(1, 2, 2, false)]
+    [InlineData(1, 2, 5, false)]
+    [InlineData(2, 8, 1, true)]
+    [InlineData(2, 8, 2, false)]
+    [InlineData(2, 8, 5, false)]
+    [InlineData(0, 2, 1, false)]
+    [InlineData(1, 4, 1, false)]
+    public void Test(int row, int col, int value, bool shouldApply)
     {
-        [Theory]
-        [InlineData(1, 2, 1, true)]
-        [InlineData(1, 2, 2, false)]
-        [InlineData(1, 2, 5, false)]
-        [InlineData(2, 8, 1, true)]
-        [InlineData(2, 8, 2, false)]
-        [InlineData(2, 8, 5, false)]
-        [InlineData(0, 2, 1, false)]
-        [InlineData(1, 4, 1, false)]
-        public void Test(int row, int col, int value, bool shouldApply)
-        {
-            var xyWing = new XyWing(
-                new Cell((1, 1), null, ImmutableHashSet<int>.Empty.Add(2).Add(5)),
-                new Cell((1, 8), null, ImmutableHashSet<int>.Empty.Add(1).Add(2)),
-                new Cell((2, 2), null, ImmutableHashSet<int>.Empty.Add(1).Add(5)));
+        var xyWing = new XyWing(
+            new Cell((1, 1), null, ImmutableHashSet<int>.Empty.Add(2).Add(5)),
+            new Cell((1, 8), null, ImmutableHashSet<int>.Empty.Add(1).Add(2)),
+            new Cell((2, 2), null, ImmutableHashSet<int>.Empty.Add(1).Add(5)));
 
-            var cell = new Cell(new Position(row, col), null, ImmutableHashSet<int>.Empty.Add(value));
+        var cell = new Cell(new Position(row, col), null, ImmutableHashSet<int>.Empty.Add(value));
 
-            Assert.Equal(shouldApply, xyWing.AppliesTo(cell));
-        }
+        Assert.Equal(shouldApply, xyWing.AppliesTo(cell));
     }
 }
