@@ -31,7 +31,7 @@ internal class HiddenSubset : SubsetTechniqueBase
             return NoChangeDescription.Instance;
         }
 
-        foreach (var combination in CollectionPermutator.Permutate(cellsForCandidates.Count, Size))
+        foreach (var combination in CollectionPermutator.Permutate(Size, cellsForCandidates.Count))
         {
             var cellsForCombination = combination.SelectMany(idx => cellsForCandidates[idx].Cells.Select(c => c.Position)).ToHashSet();
             if (cellsForCombination.Count == Size)

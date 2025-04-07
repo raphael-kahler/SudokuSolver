@@ -10,7 +10,7 @@ internal static class SetFinder
             yield break;
         }
 
-        foreach (var permutation in CollectionPermutator.Permutate(cellList.Count, size))
+        foreach (var permutation in CollectionPermutator.Permutate(size, cellList.Count))
         {
             var cells = permutation.Select(idx => cellList[idx]);
             var candidateCount = cells.SelectMany(c => c.Candidates).Distinct().Count();

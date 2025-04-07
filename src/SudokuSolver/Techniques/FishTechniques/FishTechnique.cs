@@ -36,7 +36,7 @@ internal class FishTechnique : ISolverTechnique
             .ToList();
 
         var cells = new List<Position>[Size];
-        foreach (var permutation in CollectionPermutator.Permutate(cellCollections.Count, Size))
+        foreach (var permutation in CollectionPermutator.Permutate(Size, cellCollections.Count))
         {
             for (int i = 0; i < Size; ++i)
             {

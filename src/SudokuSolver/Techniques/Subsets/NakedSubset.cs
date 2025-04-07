@@ -27,7 +27,7 @@ internal class NakedSubset : SubsetTechniqueBase
             return NoChangeDescription.Instance;
         }
 
-        var combinations = CollectionPermutator.Permutate(cellsWithCandidates.Count, Size);
+        var combinations = CollectionPermutator.Permutate(Size, cellsWithCandidates.Count);
         foreach (var combination in combinations)
         {
             var candidateCount = combination.SelectMany(idx => cellsWithCandidates[idx].Candidates).Distinct().Count();
